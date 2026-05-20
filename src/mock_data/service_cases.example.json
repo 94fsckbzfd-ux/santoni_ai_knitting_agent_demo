@@ -1,0 +1,134 @@
+[
+  {
+    "case_id": "SVC-MOCK-0001",
+    "title": "Yarn tension alarm stops SM8-TOP2V production",
+    "machine_models": ["SM8-TOP2V"],
+    "issue_category": "alarm",
+    "symptom_keywords": ["yarn tension alarm", "张力报警", "停机", "断纱", "feed tension"],
+    "alarm_codes": ["TENSION_ALARM_MOCK"],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Record the alarm screen before resetting.",
+      "Check whether the alarm is limited to one feed or appears across multiple feeds.",
+      "Inspect yarn path, tensioner, and yarn package resistance.",
+      "Restart only after confirming there is no mechanical obstruction."
+    ],
+    "online_resolution_steps_zh": [
+      "复位前先拍照记录报警界面。",
+      "确认报警只出现在单路纱，还是多路纱同时出现。",
+      "检查纱路、张力器和纱筒退绕阻力是否异常。",
+      "确认没有机械卡阻后，再尝试安全重启。"
+    ],
+    "safety_warnings": [
+      "Do not bypass safety covers or sensors.",
+      "Stop the machine before touching yarn path or moving parts."
+    ],
+    "safety_warnings_zh": [
+      "不要短接或绕过安全门、护罩或传感器。",
+      "接触纱路或运动部件前必须停机。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "alarm_code_or_panel_photo",
+      "whether_alarm_repeats_after_restart",
+      "affected_feeds_or_positions"
+    ],
+    "required_evidence": [
+      "control_panel_photo",
+      "short_video_after_restart",
+      "photo_of_yarn_path_and_tensioner"
+    ],
+    "probable_causes": [
+      "abnormal yarn package resistance",
+      "dirty or stuck tensioner",
+      "sensor signal instability",
+      "incorrect yarn path"
+    ],
+    "recommended_parts": ["yarn tension sensor", "standard needle set"],
+    "dispatch_triggers": [
+      "alarm repeats after safe restart and basic yarn path check",
+      "multiple feeds fail at the same time",
+      "sensor or wiring damage is visible",
+      "customer cannot safely perform the check"
+    ],
+    "dispatch_triggers_zh": [
+      "安全重启和基础纱路检查后报警仍重复出现",
+      "多路纱同时异常",
+      "可见传感器或线缆损坏",
+      "客户无法安全完成检查"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "SM8-TOP2V onsite troubleshooting"
+    },
+    "estimated_resolution_time": "30-60 minutes online if yarn path issue; onsite same day if sensor/wiring suspected",
+    "estimated_resolution_time_zh": "如果是纱路/张力器问题，在线排查约 30-60 分钟；如果怀疑传感器或线缆问题，建议当天现场处理。",
+    "confidence_notes": "Mock case for workflow design. Needs validation by Santoni service team.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-MOCK-0002",
+    "title": "Lock-machine activation password after motherboard replacement",
+    "machine_models": ["TOP2MP"],
+    "issue_category": "other",
+    "symptom_keywords": ["TOP2MP", "TOP2-HIE", "激活密码", "生成激活密码", "租赁锁定", "机器码", "更换主板", "activation password", "lock screen"],
+    "alarm_codes": [],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": true,
+    "automation_candidate": true,
+    "automation_tool": "activation_password_generator",
+    "tool_inputs_required": ["serial_number", "machine_code"],
+    "tool_success_output": "activation_password",
+    "data_sources": ["activation password platform mock database"],
+    "online_resolution_steps": [
+      "Collect the machine serial number, preferably from nameplate photo.",
+      "Collect the machine code shown on the lock screen.",
+      "Mock tool checks whether the serial number exists and whether the platform status allows password generation.",
+      "If allowed, generate the activation password and return it to the onsite customer or agent technician."
+    ],
+    "safety_warnings": [
+      "Do not expose platform credentials in chat or logs.",
+      "Only return a generated activation password when the platform status allows it."
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "machine_code",
+      "factory_location",
+      "customer_contact"
+    ],
+    "required_evidence": [
+      "nameplate_photo",
+      "lock_screen_photo"
+    ],
+    "probable_causes": [
+      "motherboard replacement triggered lease lock state",
+      "machine requires activation password before production can continue"
+    ],
+    "recommended_parts": [],
+    "dispatch_triggers": [
+      "customer cannot provide serial number or machine code",
+      "machine remains locked after password entry"
+    ],
+    "manual_escalation_triggers": [
+      "serial number is not found in platform",
+      "lease expiry date is earlier than today",
+      "platform data indicates unresolved lease/payment status"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_tool_result": true,
+      "recommended_engineer_skill": "lock-machine activation password / platform support"
+    },
+    "estimated_resolution_time": "5-10 minutes online if serial and lease status are valid; manual intervention required if platform data is missing or expired.",
+    "confidence_notes": "Extracted from Joey's lock-machine activation password service thread on 2026-05-18. Credentials and real platform access are intentionally excluded from mock data.",
+    "related_cases": []
+  }
+]

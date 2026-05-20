@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santoni AI Knitting Agent Demo - Changelog</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="changelog-shell">
+    <header class="changelog-header">
+      <div>
+        <p class="eyebrow">Santoni AI Knitting Agent</p>
+        <h1>Version History</h1>
+      </div>
+      <a class="text-link" href="/">Back to Demo</a>
+    </header>
+
+    <section class="version-rule">
+      <h2>Version Rule</h2>
+      <p><strong>vMajor.Feature.Patch</strong></p>
+      <p>Patch updates change the third number. New features change the second number. Major iterations change the first number.</p>
+    </section>
+
+    <section class="changelog-list">
+      <article class="version-entry current">
+        <div class="version-entry-header">
+          <h2>v0.19.4</h2>
+          <span>2026-05-20</span>
+        </div>
+        <h3>Lock-machine activation wording</h3>
+        <ul>
+          <li>Renames the customer-facing quick action to `锁机激活`.</li>
+          <li>Updates user-facing activation-password copy to describe lock-machine activation instead of model-specific activation wording.</li>
+          <li>Keeps TOP2 model matching as the technical implementation detail for the controlled activation-password service case.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.19.3</h2>
+          <span>2026-05-20</span>
+        </div>
+        <h3>Natural lock activation routing</h3>
+        <ul>
+          <li>Routes natural machine-lock wording such as `my machine is locked` into Service activation-password intake.</li>
+          <li>Matches the activation-password case without inventing machine model, serial number, or lock-screen machine code.</li>
+          <li>Asks for the required model, serial number, and machine-code details instead of returning a generic design/service clarification.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.19.2</h2>
+          <span>2026-05-20</span>
+        </div>
+        <h3>Unlock intent credential trigger</h3>
+        <ul>
+          <li>Triggers the platform credential prompt for natural unlock-machine wording, such as `unlock the machine` or `解锁机器`.</li>
+          <li>Keeps activation-tool context during follow-up turns so model, serial number, and machine-code details continue in real-platform mode.</li>
+          <li>Still allows mock mode when credentials are not available.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.19.1</h2>
+          <span>2026-05-20</span>
+        </div>
+        <h3>Activation credential prompt</h3>
+        <ul>
+          <li>Prompts for platform username and password only when a lock-machine activation-password task is detected on the customer page.</li>
+          <li>Sends credentials only with that request in `real_attempt` mode and keeps them in browser memory for the current session.</li>
+          <li>Allows the user to continue in mock mode when real-platform credentials are not available.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.19.0</h2>
+          <span>2026-05-20</span>
+        </div>
+        <h3>Customer-facing interaction page</h3>
+        <ul>
+          <li>Replaces the root page with a clean customer-facing chat entry using Santoni branding.</li>
+          <li>Moves the previous debugging interface to `/developer.html`.</li>
+          <li>Adds simplified response cards, quick scenario prompts, image upload, reset, and links to user/developer documentation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.18.0</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Service case approval workflow</h3>
+        <ul>
+          <li>Adds review controls to the Service Case Library for `approved`, `needs_changes`, `internal_only`, and `draft_needs_review`.</li>
+          <li>Saves review decisions to `src/mock_data/service_case_reviews.json` through `/api/service-cases/review`.</li>
+          <li>Allows approved Excel draft cases to enter Service Agent matching while keeping other draft/review states blocked.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.17.0</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Excel service case importer</h3>
+        <ul>
+          <li>Adds `scripts/import_service_cases.py` to convert monthly service Excel files into draft service-case JSON.</li>
+          <li>Adds a standard-library `.xlsx` reader and heuristic service-case grouping, without adding external dependencies.</li>
+          <li>Shows Excel draft cases in Service Case Library as `draft_needs_review` while keeping them out of customer-facing matching.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.16.1</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Operation guide page</h3>
+        <ul>
+          <li>Adds `/guide.html` as an operation guide for business testers.</li>
+          <li>Adds a Guide link to the Web demo header and Project Docs header.</li>
+          <li>Documents demo scope, usage method, current features, limitations, and testing suggestions.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.16.0</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Service Case Library review page</h3>
+        <ul>
+          <li>Adds a readonly Service Case Library page for reviewing mock case status, visibility, symptoms, steps, risks, and dispatch triggers.</li>
+          <li>Adds `/api/service-cases` so the review page reads the same case knowledge used by the Service Agent.</li>
+          <li>Updates Project Docs with implemented and planned feature lists, including the planned Excel auto importer.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.15.3</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Guided service troubleshooting follow-up</h3>
+        <ul>
+          <li>Answers follow-up questions about online troubleshooting steps instead of only repeating the case card.</li>
+          <li>Records diagnostic observations such as wrong pattern fixed on the same feed/position.</li>
+          <li>Uses those observations to guide the next check, such as focusing on the feed-specific actuator cable and selector area.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.15.2</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Service follow-up context guard</h3>
+        <ul>
+          <li>Preserves the current service case when the customer follows up with only machine model and serial number.</li>
+          <li>Prevents TOP2 model/serial follow-ups from being misrouted into the activation-password workflow.</li>
+          <li>Adds regression coverage for split-input customer conversations.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.15.1</h2>
+          <span>2026-05-19</span>
+        </div>
+        <h3>Imported recent service cases</h3>
+        <ul>
+          <li>Distills the 2026-04-18 to 2026-05-18 service report into eight mock online-assist case skills.</li>
+          <li>Adds cases for wrong selection, software/display faults, oil leaks, needle crashes, motor/driver faults, sensor learning, socks fabric defects, and parts claims.</li>
+          <li>Loads the imported case file together with the base service-case examples.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.15.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Service Case Online Assist Mock</h3>
+        <ul>
+          <li>Adds a case-based Service Agent skill that loads structured service cases and matches customer issues by machine model, symptoms, alarm codes, impact, and urgency.</li>
+          <li>Returns online troubleshooting steps, safety warnings, evidence requests, probable causes, recommended parts, and dispatch triggers from the matched case.</li>
+          <li>Adds a service-case import template for the recent-month case review workflow.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.7</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Telerik client-state password extraction</h3>
+        <ul>
+          <li>Reads generated activation passwords from Telerik masked textbox `ClientState` fields.</li>
+          <li>Scans ASP.NET AJAX update fragments near the precise `激活密码:` label for generated password values.</li>
+          <li>Keeps excluding the submitted machine code when selecting password-like values.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.6</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Activation password result extraction</h3>
+        <ul>
+          <li>Reads the generated result from the input field after the precise `激活密码:` label.</li>
+          <li>Handles Telerik masked textbox names such as `radwindownew$C$RadMaskedTextBox3` that do not contain password-related words.</li>
+          <li>Rejects the submitted machine code when scanning password-like values, so the agent does not echo the wrong field.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.5</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Activation dialog submit mapping</h3>
+        <ul>
+          <li>Uses the discovered activation-code textbox prefix, such as `radwindownew$C$`, to find the matching Telerik submit button.</li>
+          <li>Avoids submitting unrelated edit-window or grid buttons when generating the real activation password.</li>
+          <li>Exports attempted submit candidates if the real platform still does not return the generated password.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.4</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Activation dialog mapping diagnostics</h3>
+        <ul>
+          <li>Looks for activation-code inputs near `激活码`, `激活机器码`, and `机器码` labels instead of relying only on field names.</li>
+          <li>Adds safe activation-window input and submit candidates to exported logs when the real platform mapping is still incomplete.</li>
+          <li>Keeps grid filter fields rejected so the tool does not submit the machine code into the wrong textbox.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.3</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Activation code input mapping guard</h3>
+        <ul>
+          <li>Prevents the real-platform tool from using grid filter fields as the activation-code input.</li>
+          <li>Prefers `radwindowactive` dialog fields when mapping the activation-code textbox.</li>
+          <li>Exports safer, smaller mapping hints for activation-window controls when the dialog field is still not rendered.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.2</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Real login completion guard</h3>
+        <ul>
+          <li>Detects when the real platform still returns the login page after submitting credentials.</li>
+          <li>Retries `Default2.aspx` with the same authenticated cookie before attempting serial lookup.</li>
+          <li>Returns a dedicated login-not-completed status instead of mislabeling the failure as a serial filter mapping issue.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Telerik toolbar activation dialog mapping</h3>
+        <ul>
+          <li>Added Telerik RadToolBar client-state parsing for the real-platform Generate Activation Password dialog.</li>
+          <li>When direct postback markup is unavailable, the tool now tries activation-only toolbar postback candidates and avoids destructive toolbar commands.</li>
+          <li>Mapping hints now include safe toolbar previews and activation command candidates for the next test log.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.14.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Real activation password generation mapping</h3>
+        <ul>
+          <li>Real-platform mode now attempts the full activation-password workflow after login: serial lookup, dialog opening, activation-code entry, generation submit, and password extraction.</li>
+          <li>Added separate mapping statuses for serial filter, activation dialog, submit button, and password extraction so failed steps are visible in exported logs.</li>
+          <li>Activation-lock intent now keeps the service agent in the password workflow even before the machine model is known.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.13.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Activation password terminology correction</h3>
+        <ul>
+          <li>Corrected the TOP2 flow from lease-password wording to activation-password wording.</li>
+          <li>Updated mock tool output to `activation_password` and the tool candidate to `activation_password_generator`.</li>
+          <li>Added the screenshot serial `3004116` as a TOP2-HIE mock record for workflow testing without storing the real platform password.</li>
+          <li>Restricted TOP2 password routing so model name alone does not trigger the password tool.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.13.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Real platform login discovery</h3>
+        <ul>
+          <li>Real-platform mode now submits the login form using request-only credentials.</li>
+          <li>Returns a safe post-login page summary with field names, links, and matched terms for next-step mapping.</li>
+          <li>Added parsing support for TOP2-HIE / TOP2-* machine models in lease-password cases.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.12.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Conversation memory reset</h3>
+        <ul>
+          <li>Each browser refresh now starts a new web session instead of reusing `web-demo` memory.</li>
+          <li>Added a Clear Memory button that resets backend session memory, detected role, page messages, attachment state, and export log state.</li>
+          <li>Exported test logs now include the current session id for easier debugging.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.11.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Backend version mismatch warning</h3>
+        <ul>
+          <li>Added a visible warning when the frontend version and backend runtime version do not match.</li>
+          <li>This prevents tests from accidentally using stale backend Agent logic after frontend files refresh.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.11.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Real platform connection experiment</h3>
+        <ul>
+          <li>Added an experimental TOP2MP real-platform mode in the web demo.</li>
+          <li>Credentials can be entered per request and are excluded from exported test logs.</li>
+          <li>The tool can attempt to connect to the real login page and discover safe form fields, but password generation remains paused until post-login steps are mapped.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.10.2</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Verified service tool inputs</h3>
+        <ul>
+          <li>Prevents the LLM from inventing machine model, serial number, or machine code for service tools.</li>
+          <li>Vague lock requests now ask for confirmed machine model, serial number, and lock-screen machine code.</li>
+          <li>TOP2MP lease-password generation only runs when tool inputs come from the user or confirmed session memory.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.10.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>TOP2MP tool result response fix</h3>
+        <ul>
+          <li>TOP2MP activation-password success no longer falls through into dispatch confirmation.</li>
+          <li>Service Agent now summarizes mock activation-password success and manual escalation separately from onsite service tickets.</li>
+          <li>Activation-password tool outcomes clear normal dispatch missing fields when the tool has already reached a terminal result.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.10.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>TOP2MP activation password mock tool</h3>
+        <ul>
+          <li>Added a local mock activation-password database for TOP2MP service automation.</li>
+          <li>Added the password-generation mock tool with success, serial-not-found, and status-expired outcomes.</li>
+          <li>Activation-password cases can now return a mock generated password when serial number and machine code are valid.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.9.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>TOP2MP activation password service case</h3>
+        <ul>
+          <li>Added the TOP2MP activation-password lock flow as the second mock service case.</li>
+          <li>Extended service case schema for tool-based automation candidates.</li>
+          <li>Service Agent now recognizes TOP2MP lock-screen password requests and returns mock online-assist steps plus manual escalation triggers.</li>
+          <li>Real platform credentials are intentionally excluded from mock data and code.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.8.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Service dispatch required fields</h3>
+        <ul>
+          <li>Confirmed Service dispatch minimum fields for the MVP mock workflow.</li>
+          <li>Service Agent now requires factory location, customer contact, photo/video evidence, and online steps attempted before dispatch confirmation.</li>
+          <li>Added structured extraction and display labels for these service fields.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.8.0</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Service state flow and case mock schema</h3>
+        <ul>
+          <li>Added the Service Agent state flow to Project Docs.</li>
+          <li>Changed Service flow so complete intake asks for dispatch confirmation before creating a ticket.</li>
+          <li>Added cache-busting and backend-status version sync so exported logs use the current runtime version.</li>
+          <li>Recognizes requests like "generate a 3D preview" as Designer output intent.</li>
+          <li>Added a suggested mock data structure for future service cases.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.7.2</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Designer generation confirmation gate</h3>
+        <ul>
+          <li>Added a final confirmation gate before generating a full Designer proposal.</li>
+          <li>When enough discovery information is collected, the agent now asks whether to generate the first product development brief or continue exploring.</li>
+          <li>Prevents sample-related answers from accidentally triggering the full SWS proposal flow.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.7.1</h2>
+          <span>2026-05-18</span>
+        </div>
+        <h3>Conversation state retention fixes</h3>
+        <ul>
+          <li>Preserved session language so Chinese service conversations stay Chinese after model/serial-only inputs.</li>
+          <li>Improved Designer memory merge so specific product context is not overwritten by generic follow-up parsing.</li>
+          <li>Captured Designer sample-related context such as brand line, size range, sample type, sample speed, and yarn status.</li>
+          <li>Tightened Service dispatch gating so stopped machines still require serial number and alarm/photo evidence before dispatch.</li>
+          <li>Preserved P1 urgency and onsite requirement across follow-up turns.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.7.0</h2>
+          <span>2026-05-17</span>
+        </div>
+        <h3>Project docs and Designer state assumptions</h3>
+        <ul>
+          <li>Added Designer 8-stage state flow as an assumption pending Designer VOC.</li>
+          <li>Added `/api/project-docs` to expose confirmed decisions, uncertain assumptions, Designer state flow, and next decisions.</li>
+          <li>Added `/docs.html` as a product/development documentation page.</li>
+          <li>Added `Project Docs` link to the demo header.</li>
+          <li>Updated State progress from 35% to 45%.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.6.2</h2>
+          <span>2026-05-17</span>
+        </div>
+        <h3>Service Agent goal definition</h3>
+        <ul>
+          <li>Defined Service Agent as a customer-side Santoni service assistant.</li>
+          <li>Set the core principle: help customers restore production quickly, solve online whenever safe and feasible.</li>
+          <li>Defined dispatch as an escalation path, not the default first action.</li>
+          <li>Added Service success criteria and failure modes to the Goal interface.</li>
+          <li>Updated Goal progress from 40% to 70%.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.6.1</h2>
+          <span>2026-05-17</span>
+        </div>
+        <h3>Designer Agent goal definition</h3>
+        <ul>
+          <li>Defined Designer Agent as a product development copilot rather than a direct打版 generator.</li>
+          <li>Added Designer success criteria and failure modes to the Goal interface.</li>
+          <li>Updated Goal progress from 20% to 40%.</li>
+          <li>Reserved the next Goal step for Service Agent definition.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.6.0</h2>
+          <span>2026-05-17</span>
+        </div>
+        <h3>Agent Operating Model progress</h3>
+        <ul>
+          <li>Added backend interfaces for Goal, State, Guardrails, Handoff, and Evaluation.</li>
+          <li>Added `/api/operating-model` to expose capability status and progress.</li>
+          <li>Replaced Demo Scope with a live Agent Model Progress panel.</li>
+          <li>Prepared the architecture for step-by-step Goal, State, and Guardrails refinement.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.5.0</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Natural-language identity routing</h3>
+        <ul>
+          <li>Removed role selection as the primary routing mechanism.</li>
+          <li>Main Agent now infers Designer or Equipment Engineer identity from natural language and session context.</li>
+          <li>Left sidebar now shows auto-routing status instead of role buttons.</li>
+          <li>Designer discovery now asks concrete design-intent questions instead of repeating generation confirmation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.4.1</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Stricter discovery and service intake routing</h3>
+        <ul>
+          <li>Designer workflow no longer generates a full proposal unless the user explicitly asks to generate one.</li>
+          <li>Designer follow-up questions can answer sample lead-time questions using session memory.</li>
+          <li>Customer Equipment Engineer role now treats broad issue descriptions like "machine broken" as service intake.</li>
+          <li>Service workflow continues collecting required ticket information before dispatching.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.4.0</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Conversational discovery before generation</h3>
+        <ul>
+          <li>Added session memory for Designer and Service workflows.</li>
+          <li>Designer workflow now asks discovery questions before generating a knitting proposal when design intent is incomplete.</li>
+          <li>Service workflow now collects required ticket fields before dispatching a service ticket.</li>
+          <li>Service workflow now provides online-assist steps and reserves a future service case database hook.</li>
+          <li>Added UI cards for known information, missing information, and online assistance.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.3.0</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Exportable test logs</h3>
+        <ul>
+          <li>Added `Export Test Log` button to download a JSON record of the current test session.</li>
+          <li>Captured version, runtime status, selected role, user messages, attachment metadata, and raw Agent responses.</li>
+          <li>Excluded image base64 payloads from exported logs to keep files lightweight.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.2.1</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Intent-aware conversation routing</h3>
+        <ul>
+          <li>Fixed role-first routing that incorrectly sent greetings like "你好" into the Designer workflow.</li>
+          <li>Added natural chat responses for greetings.</li>
+          <li>Changed unclear requests to ask for clarification before calling sub-agents.</li>
+          <li>Prevented empty chat responses from rendering workflow result cards.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.2.0</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Switchable LLM provider with DeepSeek support</h3>
+        <ul>
+          <li>Added `LLM_PROVIDER` config for switching between OpenAI and DeepSeek.</li>
+          <li>Added DeepSeek Chat Completions JSON Output integration.</li>
+          <li>Updated `/api/status` and the header status pill to show the active provider and model.</li>
+          <li>Kept local fallback behavior when no provider key is configured or API calls fail.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.1.2</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Demo server process cleanup helper</h3>
+        <ul>
+          <li>Added `scripts/stop_web_demo.ps1` to stop stale demo processes listening on the local demo port.</li>
+          <li>Added startup logs for version, OpenAI key presence, and model.</li>
+          <li>Updated `/api/status` version to v0.1.2.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.1.1</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Robust local API key loading</h3>
+        <ul>
+          <li>Moved local `.env` loading into the LLM client so GPT configuration works across startup paths.</li>
+          <li>Added `/api/status` to expose whether the backend sees an OpenAI key.</li>
+          <li>Changed the header status pill to show GPT model or fallback mode.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.1.0</h2>
+          <span>2026-05-16</span>
+        </div>
+        <h3>Versioning and changelog</h3>
+        <ul>
+          <li>Added visible version number on the demo page.</li>
+          <li>Added this version history page.</li>
+          <li>Documented the versioning rule: major, feature, patch.</li>
+          <li>Kept the current GPT/fallback behavior unchanged.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.0.0</h2>
+          <span>2026-05-15</span>
+        </div>
+        <h3>Initial MVP prototype</h3>
+        <ul>
+          <li>Created Main Agent and sub-agent architecture.</li>
+          <li>Added Designer workflow with Translation Agent and Digital Twin Agent.</li>
+          <li>Added Equipment Engineer workflow with Service Dispatch Agent.</li>
+          <li>Added bilingual Chinese and English interaction.</li>
+          <li>Added mock Image Understanding Agent and image upload contract.</li>
+          <li>Added GPT structured understanding and fallback parser.</li>
+          <li>Added GPT-backed recommendation and dispatch generation with local fallback.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

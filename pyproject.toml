@@ -1,0 +1,10 @@
+[project]
+name = "ai-knitting-agent-demo"
+version = "0.1.0"
+description = "Santoni AI Knitting Agent MVP demo"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

@@ -1,0 +1,1183 @@
+[
+  {
+    "case_id": "SVC-DRAFT-20260519-001",
+    "title": "Draft: needle crash, broken needle, cam, or mechanical collision from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "TOP2-FAST",
+      "Fault machine type-Santoni LD",
+      "Fault machine type-Seamless SJ",
+      "Fault machine type-Soosan Socks",
+      "HS-EX8"
+    ],
+    "issue_category": "mechanical",
+    "symptom_keywords": [
+      "坏针",
+      "撞针",
+      "打针",
+      "护针板",
+      "三角",
+      "断裂",
+      "needle crash",
+      "cam"
+    ],
+    "alarm_codes": [
+      "43.025"
+    ],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Stop the machine immediately and do not continue production.",
+      "Keep photos of damaged needles, cam, through-plate, latch opener, or alarm screen.",
+      "Prepare affected feed/position and whether collision noise occurred."
+    ],
+    "online_resolution_steps_zh": [
+      "立即停机，不要继续强行生产。",
+      "保留坏针、三角、护针板、开针钩或报警界面照片。",
+      "准备发生位置/路数，以及是否有撞击异响。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "alarm_screen_photo",
+      "damaged_part_photo",
+      "short_video_if_available"
+    ],
+    "probable_causes": [
+      "broken needle",
+      "cam damage",
+      "mechanical collision",
+      "incorrect mechanical position"
+    ],
+    "recommended_parts": [
+      "cam",
+      "latch opener",
+      "needle",
+      "needles",
+      "through-plate"
+    ],
+    "dispatch_triggers": [
+      "visible mechanical damage",
+      "repeated collision noise",
+      "customer cannot safely clear the machine"
+    ],
+    "dispatch_triggers_zh": [
+      "可见机械损坏",
+      "重复出现撞击异响",
+      "客户无法安全清理机器"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "mechanical collision and needle path repair"
+    },
+    "estimated_resolution_time": "Online triage only; onsite inspection is usually required.",
+    "estimated_resolution_time_zh": "仅适合在线判断风险，通常需要现场检查。",
+    "confidence_notes": "Auto-drafted from 14 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 14,
+    "source_serials": [
+      "Z004536",
+      "9009352",
+      "SC01414",
+      "9004149",
+      "9007425",
+      "9007700",
+      "9007425",
+      "E001122",
+      "A000335",
+      "E000892",
+      "Z004148",
+      "9009347",
+      "E000965",
+      "9009305"
+    ],
+    "source_wo_numbers": [
+      "0052102",
+      "0052182",
+      "0052104",
+      "0052186",
+      "0052173",
+      "0052160",
+      "0052171",
+      "0052188",
+      "0052100",
+      "0052161",
+      "0052101",
+      "0052086",
+      "0052168",
+      "0052081"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052102",
+        "serial": "Z004536",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "Cam Screw not given by Sales",
+        "engineer_notes": "Cam Screw not given by Sales For machine Z004536, 37, 38 the missing screw will be sent FOC a agrred with Anrea Carducci."
+      },
+      {
+        "wo_number": "0052182",
+        "serial": "9009352",
+        "machine_model": "TOP2-FAST",
+        "description": "织针异常磨损",
+        "engineer_notes": "工作结束 织针异常磨损 工作完成 织针异常磨损 检查并调整内生克罩和生克床 调整针筒位置 调整加油量等"
+      },
+      {
+        "wo_number": "0052104",
+        "serial": "SC01414",
+        "machine_model": "Fault machine type-Soosan Socks",
+        "description": "服务客户",
+        "engineer_notes": "服务客户 任务完成 罗口做后跟橡筋刀进入被针脚挡住。橡筋接不上，钢圈三脚有点高，更换三脚已解决， 双橡筋换色断橡筋，更改橡筋组合角度，已解决，缝头漏针，更换缝头小针已解决 41#气阀信号没有报警，调节信号感应已解决，双橡筋断，原因橡筋马达启动不了，机器升级问题已解决，"
+      },
+      {
+        "wo_number": "0052186",
+        "serial": "9004149",
+        "machine_model": "TOP2-FAST",
+        "description": "机器打针脚 更换索赔的上轨道",
+        "engineer_notes": "工作完成 机器打针脚， 更换索赔回的上轨道 提花片客户出。各个部件按照标准安装，安装好后机器正常运行。 机器打针脚 更换索赔的上轨道"
+      },
+      {
+        "wo_number": "0052173",
+        "serial": "9007425",
+        "machine_model": "TOP2-FAST",
+        "description": "机器打针",
+        "engineer_notes": "工作完成 机器运行了828天，现在经常打针脚，拆卸机器检查，确认提花片和上轨道磨损造成，需更换处理。 机器打针"
+      },
+      {
+        "wo_number": "0052160",
+        "serial": "9007700",
+        "machine_model": "TOP2-FAST",
+        "description": "打针脚、中间片",
+        "engineer_notes": "工作完成 打针脚、中间片，经检查中间片轨道磨损 待索赔中间片轨道磨损更换"
+      },
+      {
+        "wo_number": "0052171",
+        "serial": "9007425",
+        "machine_model": "TOP2-FAST",
+        "description": "机器打针脚",
+        "engineer_notes": "麦伦 此台机器打针脚 平均一个班1-2枚 检查发现上轨道和提花片磨损 下轨道还好 。需要索赔上轨道 。机器运行时间828天。 工作完成 机器打针脚"
+      },
+      {
+        "wo_number": "0052188",
+        "serial": "E001122",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "EX8高速机，出现断针头问题",
+        "engineer_notes": "纱板位置重新调整，机器生产织物正常，客户反应机器正常了。 EX8高速机，出现断针头问题 机器运转生产出现针头断掉问题，检查机器密度问题及开针勾，纱板贴到织针造成针头拉断问题。 工作完成"
+      },
+      {
+        "wo_number": "0052100",
+        "serial": "A000335",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "昆山南亚投诉两台ATLAS机器黑油针及竖条问题，需现场处理。 前期已经采取脱布并大容量给油磨合运行，A000332 A000335",
+        "engineer_notes": "昆山南亚ATLAS机器，A000335黑油针及竖条问题，机器已空机磨机3天，下布完成待客户拿去打染布头。 昆山南亚ATLAS机器，黑油针及竖条问题，A000335，30寸44G，成品布出来布面有两条油针，已告知客户下布后带纱磨合时间不够，通知客户继续再开两批布继续跟进。 A000335，30寸44G，客户继续跟进，A000332，30寸54G待公司清洗并检查..."
+      },
+      {
+        "wo_number": "0052161",
+        "serial": "E000892",
+        "machine_model": "HS-EX8",
+        "description": "产品有针痕",
+        "engineer_notes": "盈云（杰妮）产品固定位置 固定组织有针痕，换针 生克片 移内生克 均没有效果。（如图） 工作完成 产品有针痕"
+      },
+      {
+        "wo_number": "0052101",
+        "serial": "Z004148",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "越南晶苑反应ZENIT HS2CC机器在生产一组样布时与来样风格差异明显，反面纹路不清晰，需协助客户处理。 Z004148",
+        "engineer_notes": "待看成品郊果 后续跟踪 越南晶苑反应ZENIT HS2CC机器在生产一组样布时与来样风格差异明显，反面纹路不清晰，需协助客户处理。 Z004148 Z004148布纹差异 规格：ZENIT-HS2CC。 34寸28针 原料：100d/144F/DTY十40D氨纶 线长：27cm/9cm/100针 客户诉求布面不能有横条、反氨纶、竖条、布底纹路幅度明显感觉（有..."
+      },
+      {
+        "wo_number": "0052086",
+        "serial": "9009347",
+        "machine_model": "TOP2-FAST",
+        "description": "内生克断齿。",
+        "engineer_notes": "内生克断齿。 机器是2025年9月29号安装完成，几个月时间做的是同一个款，就没有保养机器，今天在保养机器更换针和生克片时，发现内生克有个齿断了。需要更换。物料号：MX340602 工作完成"
+      },
+      {
+        "wo_number": "0052168",
+        "serial": "E000965",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "EX8 FAST ,18寸针筒皮带断裂。针筒不转。",
+        "engineer_notes": "工作完成 客户机器皮带已安装，机器正常生产，客户备用配件安装。 EX8 FAST ,18寸针筒皮带断裂。针筒不转。 机器针筒皮带断裂，需要索赔18寸针筒皮带（K341048）进行更换。"
+      },
+      {
+        "wo_number": "0052081",
+        "serial": "9009305",
+        "machine_model": "TOP2-FAST",
+        "description": "43.025:反转 关闭最大限制 马达驱动（信号 25）",
+        "engineer_notes": "机器在生产大货时，机器停了以后，在点动的时会出现倒转问题，每次出现这个问题，都会撞针和中间片或者提花片，更换了的变频器。问题就好了。物料号：0420311 工作完成 43.025:反转 关闭最大限制 马达驱动（信号 25）"
+      }
+    ],
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-DRAFT-20260519-002",
+    "title": "Draft: oil leak or lubrication issue from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "Fault machine type-Santoni LD",
+      "Fault machine type-Seamless SJ"
+    ],
+    "issue_category": "mechanical",
+    "symptom_keywords": [
+      "漏油",
+      "油箱",
+      "油排",
+      "分油嘴",
+      "油泵",
+      "oil leak"
+    ],
+    "alarm_codes": [],
+    "production_impact": "quality_risk",
+    "severity": "P2",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Stop and clean the visible oil area enough to identify the leak point.",
+      "Take photos of the oil tank, distributor/nozzle, pipe, and nearby screws.",
+      "Do not continue production if oil may contaminate fabric or reach electrical parts."
+    ],
+    "online_resolution_steps_zh": [
+      "先停机并清洁可见油污区域，确认漏油点。",
+      "拍摄油箱、分油嘴、油管和周边螺丝位置。",
+      "如油污可能污染布面或接近电气部件，不要继续生产。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "leak_point_photo",
+      "oil_tank_or_distributor_photo",
+      "short_video_after_idle_run"
+    ],
+    "probable_causes": [
+      "oil distributor/nozzle leak",
+      "oil pipe issue",
+      "lubrication fitting failure"
+    ],
+    "recommended_parts": [
+      "oil distributor",
+      "oil nozzle",
+      "oil pipe"
+    ],
+    "dispatch_triggers": [
+      "leak continues after cleaning",
+      "oil reaches electrical components",
+      "cracked distributor/nozzle/pipe is visible"
+    ],
+    "dispatch_triggers_zh": [
+      "清洁后仍持续漏油",
+      "油污接近电气部件",
+      "分油嘴、油管或相关部件有可见裂纹"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P2",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "lubrication system troubleshooting"
+    },
+    "estimated_resolution_time": "10-20 minutes online to confirm source; onsite/parts if leak persists.",
+    "estimated_resolution_time_zh": "在线确认漏油源约 10-20 分钟；持续漏油通常需要现场或备件处理。",
+    "confidence_notes": "Auto-drafted from 4 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 4,
+    "source_serials": [
+      "PS00615",
+      "E001183",
+      "E001180",
+      "Z004173"
+    ],
+    "source_wo_numbers": [
+      "0052169",
+      "0052122",
+      "0052121",
+      "0052099"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052169",
+        "serial": "PS00615",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "Pulsar PS00615 loosing oil",
+        "engineer_notes": "We will send the parts FOC Pulsar PS00615 loosing oil"
+      },
+      {
+        "wo_number": "0052122",
+        "serial": "E001183",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "油压报警",
+        "engineer_notes": "油压报警 美尔棒(柬埔赛工厂)EXBFAST很多机器报普油压不足，调节油压感应器没有效果，每台机器有2个油压感应器，目前美尔棒一共193台EX8FAST 坏了70多个油压感应器。油压感应器编号0515780 E001126 E001127 E001128 E001129 E001177 E001125 E001176 E001178 E001124 E001..."
+      },
+      {
+        "wo_number": "0052121",
+        "serial": "E001180",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "油压报警",
+        "engineer_notes": "油压报警 工作完成 美尔棒(柬埔寨工厂） EX8FAST很多机器报警油压不足，调节油压感应器没有效果，每台机器有2个油压感应器，目前美尔棒一共193台EX8FAST 坏了70多个油压感应器。油压感应器编号0515780 E001080 E001077 E001105 E001102 E001104 E001098 E001100 E001051 E00110..."
+      },
+      {
+        "wo_number": "0052099",
+        "serial": "Z004173",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "越南互太投诉ZENIT 3.6琦冠针筒黑油针问题，琦冠再次发送4个新工艺生产34寸E32针筒到越南互太测试，售后需协助琦冠团队在客户现场处理。 先在Z004173 Z004184两台机器上更换两个新针筒测试。",
+        "engineer_notes": "Z004184换针筒.换好针筒开布头 20号--22号捡好针路，油针开机看效果。油针越开越明显，客户不接受。 总结32G和44G的针筒油针和针路都是越开越明显，客户不接受。 17号--18号，Z004180换44G针筒，换好开下布头针路，油针多。 捡好针路，油针开机，看效果。 效果不太理想，换Z004173针筒。 OK 14号--16号开机看效果，油针越开越..."
+      }
+    ],
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-DRAFT-20260519-003",
+    "title": "Draft: parts claim, broken delivered part, or warranty handling from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "Fault machine type-Seamless SJ",
+      "HS-EX8",
+      "TOP2-FAST",
+      "Fault machine type-Santoni LD",
+      "SM8 TOP2 MP2"
+    ],
+    "issue_category": "other",
+    "symptom_keywords": [
+      "索赔",
+      "配件损坏",
+      "交付配件损坏",
+      "重新交付",
+      "claim",
+      "warranty"
+    ],
+    "alarm_codes": [
+      "14.170"
+    ],
+    "production_impact": "unknown",
+    "severity": "P3",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Collect clear photos of the damaged part, label, packaging, and machine serial number.",
+      "Confirm whether the machine is stopped or this is a spare-part claim only.",
+      "Do not install visibly damaged parts."
+    ],
+    "online_resolution_steps_zh": [
+      "收集损坏配件、标签、包装和机器序列号的清晰照片。",
+      "确认机器是否停机，还是单纯备件索赔。",
+      "不要安装肉眼可见损坏的配件。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "damaged_part_photo",
+      "part_label_photo",
+      "machine_nameplate_photo"
+    ],
+    "probable_causes": [
+      "part damaged before or during delivery",
+      "warranty replacement request",
+      "wrong replacement part"
+    ],
+    "recommended_parts": [],
+    "dispatch_triggers": [
+      "machine is stopped and part replacement is urgent",
+      "part identity is unclear",
+      "onsite confirmation is needed"
+    ],
+    "dispatch_triggers_zh": [
+      "机器停机且备件更换紧急",
+      "配件身份不明确",
+      "需要现场确认后才能处理"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P3",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "warranty and spare parts claim support"
+    },
+    "estimated_resolution_time": "Online information collection 5-10 minutes; fulfillment depends on parts process.",
+    "estimated_resolution_time_zh": "在线收集信息约 5-10 分钟；后续时效取决于备件流程。",
+    "confidence_notes": "Auto-drafted from 19 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 19,
+    "source_serials": [
+      "E000962",
+      "E000965",
+      "E001174",
+      "E000836",
+      "E000787",
+      "E001174",
+      "E000888",
+      "E001174",
+      "E000836",
+      "Z004391",
+      "3006773",
+      "E001136",
+      "E001137",
+      "E001179",
+      "9009069",
+      "9009213",
+      "9009709",
+      "E000962",
+      "E000962"
+    ],
+    "source_wo_numbers": [
+      "0052116",
+      "0052177",
+      "0052117",
+      "0052159",
+      "0052126",
+      "0052115",
+      "0052167",
+      "0052125",
+      "0052088",
+      "0052170",
+      "0052185",
+      "0052120",
+      "0052119",
+      "0052118",
+      "0052084",
+      "0052226",
+      "0052180",
+      "0052105",
+      "0052187"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052116",
+        "serial": "E000962",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "电机不转",
+        "engineer_notes": "工作完成 索赔步进马达 电机不转"
+      },
+      {
+        "wo_number": "0052177",
+        "serial": "E000965",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "哈夫针对不齐",
+        "engineer_notes": "哈夫针对不齐，针筒皮带磨损 索赔针筒皮带 工作完成"
+      },
+      {
+        "wo_number": "0052117",
+        "serial": "E001174",
+        "machine_model": "HS-EX8",
+        "description": "长轴磨损，哈夫针左右不居中，调不准",
+        "engineer_notes": "长轴磨损，哈夫针左右不居中，调不准 索赔长轴 工作完成"
+      },
+      {
+        "wo_number": "0052159",
+        "serial": "E000836",
+        "machine_model": "HS-EX8",
+        "description": "哈夫针左右偏",
+        "engineer_notes": "哈夫针左右偏，经检查，皮带磨损，需更换皮带 待索赔皮带更换 工作完成"
+      },
+      {
+        "wo_number": "0052126",
+        "serial": "E000787",
+        "machine_model": "HS-EX8",
+        "description": "出布管气节头处破裂",
+        "engineer_notes": "工作完成 出布管气节头处破裂 智道（卡蔻莎）8台EX8新机器装好调试好后，陆续有3台机器的出布口弯管气接头处破裂（见图片）。坏的3个已经从我们公司借出安装了，需要索赔3个弯管 物料号M222040"
+      },
+      {
+        "wo_number": "0052115",
+        "serial": "E001174",
+        "machine_model": "HS-EX8",
+        "description": "哈夫针左右偏",
+        "engineer_notes": "待索赔长轴更换 工作完成 哈夫针左右偏，需更换长轴"
+      },
+      {
+        "wo_number": "0052167",
+        "serial": "E000888",
+        "machine_model": "HS-EX8",
+        "description": "机器异响",
+        "engineer_notes": "智道（卡蔻莎）刚到的EX8新机器有异响，检查发现异响处在针筒底部，拆下针筒底部回油盘检查上下皮带松紧轴承， 调节主马达皮带松紧 都没有效果，目前异响问题待观察。 机器异响 工作完成"
+      },
+      {
+        "wo_number": "0052125",
+        "serial": "E001174",
+        "machine_model": "HS-EX8",
+        "description": "机器哈夫针位置无法调正，左右偏差。",
+        "engineer_notes": "工作完成 机器哈夫针位置无法调正，左右偏差。 机器目前低速运转。 需要更换花键轴。"
+      },
+      {
+        "wo_number": "0052088",
+        "serial": "E000836",
+        "machine_model": "HS-EX8",
+        "description": "更换18寸，机头花键长轴",
+        "engineer_notes": "工作完成 更换18寸，机头花键长轴 机器正常生产。 更换索赔件（M902280）花键轴。安装调试哈夫针位置。测试位置正常。"
+      },
+      {
+        "wo_number": "0052170",
+        "serial": "Z004391",
+        "machine_model": "Fault machine type-Santoni LD",
+        "description": "Take down roller broken",
+        "engineer_notes": "Removed text: the length of the text cannot exceed 32767 characters"
+      },
+      {
+        "wo_number": "0052185",
+        "serial": "3006773",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "产品局部横纹",
+        "engineer_notes": "工作完成 继续安装机器，之前横纹在251--710段比较明显，现在这个位置没有横纹，580--1030这里有局部横纹，比之前的有点改观，客户技术员还是不接受，原因基本判断为针筒底座和针筒配合的装配公差偏大造成，没有合适的垫片来调整。 机器在朵彩，做产品局部横纹，校正生克罩同心度无效，拆卸机器检查发现针筒端面跳动0.09mm，针筒底座0.06mm，均超出公差范..."
+      },
+      {
+        "wo_number": "0052120",
+        "serial": "E001136",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "EX8FAST纱嘴打不到位",
+        "engineer_notes": "EX8FAST纱嘴打不到位 工作完成 美尔棒(柬埔寨工厂）纱嘴没有动作 打不到位。检查发现纱嘴电磁阀导致。6号纱嘴D位居多，目前193台机器纱嘴电池阀坏的导致纱嘴没有动作的电磁阀已经有200多个。E001179 E001137 E001136 E001180 E001183 E001129 E001128 E001150等。"
+      },
+      {
+        "wo_number": "0052119",
+        "serial": "E001137",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "EX8FAST纱嘴打不到位",
+        "engineer_notes": "美尔棒(柬埔寨工厂）纱嘴没有动作 打不到位。检查发现纱嘴电磁阀导致。6号纱嘴D位居多，目前193台机器纱嘴电池阀坏的导致纱嘴没有动作的电磁阀已经有200多个。E001179 E001137 E001136 E001180 E001183 E001129 E001128 E001150等。 工作完成 EX8FAST纱嘴打不到位"
+      },
+      {
+        "wo_number": "0052118",
+        "serial": "E001179",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "EX8FAST纱嘴打不到位",
+        "engineer_notes": "EX8FAST纱嘴打不到位 工作完成 美尔棒(柬埔寨工厂）纱嘴没有动作 打不到位。检查发现纱嘴电磁阀导致。6号纱嘴D位居多，目前193台机器纱嘴电池阀坏的导致纱嘴没有动作的电磁阀已经有200多个。E001179 E001137 E001136 E001180 E001183 E001129 E001128 E001150等。"
+      },
+      {
+        "wo_number": "0052084",
+        "serial": "9009069",
+        "machine_model": "TOP2-FAST",
+        "description": "机器反转",
+        "engineer_notes": "工作完成 工作完成 机器在生产大货时，停机后，点动发现声音不对，检查发现机器倒转了。附件里面有详细图片。每次倒转都会撞很多针中间片提花片。更换完变频器。机器就可以生产大货了。物料号：0420311 机器反转"
+      },
+      {
+        "wo_number": "0052226",
+        "serial": "9009213",
+        "machine_model": "TOP2-FAST",
+        "description": "报编码器末连接",
+        "engineer_notes": "报编码器末连接，拆装主马达加紧 问题已解决 工作完成"
+      },
+      {
+        "wo_number": "0052180",
+        "serial": "9009709",
+        "machine_model": "TOP2-FAST",
+        "description": "机器报编码器未连接。14.170.",
+        "engineer_notes": "机器问题已解决。 机器报编码器未连接。14.170. 机器运转生产织物出现编码器未连接错误，拆解主马达重新加固皮带轮位置。安装测试正常。 工作完成"
+      },
+      {
+        "wo_number": "0052105",
+        "serial": "E000962",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "横纹",
+        "engineer_notes": "横纹 工作完成 电机不工作，待索赔更换"
+      },
+      {
+        "wo_number": "0052187",
+        "serial": "E000962",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "横纹，调不了密度",
+        "engineer_notes": "横纹，调不了密度，更换电机 工作完成 更换电机已解决"
+      }
+    ],
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-DRAFT-20260519-004",
+    "title": "Draft: wrong pattern or selector/actuator issue from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "TOP2-FAST",
+      "SM8 TOP2 MP2",
+      "Fault machine type-Soosan Socks",
+      "Fault machine type-Socks"
+    ],
+    "issue_category": "fabric_defect",
+    "symptom_keywords": [
+      "错花",
+      "选针器",
+      "漏选",
+      "花型错误",
+      "actuator",
+      "selector",
+      "wrong pattern"
+    ],
+    "alarm_codes": [],
+    "production_impact": "quality_risk",
+    "severity": "P2",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Confirm whether the defect is fixed on the same feed/position or appears randomly.",
+      "Keep fabric photos and a low-speed video showing the repeat interval.",
+      "Check visible actuator/selector cable seating before any restart."
+    ],
+    "online_resolution_steps_zh": [
+      "先确认错花是否固定出现在同一路/同一位置，还是随机出现在布面。",
+      "保留能看到循环间距的布面照片和低速视频。",
+      "重启前先检查可见的选针器/执行器线缆是否松动或损坏。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "fabric_defect_photo",
+      "low_speed_video",
+      "actuator_or_selector_area_photo"
+    ],
+    "probable_causes": [
+      "actuator/selector issue",
+      "selector cable issue",
+      "pattern/program issue"
+    ],
+    "recommended_parts": [
+      "actuator",
+      "actuator cable",
+      "pcb",
+      "selector",
+      "选针器"
+    ],
+    "dispatch_triggers": [
+      "defect repeats after safe checks",
+      "visible selector/actuator damage",
+      "collision noise or broken needles appear"
+    ],
+    "dispatch_triggers_zh": [
+      "安全检查后错花仍重复出现",
+      "选针器/执行器有可见损坏",
+      "伴随撞针、异响或坏针"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P2",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "selector and actuator troubleshooting"
+    },
+    "estimated_resolution_time": "15-30 minutes online if cable/program issue; onsite if hardware damage is found.",
+    "estimated_resolution_time_zh": "如为线缆或程序问题，在线约 15-30 分钟；如硬件损坏，需要现场处理。",
+    "confidence_notes": "Auto-drafted from 25 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 25,
+    "source_serials": [
+      "9008754",
+      "9009427",
+      "9009427",
+      "SC01515",
+      "3006807",
+      "3006803",
+      "3006816",
+      "3006815",
+      "3006809",
+      "3006802",
+      "9008381",
+      "9009111",
+      "9008370",
+      "9009279",
+      "9008372",
+      "9009236",
+      "9008380",
+      "9009235",
+      "9008378",
+      "9009295"
+    ],
+    "source_wo_numbers": [
+      "0052053",
+      "0052051",
+      "0052050",
+      "0052183",
+      "0052157",
+      "0052153",
+      "0052156",
+      "0052155",
+      "0052158",
+      "0052154",
+      "0052175",
+      "0052178",
+      "0052174",
+      "0052124",
+      "0052083",
+      "0052127",
+      "0052082",
+      "0052052",
+      "0052176",
+      "0052091"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052053",
+        "serial": "9008754",
+        "machine_model": "TOP2-FAST",
+        "description": "打针脚，提花片，轨道磨损。",
+        "engineer_notes": "工作完成 打针脚、提花片，更换上轨道、提花片，重新安装调整，已好。 机器问题已解决，机器磨合期已打开。 打针脚，提花片，轨道磨损。"
+      },
+      {
+        "wo_number": "0052051",
+        "serial": "9009427",
+        "machine_model": "TOP2-FAST",
+        "description": "机器打提花片",
+        "engineer_notes": "工作完成 杭宏 机器打提花片。检查发现打提花片上脚 从第一路开始打歪的。拆机器检查发现第一路的提花上轨道断裂，提花片打歪50组。上轨道和提花片已经找公司借出更换好， 机器正常运行的。上轨道和提花片需要索赔后还给公司。 机器打提花片"
+      },
+      {
+        "wo_number": "0052050",
+        "serial": "9009427",
+        "machine_model": "TOP2-FAST",
+        "description": "新机打提花片上脚",
+        "engineer_notes": "工作完成 机器在正常运转生产过程中突然发出异响并停机，检查发现从第1路到第4路这一段提花片上脚撞歪，拆卸机器看见第4块上提花片三角螺钉孔处断裂了，更换了50组提花片，安装调试机器后正常生产。 新机打提花片上脚"
+      },
+      {
+        "wo_number": "0052183",
+        "serial": "SC01515",
+        "machine_model": "Fault machine type-Soosan Socks",
+        "description": "扎口漏针，需要维修",
+        "engineer_notes": "扎口漏针，需要维修 任务完成 SC01515机台客户反馈扎口漏针，检查发现是程序连接有问题（此款袜为扎口接花）更改起口位置，开针舌角度，旁边同款袜也有此问题，同时更改程序，观察一天下来都无扎口漏针问题，已解决此问题，华尔师傅全程一起参与，已教学。"
+      },
+      {
+        "wo_number": "0052157",
+        "serial": "3006807",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "工作完成 盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。 机器错花"
+      },
+      {
+        "wo_number": "0052153",
+        "serial": "3006803",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。 工作完成 机器错花"
+      },
+      {
+        "wo_number": "0052156",
+        "serial": "3006816",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "工作完成 机器错花 盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。"
+      },
+      {
+        "wo_number": "0052155",
+        "serial": "3006815",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。 工作完成 机器错花"
+      },
+      {
+        "wo_number": "0052158",
+        "serial": "3006809",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "机器错花 工作完成 盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。"
+      },
+      {
+        "wo_number": "0052154",
+        "serial": "3006802",
+        "machine_model": "SM8 TOP2 MP2",
+        "description": "机器错花",
+        "engineer_notes": "机器错花 工作完成 盈云（华彩）产品错花 检查选针器批号是有问题的WAC选针器，需要索赔更换。"
+      },
+      {
+        "wo_number": "0052175",
+        "serial": "9008381",
+        "machine_model": "TOP2-FAST",
+        "description": "机器错花",
+        "engineer_notes": "机器错花 产品有错花现象 更换索赔的脉冲选针器 更换好后机器正常运行。 工作完成"
+      },
+      {
+        "wo_number": "0052178",
+        "serial": "9009111",
+        "machine_model": "TOP2-FAST",
+        "description": "产品选针不对",
+        "engineer_notes": "产品选针不对 产品有选针不对 检查发现第4路和第7路有3个选针器检查 有刀头没有动作 需要索赔更换 （义大脉冲选针器） 工作完成"
+      },
+      {
+        "wo_number": "0052174",
+        "serial": "9008370",
+        "machine_model": "TOP2-FAST",
+        "description": "机器错花",
+        "engineer_notes": "工作完成 机器错花 产品有错花现象 更换索赔的脉冲选针器 更换好后机器正常运行。"
+      },
+      {
+        "wo_number": "0052124",
+        "serial": "9009279",
+        "machine_model": "TOP2-FAST",
+        "description": "乱起针错花。",
+        "engineer_notes": "乱起针错花。 2025年9月份安装的机器，在生产大货时，经常出现乱起针错花问题，经常发现是WAC选针器陶瓷片问题，更换了新的WAC选针器陶瓷片，还是经常出现错花问题。客户要求更换成Enorme的选针器。机器编号和选针器编号。详细在附件里。 工作完成"
+      },
+      {
+        "wo_number": "0052083",
+        "serial": "9008372",
+        "machine_model": "TOP2-FAST",
+        "description": "布面错花",
+        "engineer_notes": "布面错花 工作完成 产品错花 更换整台机器索赔的义大选针器 更换后机器正常运行。换下的WAC选针器带回。"
+      },
+      {
+        "wo_number": "0052127",
+        "serial": "9009236",
+        "machine_model": "TOP2-FAST",
+        "description": "错花。",
+        "engineer_notes": "错花。 2025年9月份安装的机器，在生产大货时，经常出现乱起针错花问题，经常发现是WAC选针器陶瓷片问题，更换了新的WAC选针器陶瓷片，还是经常出现错花问题。客户要求更换成Enorme的选针器。机器编号和选针器编号。详细在附件里。 工作完成"
+      },
+      {
+        "wo_number": "0052082",
+        "serial": "9008380",
+        "machine_model": "TOP2-FAST",
+        "description": "产品错花",
+        "engineer_notes": "产品错花 更换整台机器索赔的义大选针器 更换后机器正常运行。换下的WAC选针器带回。 产品错花 工作完成"
+      },
+      {
+        "wo_number": "0052052",
+        "serial": "9009235",
+        "machine_model": "TOP2-FAST",
+        "description": "乱起针，错花。",
+        "engineer_notes": "工作完成 德清锦桐服饰有限公司，机器是2025年7月份安装的，机器在生产大货时，经常出现乱起针错花问题。检查发现是WAC选针器陶瓷片问题，客户要求更换Enorme的选针器。更换详细机器编号和选针器编号。在附件里! 请查收 乱起针，错花。"
+      },
+      {
+        "wo_number": "0052176",
+        "serial": "9008378",
+        "machine_model": "TOP2-FAST",
+        "description": "机器错花",
+        "engineer_notes": "工作完成 机器错花 产品有错花现象 更换索赔的脉冲选针器 更换好后机器正常运行。"
+      },
+      {
+        "wo_number": "0052091",
+        "serial": "9009295",
+        "machine_model": "TOP2-FAST",
+        "description": "乱起针错花。",
+        "engineer_notes": "工作完成 2025年9月份安装的机器。在生产大货时，经常出现乱起针错花问题，检查发现时WAC选针器陶瓷片问题，更换了新的WAC陶瓷片还是经常出现错花。客户要求更换成Enorme的选针器。以上是把WAC选针器更换成Enorme的机器编号和Enorme编号。详细在附件里！ 乱起针错花。"
+      }
+    ],
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-DRAFT-20260519-005",
+    "title": "Draft: sensor, electronic eye, feeder, or learning issue from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "Fault machine type-Jingmei LD"
+    ],
+    "issue_category": "calibration",
+    "symptom_keywords": [
+      "电子眼",
+      "输纱器",
+      "传感器",
+      "学习",
+      "sensor",
+      "feeder"
+    ],
+    "alarm_codes": [],
+    "production_impact": "running",
+    "severity": "P3",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Confirm whether this is a retrofit/install task or an alarm after production starts.",
+      "Check sensor/feeder connection and whether signal changes when yarn passes.",
+      "Run learning/calibration only if the customer engineer is trained."
+    ],
+    "online_resolution_steps_zh": [
+      "确认这是改装/安装任务，还是生产后出现的传感器或输纱器报警。",
+      "检查电子眼/输纱器连接，并确认纱线经过时信号是否变化。",
+      "只有客户工程师受过培训时，才执行学习/校准步骤。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "sensor_wiring_photo",
+      "panel_signal_photo",
+      "short_video_of_signal_change"
+    ],
+    "probable_causes": [
+      "sensor learning not completed",
+      "sensor wiring issue",
+      "feeder signal issue"
+    ],
+    "recommended_parts": [
+      "feeder",
+      "sensor",
+      "sensor cable"
+    ],
+    "dispatch_triggers": [
+      "signal does not change",
+      "customer is not trained for calibration",
+      "alarm repeats after calibration"
+    ],
+    "dispatch_triggers_zh": [
+      "信号无变化",
+      "客户未受训无法校准",
+      "校准后报警仍重复"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P3",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "sensor learning and feeder support"
+    },
+    "estimated_resolution_time": "20-40 minutes online if wiring and learning are straightforward; onsite if retrofit is unclear.",
+    "estimated_resolution_time_zh": "如接线和学习流程清楚，在线约 20-40 分钟；改装状态不清时建议现场。",
+    "confidence_notes": "Auto-drafted from 1 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 1,
+    "source_serials": [
+      "JM190703"
+    ],
+    "source_wo_numbers": [
+      "0052113"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052113",
+        "serial": "JM190703",
+        "machine_model": "Fault machine type-Jingmei LD",
+        "description": "Fabric Problem",
+        "engineer_notes": "Fabric Problem the customer complaints are horizoldal stripes on the polyester fabrics yarn counts 75/72 D 2.4 lfa this is 7 year old machines checked the machine roundness ,height..."
+      }
+    ],
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-DRAFT-20260519-006",
+    "title": "Draft: software, display, PCB, or control panel fault from Excel import",
+    "source": "excel_auto_import",
+    "review_status": "draft_needs_review",
+    "customer_visible": false,
+    "machine_models": [
+      "TOP2-FAST",
+      "Fault machine type-Seamless SJ",
+      "HS-EX8"
+    ],
+    "issue_category": "electrical",
+    "symptom_keywords": [
+      "程序错乱",
+      "白屏",
+      "显示屏",
+      "触摸无反应",
+      "主板",
+      "PCB",
+      "software",
+      "display"
+    ],
+    "alarm_codes": [
+      "16.008"
+    ],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Record the screen status, software version, and whether touch input responds.",
+      "Power-cycle once only if allowed by customer procedure.",
+      "Do not flash software or replace boards without Santoni confirmation."
+    ],
+    "online_resolution_steps_zh": [
+      "记录屏幕状态、软件版本，以及触摸屏是否有反应。",
+      "在客户流程允许且安全的前提下，只做一次断电重启确认。",
+      "未经 Santoni 确认，不要自行刷机或更换主板/显示屏。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching mechanical, electrical, sensor, or yarn-path components.",
+      "Do not bypass safety devices or repeatedly restart if collision, overcurrent, or electrical fault is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触机械、电气、传感器或纱路部件前必须先停机。",
+      "如怀疑撞针、过流或电气故障，不要绕过安全保护或反复重启。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "symptom_description",
+      "production_status",
+      "photos_or_short_video",
+      "online_steps_attempted"
+    ],
+    "required_evidence": [
+      "screen_photo",
+      "software_version_photo",
+      "short_video_of_touch_response"
+    ],
+    "probable_causes": [
+      "software issue",
+      "display panel fault",
+      "mainboard/PCB fault"
+    ],
+    "recommended_parts": [
+      "PCB",
+      "cam",
+      "display panel",
+      "feeder",
+      "mainboard",
+      "needle",
+      "pcb",
+      "sensor",
+      "油箱"
+    ],
+    "dispatch_triggers": [
+      "screen remains white",
+      "touch panel does not respond",
+      "software or PCB fault is suspected"
+    ],
+    "dispatch_triggers_zh": [
+      "屏幕持续白屏",
+      "触摸屏无反应",
+      "怀疑软件、主板或 PCB 故障"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "software, display, and PCB troubleshooting"
+    },
+    "estimated_resolution_time": "Remote triage 10-20 minutes; onsite or parts replacement likely if PCB/display is suspected.",
+    "estimated_resolution_time_zh": "远程判断约 10-20 分钟；如怀疑主板或显示屏，通常需要现场或备件处理。",
+    "confidence_notes": "Auto-drafted from 7 Excel row(s). Source file: ReportGuasti0519.xlsx. Requires Santoni service review before customer-facing use.",
+    "data_sources": [
+      "ReportGuasti0519.xlsx"
+    ],
+    "source_row_count": 7,
+    "source_serials": [
+      "E000626",
+      "9000333",
+      "9009361",
+      "99161/8022544",
+      "9008244",
+      "E000962",
+      "9009347"
+    ],
+    "source_wo_numbers": [
+      "0052184",
+      "0052098",
+      "0052087",
+      "0052092",
+      "0052123",
+      "0052106",
+      "0052085"
+    ],
+    "source_rows": [
+      {
+        "wo_number": "0052184",
+        "serial": "E000626",
+        "machine_model": "HS-EX8",
+        "description": "机器打针",
+        "engineer_notes": "机器打针 机器产品上浮 触碰到2路6路的大探针 大探针弹起后机器没有报警停机。造成打针112枚。 工作完成"
+      },
+      {
+        "wo_number": "0052098",
+        "serial": "9000333",
+        "machine_model": "TOP2-FAST",
+        "description": "PIUS送裸氨线长达不到3m，测试新软件",
+        "engineer_notes": "工作完成 机器版本由r59456升级到r133882，在两种送纱模式下测试PLUS，均达到客户要求。 PIUS送裸氨线长达不到3m，测试新软件"
+      },
+      {
+        "wo_number": "0052087",
+        "serial": "9009361",
+        "machine_model": "TOP2-FAST",
+        "description": "F1状态下调试平纹布面时马达密度会异变",
+        "engineer_notes": "工作完成 F1状态下调试平纹布面时马达密度会异变 机器在按F1状态修改密度时，加减数值后退出界面，消除F1功能键在启动机器，这时密度会突然变化，织针都不平整，织物破洞，客户程序是从MP2机型直接导过来的，密度马达数值、指令都在程序链条步里，其它机台没问题，修改程序链条步里马达指令、数值无效，机器版本号为r127021,刷新版本r133882也没有解决，修改马..."
+      },
+      {
+        "wo_number": "0052092",
+        "serial": "99161/8022544",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "产品布面横纹、起球、毛圈漏底",
+        "engineer_notes": "机器8022544做产品 毛圈漏底、起球、反纱、横 纹，之前2、4、6、8路包纱张力都是设置3g,在生产过程中2.1和6.1BODYMAP2会变成1g,程序中根本就没有设定1g这个张力值，“送纱器修改”栏内SYF2.1及SYF6.1与其它6路显示异样，SYF2.4和SYF6.4显示段也异样，重新编号等无效，目前每做一件需手动在2.1和6.1BODYMAP2调..."
+      },
+      {
+        "wo_number": "0052123",
+        "serial": "9008244",
+        "machine_model": "TOP2-FAST",
+        "description": "2014版坏了，更改不了时间",
+        "engineer_notes": "2014版坏了，更改不了时间 工作完成 待索赔PCB2014版更换"
+      },
+      {
+        "wo_number": "0052106",
+        "serial": "E000962",
+        "machine_model": "Fault machine type-Seamless SJ",
+        "description": "密度电机无法回到零位。",
+        "engineer_notes": "机器运转生产出现密度电机归零失败，检查问题原因密度电机系统程序丢失。需要重新申请索赔密度电机进行安装。 目前机器更换备用密度电机，机器正常生产。 工作完成 密度电机无法回到零位。"
+      },
+      {
+        "wo_number": "0052085",
+        "serial": "9009347",
+        "machine_model": "TOP2-FAST",
+        "description": "16.008:提花片区域油压不足",
+        "engineer_notes": "工作完成 16.008:提花片区域油压不足 机器在生产时，经常出现提花片油压不足。也排了油箱的空气。还是报警。更换了整个油箱问题依然存在。最后更换了2018D电路板错误报警问题消息。"
+      }
+    ],
+    "related_cases": []
+  }
+]

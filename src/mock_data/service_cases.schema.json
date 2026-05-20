@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Santoni Service Case Mock Schema",
+  "type": "object",
+  "required": [
+    "case_id",
+    "title",
+    "machine_models",
+    "issue_category",
+    "symptom_keywords",
+    "online_solvable",
+    "online_resolution_steps",
+    "dispatch_triggers"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Stable case identifier, for example SVC-MOCK-0001."
+    },
+    "title": {
+      "type": "string",
+      "description": "Short human-readable problem title."
+    },
+    "machine_models": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "issue_category": {
+      "type": "string",
+      "enum": [
+        "alarm",
+        "fabric_defect",
+        "installation",
+        "calibration",
+        "mechanical",
+        "electrical",
+        "maintenance",
+        "other"
+      ]
+    },
+    "symptom_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Chinese and English phrases the agent can use for matching."
+    },
+    "alarm_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "production_impact": {
+      "type": "string",
+      "enum": [
+        "stopped",
+        "reduced_speed",
+        "quality_risk",
+        "running",
+        "unknown"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "online_solvable": {
+      "type": "boolean",
+      "description": "Whether customer-side engineer can usually resolve this with remote guidance."
+    },
+    "online_resolution_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Safe customer-facing troubleshooting steps."
+    },
+    "online_resolution_steps_zh": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional Chinese version of online_resolution_steps."
+    },
+    "online_resolution_steps_en": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional English version of online_resolution_steps."
+    },
+    "safety_warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "safety_warnings_zh": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_customer_info": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Information the agent must collect before a confident recommendation."
+    },
+    "required_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Photos, videos, logs, or alarm screenshots useful for matching and dispatch."
+    },
+    "probable_causes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_parts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dispatch_triggers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Conditions that should escalate from online assist to onsite dispatch."
+    },
+    "dispatch_triggers_zh": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "automation_candidate": {
+      "type": "boolean",
+      "description": "Whether this case can be solved by a backend tool instead of onsite dispatch."
+    },
+    "automation_tool": {
+      "type": "string",
+      "description": "Mock or future tool name, for example activation_password_generator."
+    },
+    "tool_inputs_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tool_success_output": {
+      "type": "string"
+    },
+    "manual_escalation_triggers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Conditions that require Santoni staff intervention even if a tool exists."
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "handoff_payload": {
+      "type": "object",
+      "description": "Fields that should be copied into a ticket or shared with Santoni service leader."
+    },
+    "estimated_resolution_time": {
+      "type": "string"
+    },
+    "confidence_notes": {
+      "type": "string"
+    },
+    "related_cases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,450 @@
+﻿"""Agent Operating Model placeholders.
+
+These interfaces reserve the product architecture for the five capabilities
+that turn the demo from a chatbot into a business agent.
+"""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+
+
+@dataclass(frozen=True)
+class OperatingModelCapability:
+    key: str
+    name: str
+    status: str
+    progress: int
+    purpose: str
+    current_scope: str
+    next_step: str
+
+
+@dataclass
+class GoalInterface:
+    """Defines agent objectives and success criteria."""
+
+    primary_goal: str = ""
+    success_criteria: list[str] = field(default_factory=list)
+    failure_modes: list[str] = field(default_factory=list)
+
+
+@dataclass
+class StateInterface:
+    """Tracks where the user is in the workflow."""
+
+    workflow: str = "unknown"
+    stage: str = "intake"
+    known_info: dict = field(default_factory=dict)
+    missing_info: list[str] = field(default_factory=list)
+
+
+@dataclass
+class GuardrailsInterface:
+    """Defines boundaries and escalation rules."""
+
+    rules: list[str] = field(default_factory=list)
+    requires_human_confirmation: list[str] = field(default_factory=list)
+    blocked_actions: list[str] = field(default_factory=list)
+
+
+@dataclass
+class HandoffInterface:
+    """Defines when and how the agent hands work to humans or systems."""
+
+    target_role: str = ""
+    handoff_payload: dict = field(default_factory=dict)
+    handoff_reason: str = ""
+
+
+@dataclass
+class EvaluationInterface:
+    """Defines self-checks before the agent responds or acts."""
+
+    checks: list[str] = field(default_factory=list)
+    score: float | None = None
+    revision_needed: bool = False
+
+
+def designer_state_flow() -> list[dict]:
+    return [
+        {
+            "stage": "Identity / Intent Detection",
+            "status": "implemented",
+            "certainty": "confirmed",
+            "description": "Main Agent infers whether the user is a designer or service user from natural language and session context.",
+        },
+        {
+            "stage": "Design Discovery",
+            "status": "in_progress",
+            "certainty": "assumption_until_designer_voc",
+            "description": "Collect product type, target user, use case, function, cost, style, and constraints.",
+        },
+        {
+            "stage": "Concept Clarification",
+            "status": "planned",
+            "certainty": "assumption_until_designer_voc",
+            "description": "Clarify concept direction, reference image interpretation, brand line, and success criteria.",
+        },
+        {
+            "stage": "Feasibility Check",
+            "status": "planned",
+            "certainty": "high_confidence",
+            "description": "Evaluate feasibility under Santoni machine/SWS assumptions and identify risks or alternatives.",
+        },
+        {
+            "stage": "Product Development Brief",
+            "status": "planned",
+            "certainty": "high_confidence",
+            "description": "Generate a first-version product development brief for internal review and supplier communication.",
+        },
+        {
+            "stage": "Knitting / SWS Proposal",
+            "status": "planned",
+            "certainty": "high_confidence",
+            "description": "Translate the approved brief into knitting structure, yarn, machine, and SWS-oriented direction.",
+        },
+        {
+            "stage": "Sampling Plan",
+            "status": "planned",
+            "certainty": "medium_confidence",
+            "description": "Estimate sample path, timing, risks, and information required for sampling.",
+        },
+        {
+            "stage": "Handoff",
+            "status": "placeholder",
+            "certainty": "needs_process_definition",
+            "description": "Package context for designers, SWS engineers, suppliers, or future system integrations.",
+        },
+    ]
+
+
+def service_state_flow() -> list[dict]:
+    return [
+        {
+            "stage": "Identity / Intent Detection",
+            "status": "implemented",
+            "certainty": "confirmed",
+            "description": "Main Agent infers whether the user is reporting a customer-side equipment/service issue from natural language and session context.",
+        },
+        {
+            "stage": "Service Intake",
+            "status": "in_progress",
+            "certainty": "confirmed",
+            "description": "Collect machine model, serial number, symptom, alarm evidence, and basic production impact.",
+        },
+        {
+            "stage": "Impact & Urgency Check",
+            "status": "in_progress",
+            "certainty": "confirmed",
+            "description": "Classify stopped production, reduced speed, running risk, installation support, and urgency level.",
+        },
+        {
+            "stage": "Online Assist",
+            "status": "in_progress",
+            "certainty": "high_confidence",
+            "description": "Offer safe first checks and match future service cases before deciding whether onsite support is required.",
+        },
+        {
+            "stage": "Escalation Decision",
+            "status": "planned",
+            "certainty": "needs_service_case_list",
+            "description": "Decide whether the issue is online-solvable, needs remote expert help, or requires onsite dispatch.",
+        },
+        {
+            "stage": "Ticket Creation",
+            "status": "in_progress",
+            "certainty": "confirmed",
+            "description": "Create a service ticket only after minimum information and dispatch confirmation are present.",
+        },
+        {
+            "stage": "Dispatch Tracking",
+            "status": "placeholder",
+            "certainty": "needs_ticket_system_integration",
+            "description": "Track assigned engineer, ETA, spare parts, onsite status, and customer updates.",
+        },
+        {
+            "stage": "Close / Feedback",
+            "status": "placeholder",
+            "certainty": "needs_process_definition",
+            "description": "Capture resolution, parts used, downtime, customer feedback, and future case-learning data.",
+        },
+    ]
+
+
+def operating_model_progress() -> dict:
+    designer_goal = GoalInterface(
+        primary_goal=(
+            "Starting from a design reference image or natural-language idea, help brand designers form a first-version "
+            "product development proposal that can support internal review, sampling communication, and later Santoni/SWS conversion."
+        ),
+        success_criteria=[
+            "The agent understands design intent before generating a technical proposal.",
+            "The output can support internal design review and supplier/sampling communication.",
+            "The agent identifies feasibility, risks, missing information, and next decisions.",
+            "When information is sufficient, the agent can translate the brief into a knitting/SWS-oriented technical direction.",
+        ],
+        failure_modes=[
+            "Generating a knitting/SWS proposal before design intent is clear.",
+            "Treating a reference image as enough context without asking about user, market, function, and constraints.",
+            "Ignoring cost, lead time, brand line, and supplier communication concerns.",
+        ],
+    )
+    service_goal = GoalInterface(
+        primary_goal=(
+            "Act as the customer-side Santoni service assistant: understand the customer's equipment problem, "
+            "help restore production as quickly as possible, solve online whenever safe and feasible, and create/dispatch "
+            "a service ticket only when online resolution is insufficient or onsite support is required."
+        ),
+        success_criteria=[
+            "The agent first understands the machine, symptom, production impact, and available evidence.",
+            "The agent attempts safe online assistance before dispatch when the issue is suitable for remote handling.",
+            "The agent avoids unsafe machine-control instructions and escalates high-risk or production-stopping issues.",
+            "When dispatch is needed, the ticket contains enough context for Santoni service leader and onsite engineer.",
+            "Future service-case lists can define which issues are online-solvable.",
+        ],
+        failure_modes=[
+            "Dispatching a ticket before collecting the minimum service information.",
+            "Giving unsafe or overconfident repair instructions to customer engineers.",
+            "Failing to escalate production-stopping, safety-related, or repeated failures.",
+            "Ignoring online-solvable issues and sending engineers unnecessarily.",
+        ],
+    )
+
+    capabilities = [
+        OperatingModelCapability(
+            key="goal",
+            name="Goal / Success Criteria",
+            status="in_progress",
+            progress=70,
+            purpose="Define what each agent is trying to achieve and what good output means.",
+            current_scope="Designer and Service Agent goals are defined. Online-solvable service case list is pending.",
+            next_step="Define workflow states for Designer and Service Agents.",
+        ),
+        OperatingModelCapability(
+            key="state",
+            name="State",
+            status="in_progress",
+            progress=65,
+            purpose="Track workflow stage, known information, and missing information.",
+            current_scope="Designer and Service 8-stage state flows are captured. Designer VOC and Service case list are still pending.",
+            next_step="Connect current conversation state to explicit state labels and stage transitions.",
+        ),
+        OperatingModelCapability(
+            key="guardrails",
+            name="Guardrails",
+            status="planned",
+            progress=10,
+            purpose="Prevent unsafe actions, premature dispatch, or overconfident recommendations.",
+            current_scope="Some behavior is implicit in routing, but no formal guardrail engine exists yet.",
+            next_step="Define non-negotiable rules for service, design, and customer-facing output.",
+        ),
+        OperatingModelCapability(
+            key="handoff",
+            name="Handoff",
+            status="placeholder",
+            progress=5,
+            purpose="Package context for designers, technicians, service leaders, SWS, or ticket systems.",
+            current_scope="No real handoff yet; only mock ticket and proposal payloads.",
+            next_step="Define handoff targets and required payload fields.",
+        ),
+        OperatingModelCapability(
+            key="evaluation",
+            name="Evaluation",
+            status="placeholder",
+            progress=5,
+            purpose="Self-check whether the response answers the user and whether more information is needed.",
+            current_scope="No formal evaluation loop yet.",
+            next_step="Create checks for premature generation, missing information, and unsafe service advice.",
+        ),
+    ]
+
+    return {
+        "version": "v0.19.4",
+        "capabilities": [asdict(item) for item in capabilities],
+        "interfaces": {
+            "goal": GoalInterface.__name__,
+            "state": StateInterface.__name__,
+            "guardrails": GuardrailsInterface.__name__,
+            "handoff": HandoffInterface.__name__,
+            "evaluation": EvaluationInterface.__name__,
+        },
+        "agent_goals": {
+            "designer": asdict(designer_goal),
+            "service": asdict(service_goal),
+        },
+        "state_flows": {
+            "designer": designer_state_flow(),
+            "service": service_state_flow(),
+        },
+    }
+
+
+def project_documentation() -> dict:
+    model = operating_model_progress()
+    return {
+        "version": "v0.19.4",
+        "title": "AI Knitting Agent Product / Development Notes",
+        "implemented_features": [
+            {
+                "name": "Natural-language identity routing",
+                "status": "done",
+                "description": "Main Agent can infer Designer or Service intent from conversation instead of relying on the left role selector.",
+            },
+            {
+                "name": "Designer discovery workflow",
+                "status": "in_progress",
+                "description": "Designer Agent asks about product intent before producing a brief or SWS-oriented proposal.",
+            },
+            {
+                "name": "Mock image input contract",
+                "status": "done",
+                "description": "Web demo accepts image attachments and routes metadata through a mock Image Understanding Agent.",
+            },
+            {
+                "name": "Lock-machine activation-password service tool",
+                "status": "done",
+                "description": "Service Agent can run the controlled lock-machine activation-password flow in mock or experimental real-platform mode.",
+            },
+            {
+                "name": "Service Case Online Assist Mock",
+                "status": "done",
+                "description": "Service Agent matches structured service cases and returns online troubleshooting guidance before dispatch.",
+            },
+            {
+                "name": "Recent service case distilled library",
+                "status": "done",
+                "description": "Recent service report data from 2026-04-18 to 2026-05-18 is distilled into eight mock service skills.",
+            },
+            {
+                "name": "Service follow-up context guard",
+                "status": "done",
+                "description": "Split-input customer conversations preserve the current issue and avoid accidental tool misrouting.",
+            },
+            {
+                "name": "Guided service troubleshooting follow-up",
+                "status": "done",
+                "description": "Service Agent can answer follow-up diagnostic questions and record observations during online assistance.",
+            },
+            {
+                "name": "Service Case Library review page",
+                "status": "done",
+                "description": "Readonly web page shows available mock cases, review status, customer visibility, steps, risks, and dispatch triggers.",
+            },
+            {
+                "name": "Operation guide page",
+                "status": "done",
+                "description": "Business testers can open a guide page to understand demo scope, usage method, functions, limitations, and testing suggestions.",
+            },
+            {
+                "name": "Excel auto importer",
+                "status": "done",
+                "description": "CLI importer reads monthly service Excel files and generates draft service-case JSON for human review.",
+            },
+            {
+                "name": "Case approval workflow",
+                "status": "done",
+                "description": "Service reviewers can approve, request changes, or mark cases internal-only from the Service Case Library.",
+            },
+            {
+                "name": "Customer-facing interaction page",
+                "status": "done",
+                "description": "The root web page now provides a clean customer interaction entry with Santoni branding, quick prompts, image upload, and simplified response cards.",
+            },
+            {
+                "name": "Activation credential prompt",
+                "status": "done",
+                "description": "The customer page prompts for one-time platform credentials when a lock-machine activation-password task is detected.",
+            },
+            {
+                "name": "Unlock intent credential trigger",
+                "status": "done",
+                "description": "The customer page now treats natural unlock-machine wording as an activation-password task and keeps that credential context for follow-up details.",
+            },
+            {
+                "name": "Natural lock activation routing",
+                "status": "done",
+                "description": "Backend routing now treats natural machine-lock phrases such as 'my machine is locked' as a service activation-password intake instead of asking a generic design/service clarification.",
+            },
+            {
+                "name": "Lock-machine activation wording",
+                "status": "done",
+                "description": "Customer-facing wording now names the flow as lock-machine activation while retaining TOP2 model matching where technically required.",
+            },
+        ],
+        "planned_features": [
+            {
+                "name": "Editable case review and diff view",
+                "status": "planned",
+                "description": "Edit keywords, online steps, safety warnings, parts, and dispatch triggers directly from the review page.",
+            },
+            {
+                "name": "Formal Guardrails engine",
+                "status": "planned",
+                "description": "Centralize unsafe-action rules, dispatch gates, and confidence checks for customer-facing responses.",
+            },
+            {
+                "name": "Real service ticket and handoff integration",
+                "status": "planned",
+                "description": "Send approved handoff payloads into the real ticket, service leader, or field engineer process.",
+            },
+        ],
+        "confirmed": [
+            "Main Agent should infer identity and intent from natural language rather than relying on manual role selection.",
+            "Designer Agent is a product development copilot, not a direct SWS generator.",
+            "Designer Agent should understand design intent before generating a technical proposal.",
+            "Service Agent is customer-facing and should prioritize fast production recovery.",
+            "Service Agent should attempt safe online assistance before dispatching service tickets.",
+            "Service dispatch requires machine model, serial number, symptom/alarm, production status, photo/video evidence, factory location, contact, and online steps attempted.",
+            "TOP2MP lease-password lock is the first tool-automation Service case; it should generate a password only through a controlled future tool, not by exposing platform credentials.",
+            "The current lease-password generator is a local mock tool using mock records only.",
+            "The web demo has an experimental real-platform connection mode; credentials are request-only and excluded from exported test logs.",
+            "Real-platform mode can submit the login form and safely summarize post-login fields/links for mapping.",
+            "Each browser refresh starts a new web session, and the demo has a Clear Memory button for repeatable tests.",
+            "Service Agent state flow follows intake, urgency check, online assist, escalation, ticketing, tracking, and closure.",
+            "Service Case Online Assist Mock loads structured service cases and matches customer issues to online troubleshooting guidance.",
+            "Recent service cases from 2026-04-18 to 2026-05-18 are distilled into eight mock online-assist case skills.",
+            "The Service Case Library review page exposes each mock case for business review before future customer-facing approval.",
+            "The web demo includes an operation guide for business testers.",
+            "Excel service reports can be imported into draft service-case JSON through scripts/import_service_cases.py.",
+            "Service case review status can be saved from the web page; approved Excel drafts can enter customer-facing matching.",
+            "The root web page is customer-facing, while /developer.html keeps the previous development and debugging interface.",
+            "Customer-facing lock-machine activation tasks can collect platform credentials only when needed and keep them in browser memory for the session.",
+            "Customer-facing wording should say lock-machine activation; TOP2 remains a technical machine-family matcher in code and mock data.",
+            "Natural machine-lock wording should enter the Service activation-password intake, ask for confirmed model, serial number, and lock-screen machine code, and never invent those tool inputs.",
+            "All current SWS, APS, ticket, service case, and image recognition data are mocked.",
+            "DeepSeek and OpenAI provider switching is supported through local environment configuration.",
+        ],
+        "uncertain": [
+            "Designer VOC is not complete, so the 8-stage Designer process is an assumption.",
+            "Exact designer decision criteria for cost, lead time, hand feel, visual direction, and brand line need VOC input.",
+            "Service online-solvable issue list is pending from Joey / Santoni service knowledge.",
+            "Imported Excel-derived cases require service review before they should be treated as approved customer-visible knowledge.",
+            "Excel auto import and approval status are implemented, but web-based content editing is not implemented yet.",
+            "Real handoff payloads for SWS, suppliers, service leaders, and ticket systems are not yet defined.",
+            "Real tools and data integrations are not connected yet.",
+        ],
+        "designer_state_flow": model["state_flows"]["designer"],
+        "service_state_flow": model["state_flows"]["service"],
+        "service_case_mock_structure": [
+            "case_id and title",
+            "machine_models and issue_category",
+            "symptom_keywords and alarm_codes",
+            "production_impact and severity",
+            "online_solvable and online_resolution_steps",
+            "safety_warnings",
+            "required_customer_info and required_evidence",
+            "probable_causes and recommended_parts",
+            "dispatch_triggers",
+            "automation_candidate, automation_tool, tool_inputs_required, tool_success_output, and data_sources",
+            "manual_escalation_triggers for tool-based service cases",
+            "handoff_payload, estimated_resolution_time, confidence_notes, and related_cases",
+        ],
+        "next_decisions": [
+            "Confirm the Product Development Brief mandatory fields.",
+            "Define Guardrails for Designer and Service.",
+            "Define which Service issues can be solved online and which must dispatch.",
+            "Confirm Service ticket/handoff fields for Santoni service leader and onsite engineer.",
+            "Review the Excel draft cases and decide which can become approved customer-visible service knowledge.",
+        ],
+    }

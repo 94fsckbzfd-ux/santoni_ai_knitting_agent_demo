@@ -1,0 +1,450 @@
+[
+  {
+    "case_id": "SVC-IMPORT-202605-001",
+    "title": "Pattern error / wrong selection caused by actuator or selector issue",
+    "machine_models": ["TOP2-FAST", "SM8 TOP2 MP2", "HS-EX8"],
+    "issue_category": "fabric_defect",
+    "symptom_keywords": ["错花", "选针错误", "漏选", "选针器", "actuator", "selector", "wrong selection", "pattern error"],
+    "alarm_codes": [],
+    "production_impact": "quality_risk",
+    "severity": "P2",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Ask whether the wrong pattern appears on the same feed/position or randomly across the fabric.",
+      "Stop production and keep a fabric photo showing the defect direction and repeat interval.",
+      "Check actuator cable seating and visible damage before restarting.",
+      "Run a low-speed test after confirming the program and pattern file are correct."
+    ],
+    "online_resolution_steps_zh": [
+      "先确认错花是否固定出现在同一路/同一位置，还是随机出现在布面。",
+      "暂停生产，保留能看清错花方向和循环间距的布面照片。",
+      "低速重启前，先检查选针器线缆是否松动、折损或明显接触不良。",
+      "确认程序和花型文件正确后，再做低速测试。"
+    ],
+    "safety_warnings": [
+      "Stop the machine before touching actuator cables or selector area.",
+      "Do not bypass covers or force the machine to continue if needle/selector collision is suspected."
+    ],
+    "safety_warnings_zh": [
+      "接触选针器线缆或选针区域前必须停机。",
+      "如果怀疑撞针或打选针器，不要强行继续生产。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "fabric_defect_photo", "program_or_style_number", "affected_feed_or_position"],
+    "required_evidence": ["fabric_defect_photo", "control_panel_photo", "short_low_speed_video", "actuator_area_photo"],
+    "probable_causes": ["actuator cable loose or damaged", "actuator position shifted", "selector/actuator damaged", "wrong or corrupted pattern/program"],
+    "recommended_parts": ["actuator", "actuator cable", "actuator board"],
+    "dispatch_triggers": [
+      "defect repeats after cable check and program verification",
+      "visible actuator/selector/cable damage",
+      "machine has collision noise or broken needles",
+      "customer cannot safely inspect actuator area"
+    ],
+    "dispatch_triggers_zh": [
+      "检查线缆并确认程序后错花仍重复出现",
+      "选针器、选针器线缆或选针器板有明显损坏",
+      "同时伴随撞针、异响或坏针",
+      "客户无法安全检查选针区域"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P2",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "TOP2/SM8 actuator and selector troubleshooting"
+    },
+    "estimated_resolution_time": "15-30 minutes online if cable/program issue; onsite required if actuator or selector hardware is damaged.",
+    "estimated_resolution_time_zh": "如果只是线缆或程序问题，在线排查约 15-30 分钟；如果选针器硬件损坏，需要现场处理。",
+    "confidence_notes": "Derived from 2026-04-18 to 2026-05-18 service data: frequent wrong-selection cases with actuator/selector actions.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-002",
+    "title": "Software disorder, memory/full system issue, or display/control panel fault",
+    "machine_models": ["TOP2-FAST", "SM8 TOP2 MP2", "Fault machine type-Seamless SJ"],
+    "issue_category": "electrical",
+    "symptom_keywords": ["系统错乱", "程序错乱", "机器死机", "白屏", "显示屏", "触摸没有反应", "不能改日期", "内存满", "software", "screen", "touch panel", "mainboard"],
+    "alarm_codes": [],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Record the screen state, software version, and whether the touch panel still responds.",
+      "Power-cycle once only if it is safe and allowed by the customer procedure.",
+      "Do not flash software or replace boards without Santoni confirmation.",
+      "Prepare the software version, panel photo, and recent program/file operations for escalation."
+    ],
+    "online_resolution_steps_zh": [
+      "先记录屏幕状态、软件版本，以及触摸屏是否仍有反应。",
+      "在客户现场流程允许且安全的前提下，只做一次断电重启确认。",
+      "未经 Santoni 确认，不要自行刷机或更换主板/显示屏。",
+      "准备软件版本、屏幕照片和最近是否有程序/文件操作，方便升级处理。"
+    ],
+    "safety_warnings": [
+      "Do not repeatedly power-cycle a machine with suspected board or display failure.",
+      "Do not perform software flashing without the correct version and backup."
+    ],
+    "safety_warnings_zh": [
+      "疑似主板或显示屏故障时，不要反复断电重启。",
+      "没有正确软件版本和备份前，不要自行刷机。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "software_version", "screen_status", "recent_program_or_file_changes"],
+    "required_evidence": ["screen_photo", "software_version_photo", "short_video_of_touch_response"],
+    "probable_causes": ["software version or setup problem", "memory/file storage full", "display panel failure", "mainboard/PCB failure"],
+    "recommended_parts": ["display panel", "mainboard/PCB", "correct software package"],
+    "dispatch_triggers": [
+      "screen remains white or touch panel does not respond after one safe restart",
+      "date or system settings cannot be changed",
+      "software upgrade fails or correct version is unavailable",
+      "PCB/display hardware fault is suspected"
+    ],
+    "dispatch_triggers_zh": [
+      "一次安全重启后仍白屏或触摸无反应",
+      "日期或系统设置无法修改",
+      "软件升级无效或缺少正确版本",
+      "怀疑主板/显示屏硬件故障"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_software_version": true,
+      "recommended_engineer_skill": "software, display panel, and PCB troubleshooting"
+    },
+    "estimated_resolution_time": "Remote triage 10-20 minutes; onsite or parts replacement likely if PCB/display is suspected.",
+    "estimated_resolution_time_zh": "远程判断约 10-20 分钟；如果怀疑主板或显示屏，通常需要现场或备件处理。",
+    "confidence_notes": "Derived from multiple system disorder, display no-response, date setting, dead machine and PCB replacement cases.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-003",
+    "title": "Oil leak from oil tank distributor or lubrication component",
+    "machine_models": ["TOP2-FAST", "Fault machine type-Seamless SJ"],
+    "issue_category": "mechanical",
+    "symptom_keywords": ["漏油", "油箱", "分油器", "分油嘴", "油泵", "lubricant pump", "oil leak"],
+    "alarm_codes": [],
+    "production_impact": "quality_risk",
+    "severity": "P2",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Stop and clean the visible oil area enough to identify the leak point.",
+      "Take photos of the oil tank, distributor/nozzle, and surrounding screws.",
+      "Check whether the leak is active after a short safe idle run.",
+      "Do not continue production if oil may contaminate fabric or reach electrical parts."
+    ],
+    "online_resolution_steps_zh": [
+      "先停机并清洁可见油污区域，确认漏油点位置。",
+      "拍摄油箱、分油器/分油嘴和周边螺丝位置照片。",
+      "在安全空转短时间后，观察是否仍持续漏油。",
+      "如果油污可能污染布面或接近电气部件，不要继续生产。"
+    ],
+    "safety_warnings": [
+      "Avoid operating if oil reaches electrical components.",
+      "Clean oil spills to prevent slip risk and fabric contamination."
+    ],
+    "safety_warnings_zh": [
+      "如果油污接近电气部件，避免继续运行。",
+      "及时清理油污，避免滑倒风险和布面污染。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "leak_location", "whether_leak_continues_after_idle_run"],
+    "required_evidence": ["leak_point_photo", "oil_tank_or_distributor_photo", "short_video_after_idle_run"],
+    "probable_causes": ["oil distributor/nozzle leak", "lubrication fitting failure", "loose or damaged oil pipe", "oil baffle/support damage"],
+    "recommended_parts": ["oil distributor/nozzle", "lubricant pump fitting", "oil pipe", "oil baffle/support"],
+    "dispatch_triggers": [
+      "leak continues after cleaning and short idle check",
+      "oil reaches electrical components",
+      "visible cracked distributor/nozzle/support",
+      "customer cannot identify leak point safely"
+    ],
+    "dispatch_triggers_zh": [
+      "清洁并短时间空转后仍持续漏油",
+      "油污接近电气部件",
+      "分油器/分油嘴/支架有可见裂纹",
+      "客户无法安全确认漏油点"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P2",
+      "include_images": true,
+      "recommended_engineer_skill": "lubrication system troubleshooting"
+    },
+    "estimated_resolution_time": "10-20 minutes online to confirm source; onsite/parts if leak persists.",
+    "estimated_resolution_time_zh": "在线确认漏油源约 10-20 分钟；持续漏油通常需要现场或备件处理。",
+    "confidence_notes": "Derived from oil distributor/nozzle and lubricant pump leak cases in the imported service data.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-004",
+    "title": "Needle crash, broken needles, through-plate/cam/latch opener damage",
+    "machine_models": ["TOP2-FAST", "Fault machine type-Socks", "Fault machine type-Soosan Socks"],
+    "issue_category": "mechanical",
+    "symptom_keywords": ["坏针", "打针", "撞针", "护针板", "开针钩", "三角断裂", "提花片", "中间片", "broken needles", "needle crash", "cam"],
+    "alarm_codes": ["43.037"],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Stop the machine immediately and do not continue production.",
+      "Keep photos of broken needles/cams/through-plate and the alarm screen.",
+      "Remove fabric only if the customer engineer can do it safely without forcing moving parts.",
+      "Prepare feed/path number, damaged part photos, and whether collision noise occurred."
+    ],
+    "online_resolution_steps_zh": [
+      "立即停机，不要继续强行生产。",
+      "保留坏针、三角、护针板等损坏位置照片和报警界面照片。",
+      "只有在客户工程师能安全操作时，才可清理布面，不要强拉运动部件。",
+      "准备发生位置/路数、损坏件照片，以及是否有撞击异响。"
+    ],
+    "safety_warnings": [
+      "Do not run the machine with suspected needle/cam collision.",
+      "Do not touch moving parts until the machine is fully stopped and isolated."
+    ],
+    "safety_warnings_zh": [
+      "疑似撞针、打针或三角损坏时，不要继续运行机器。",
+      "机器完全停稳并隔离前，不要接触运动部件。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "alarm_code_or_photo", "affected_feed_or_position", "damaged_parts_seen"],
+    "required_evidence": ["alarm_screen_photo", "damaged_needle_or_cam_photo", "short_video_before_full_stop_if_available"],
+    "probable_causes": ["broken needle", "cam/latch opener/through-plate damage", "selector or jack collision", "incorrect mechanical position"],
+    "recommended_parts": ["needles", "through-plate", "cam", "latch opener", "selector/jack"],
+    "dispatch_triggers": [
+      "any visible broken needle/cam/through-plate/latch opener",
+      "repeated collision noise",
+      "motor overcurrent or similar alarm appears with mechanical collision",
+      "customer cannot safely clear the machine"
+    ],
+    "dispatch_triggers_zh": [
+      "可见坏针、三角、护针板或开针钩损坏",
+      "重复出现撞击异响",
+      "机械撞击伴随马达过流等报警",
+      "客户无法安全清理机器"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "recommended_engineer_skill": "mechanical collision and needle path repair"
+    },
+    "estimated_resolution_time": "Online triage only; onsite inspection is usually required.",
+    "estimated_resolution_time_zh": "仅适合在线判断风险，通常需要现场检查。",
+    "confidence_notes": "Derived from imported broken needles, through-plate, latch opener, cam and collision cases.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-005",
+    "title": "Main motor / ECODD driver / servo drive fault",
+    "machine_models": ["TOP2-FAST", "SM8 TOP2 MP2"],
+    "issue_category": "electrical",
+    "symptom_keywords": ["主马达", "马达", "ECODD", "驱动器", "伺服", "马达过流", "driver", "servo motor", "motor overcurrent"],
+    "alarm_codes": ["43.037"],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Record the exact alarm code and whether the motor/driver alarm appears immediately or during knitting.",
+      "Check for obvious mechanical obstruction before any restart.",
+      "Do not repeatedly restart if overcurrent or driver fault is reported.",
+      "Prepare driver status photo and short video of the alarm sequence for Santoni review."
+    ],
+    "online_resolution_steps_zh": [
+      "记录准确报警代码，并确认马达/驱动报警是开机即出现还是编织过程中出现。",
+      "任何重启前先确认没有明显机械卡阻。",
+      "如果出现马达过流或驱动器故障，不要反复重启。",
+      "准备驱动器状态照片和报警出现过程视频，供 Santoni 判断。"
+    ],
+    "safety_warnings": [
+      "Repeated restart may worsen driver or motor damage.",
+      "Mechanical obstruction must be ruled out before electrical troubleshooting."
+    ],
+    "safety_warnings_zh": [
+      "反复重启可能扩大驱动器或马达损坏。",
+      "电气排查前必须先排除机械卡阻。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "exact_alarm_code", "when_alarm_occurs", "whether_mechanical_collision_seen"],
+    "required_evidence": ["alarm_screen_photo", "driver_status_photo", "short_video_of_startup_or_alarm_sequence"],
+    "probable_causes": ["main motor fault", "ECODD/servo driver fault", "mechanical overload", "driver parameter or signal issue"],
+    "recommended_parts": ["main motor", "ECODD driver", "servo driver", "related wiring"],
+    "dispatch_triggers": [
+      "overcurrent alarm repeats",
+      "driver fault indicator remains active",
+      "mechanical obstruction or collision is suspected",
+      "machine cannot run after one safe restart"
+    ],
+    "dispatch_triggers_zh": [
+      "马达过流报警重复出现",
+      "驱动器故障指示持续存在",
+      "怀疑机械卡阻或撞击",
+      "一次安全重启后仍无法运行"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_alarm_code": true,
+      "recommended_engineer_skill": "motor and drive electrical troubleshooting"
+    },
+    "estimated_resolution_time": "Remote triage 10-15 minutes; onsite repair likely if alarm repeats.",
+    "estimated_resolution_time_zh": "远程判断约 10-15 分钟；报警重复时通常需要现场处理。",
+    "confidence_notes": "Derived from ECODD driver, main motor and motor-overcurrent cases in the imported data.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-006",
+    "title": "Yarn sliding sensor / electronic eye / feeder retrofit or learning issue",
+    "machine_models": ["Fault machine type-Seamless SJ"],
+    "issue_category": "calibration",
+    "symptom_keywords": ["电子眼", "输纱器", "传感器", "学习", "yarn sliding sensor", "sensor learning", "feeder"],
+    "alarm_codes": [],
+    "production_impact": "running",
+    "severity": "P3",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Confirm whether this is a retrofit/install task or an alarm after production starts.",
+      "Check sensor/feeder connection and whether signal changes when yarn passes.",
+      "Run the electronic-eye learning/calibration procedure only if customer is trained.",
+      "After calibration, idle-run and then test with yarn at low speed."
+    ],
+    "online_resolution_steps_zh": [
+      "先确认这是改装/安装任务，还是生产后出现的电子眼/输纱器报警。",
+      "检查电子眼/输纱器连接，并确认纱线经过时信号是否变化。",
+      "只有客户工程师受过培训时，才执行电子眼学习/校准步骤。",
+      "校准后先空转，再低速带纱测试。"
+    ],
+    "safety_warnings": [
+      "Do not change sensor learning parameters if the customer is not trained.",
+      "Stop the machine before rewiring sensors or feeders."
+    ],
+    "safety_warnings_zh": [
+      "客户未受训时，不要随意修改电子眼学习参数。",
+      "重新接线电子眼或输纱器前必须停机。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "sensor_or_feeder_model", "whether_retrofit_or_fault", "current_signal_status"],
+    "required_evidence": ["sensor_wiring_photo", "panel_signal_photo", "short_video_of_signal_change"],
+    "probable_causes": ["sensor learning not completed", "sensor/feeder wiring issue", "incorrect retrofit setup", "sensor signal instability"],
+    "recommended_parts": ["electronic eye/yarn sliding sensor", "feeder", "sensor cable"],
+    "dispatch_triggers": [
+      "signal does not change after wiring check",
+      "customer is not trained to perform learning",
+      "retrofit wiring or mounting is uncertain",
+      "alarm repeats after learning/calibration"
+    ],
+    "dispatch_triggers_zh": [
+      "检查接线后信号仍无变化",
+      "客户未受训，无法安全执行学习步骤",
+      "改装接线或安装位置不确定",
+      "学习/校准后报警仍重复"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P3",
+      "include_images": true,
+      "recommended_engineer_skill": "sensor learning and feeder retrofit support"
+    },
+    "estimated_resolution_time": "20-40 minutes online if wiring and learning are straightforward; onsite if retrofit is unclear.",
+    "estimated_resolution_time_zh": "如果接线和学习流程清楚，在线约 20-40 分钟；改装状态不清楚时建议现场。",
+    "confidence_notes": "Derived from imported electronic eye / feeder installation and sensor learning cases.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-007",
+    "title": "Socks heel, terry, picking or fabric formation issue",
+    "machine_models": ["Fault machine type-Socks", "Fault machine type-Soosan Socks"],
+    "issue_category": "fabric_defect",
+    "symptom_keywords": ["袜子", "后跟", "破洞", "毛圈", "起毛", "不起毛", "脱圈", "拉毛", "heel", "terry", "sock"],
+    "alarm_codes": [],
+    "production_impact": "quality_risk",
+    "severity": "P2",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Ask for defect photos from both inside and outside of the sock and note the machine position.",
+      "Confirm whether the defect appears every cycle or intermittently.",
+      "Check program changes, yarn path, needle selection, and relevant picker/sinker position.",
+      "Test at low speed after one controlled adjustment."
+    ],
+    "online_resolution_steps_zh": [
+      "请客户提供袜子内外侧缺陷照片，并标注机台/位置。",
+      "确认缺陷是每个循环都出现，还是间歇出现。",
+      "检查最近程序修改、纱路、选针动作，以及相关掀针头/生克片位置。",
+      "每次只做一项受控调整，然后低速测试。"
+    ],
+    "safety_warnings": [
+      "Do not adjust picker/sinker/needle area while the machine is running.",
+      "Avoid multiple simultaneous adjustments, otherwise root cause becomes unclear."
+    ],
+    "safety_warnings_zh": [
+      "机器运行时不要调整掀针头、生克片或针区。",
+      "不要同时改多项参数，否则很难判断根因。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "sock_style_or_program", "defect_frequency", "affected_position"],
+    "required_evidence": ["defect_photo_inside_outside", "short_low_speed_video", "program_change_note"],
+    "probable_causes": ["program selection issue", "picker/sinker position issue", "needle selection issue", "yarn path or tension instability"],
+    "recommended_parts": ["picker", "sinker", "needles", "selector"],
+    "dispatch_triggers": [
+      "defect repeats after one controlled adjustment",
+      "visible damage to picker/sinker/needle area",
+      "customer cannot safely inspect fabric formation area",
+      "program issue requires Santoni technician tuning"
+    ],
+    "dispatch_triggers_zh": [
+      "一次受控调整后缺陷仍重复出现",
+      "掀针头、生克片或针区有可见损坏",
+      "客户无法安全检查成圈区域",
+      "程序问题需要 Santoni 工程师调试"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P2",
+      "include_defect_photos": true,
+      "recommended_engineer_skill": "socks fabric formation and program tuning"
+    },
+    "estimated_resolution_time": "30-60 minutes online if adjustment is simple; onsite if mechanical damage or repeated defect remains.",
+    "estimated_resolution_time_zh": "如果是简单调整，在线约 30-60 分钟；若存在机械损坏或持续重复缺陷，需要现场处理。",
+    "confidence_notes": "Derived from socks and Soosan socks cases involving heel holes, terry/picking and fabric formation issues.",
+    "related_cases": []
+  },
+  {
+    "case_id": "SVC-IMPORT-202605-008",
+    "title": "Parts claim / broken delivered part / warranty replacement handling",
+    "machine_models": ["TOP2-FAST", "Fault machine type-Seamless SJ"],
+    "issue_category": "other",
+    "symptom_keywords": ["索赔", "配件损坏", "交付配件损坏", "申请", "安排重新交付", "claim", "warranty", "broken part delivered"],
+    "alarm_codes": [],
+    "production_impact": "unknown",
+    "severity": "P3",
+    "online_solvable": false,
+    "online_resolution_steps": [
+      "Collect clear photos of the damaged part, label, and machine serial number.",
+      "Confirm whether the machine is stopped or this is a spare-part claim only.",
+      "Do not install visibly damaged parts.",
+      "Prepare part name, quantity, and claim reason for Santoni service follow-up."
+    ],
+    "online_resolution_steps_zh": [
+      "收集损坏配件、标签和机器序列号的清晰照片。",
+      "确认机器是否停机，还是单纯备件索赔。",
+      "不要安装肉眼可见损坏的配件。",
+      "准备配件名称、数量和索赔原因，交给 Santoni 服务跟进。"
+    ],
+    "safety_warnings": [
+      "Do not install or test a visibly damaged safety or electrical part.",
+      "Keep original packaging and labels for traceability."
+    ],
+    "safety_warnings_zh": [
+      "明显损坏的安全件或电气件不要安装测试。",
+      "保留原包装和标签，方便追溯。"
+    ],
+    "required_customer_info": ["machine_model", "serial_number", "part_name", "part_quantity", "claim_reason"],
+    "required_evidence": ["damaged_part_photo", "part_label_photo", "machine_nameplate_photo"],
+    "probable_causes": ["part damaged before or during delivery", "warranty replacement request", "wrong or damaged replacement part"],
+    "recommended_parts": [],
+    "dispatch_triggers": [
+      "machine is stopped and part replacement is urgent",
+      "customer needs onsite confirmation before claim",
+      "part identity or machine compatibility is unclear"
+    ],
+    "dispatch_triggers_zh": [
+      "机器停机且备件更换紧急",
+      "客户需要现场确认后才能索赔",
+      "配件身份或机型兼容性不明确"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P3",
+      "include_part_photos": true,
+      "recommended_engineer_skill": "warranty and spare parts claim support"
+    },
+    "estimated_resolution_time": "Online information collection 5-10 minutes; fulfillment depends on parts process.",
+    "estimated_resolution_time_zh": "在线收集信息约 5-10 分钟；后续时效取决于备件流程。",
+    "confidence_notes": "Derived from multiple imported warranty and spare-parts claim records.",
+    "related_cases": []
+  }
+]

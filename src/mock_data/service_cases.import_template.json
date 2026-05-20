@@ -1,0 +1,63 @@
+[
+  {
+    "case_id": "SVC-IMPORT-YYYYMM-001",
+    "title": "Short problem title",
+    "machine_models": ["SM8-TOP2V"],
+    "issue_category": "alarm",
+    "symptom_keywords": ["张力报警", "停机", "yarn tension alarm"],
+    "alarm_codes": [],
+    "production_impact": "stopped",
+    "severity": "P1",
+    "online_solvable": true,
+    "online_resolution_steps": [
+      "Customer-facing safe troubleshooting step 1.",
+      "Customer-facing safe troubleshooting step 2."
+    ],
+    "online_resolution_steps_zh": [
+      "面向客户的安全在线排查步骤 1。",
+      "面向客户的安全在线排查步骤 2。"
+    ],
+    "safety_warnings": [
+      "Do not bypass safety devices."
+    ],
+    "safety_warnings_zh": [
+      "不要绕过安全保护装置。"
+    ],
+    "required_customer_info": [
+      "machine_model",
+      "serial_number",
+      "alarm_code_or_panel_photo",
+      "whether_issue_repeats_after_restart"
+    ],
+    "required_evidence": [
+      "control_panel_photo",
+      "short_video",
+      "photo_of_relevant_component"
+    ],
+    "probable_causes": [
+      "probable cause 1",
+      "probable cause 2"
+    ],
+    "recommended_parts": [],
+    "dispatch_triggers": [
+      "issue repeats after safe online checks",
+      "visible part or wiring damage",
+      "customer cannot safely perform the check"
+    ],
+    "dispatch_triggers_zh": [
+      "完成安全在线检查后问题仍重复出现",
+      "可见部件或线缆损坏",
+      "客户无法安全完成检查"
+    ],
+    "handoff_payload": {
+      "ticket_priority": "P1",
+      "include_images": true,
+      "include_online_steps_attempted": true,
+      "recommended_engineer_skill": "Machine-specific troubleshooting skill"
+    },
+    "estimated_resolution_time": "Online estimate or onsite estimate.",
+    "estimated_resolution_time_zh": "预计在线/现场处理时间。",
+    "confidence_notes": "Source case summary, assumptions, and validation status.",
+    "related_cases": []
+  }
+]

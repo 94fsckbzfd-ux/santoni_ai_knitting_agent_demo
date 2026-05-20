@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santoni AI Service Assistant</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="user-body">
+  <main class="user-shell">
+    <header class="user-header">
+      <img class="santoni-logo" src="/santoni-logo.svg" alt="Santoni">
+      <nav class="user-nav" aria-label="Page links">
+        <a href="/guide.html">使用说明</a>
+        <a href="/developer.html">开发者页面</a>
+      </nav>
+    </header>
+
+    <section class="user-chat-panel">
+      <div class="user-panel-header">
+        <div>
+          <p class="eyebrow">AI Knitting Agent</p>
+          <h1>您好，我是 Santoni AI 助手</h1>
+          <p class="user-subtitle">可以帮您梳理无缝针织设计需求，也可以协助排查设备服务问题。</p>
+        </div>
+        <div id="userStatus" class="status-pill">Connecting</div>
+      </div>
+
+      <div class="quick-actions" aria-label="Quick actions">
+        <button type="button" data-prompt="我是设计师，想开发一款无缝运动上衣，需要透气快干，请先帮我梳理设计需求。">设计需求</button>
+        <button type="button" data-prompt="我是工厂设备工程师，机器出现故障，需要先在线排查。">设备故障</button>
+        <button type="button" data-prompt="机器出现锁机激活相关问题，我需要协助处理。">锁机激活</button>
+      </div>
+
+      <div id="userMessages" class="user-messages" aria-live="polite"></div>
+
+      <form id="userChatForm" class="user-composer">
+        <div class="user-input-wrap">
+          <textarea id="userMessageInput" rows="2" placeholder="请输入您的需求，例如：SM8 机器错花，序列号 9009452，布面固定在同一路出现问题。"></textarea>
+          <div id="userAttachmentPreview" class="attachment-preview" hidden></div>
+        </div>
+        <div class="user-composer-actions">
+          <label class="user-icon-button" for="userImageInput" title="上传图片">Image</label>
+          <input id="userImageInput" type="file" accept="image/*" hidden>
+          <button type="button" id="userResetButton" class="user-secondary">重新开始</button>
+          <button type="submit">发送</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <dialog id="credentialDialog" class="credential-dialog">
+    <form id="credentialForm" method="dialog">
+      <div class="credential-header">
+        <p class="eyebrow">Santoni Platform</p>
+        <h2>请输入平台账号</h2>
+        <p>该账号密码仅用于本次真实平台请求，不会保存到本地文件。</p>
+      </div>
+      <label>
+        <span>Username</span>
+        <input id="credentialUsername" type="text" autocomplete="username" required>
+      </label>
+      <label>
+        <span>Password</span>
+        <input id="credentialPassword" type="password" autocomplete="current-password" required>
+      </label>
+      <div class="credential-actions">
+        <button id="credentialMockButton" type="button" class="user-secondary">使用模拟模式</button>
+        <button type="submit">继续真实测试</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/user-app.js?v=0.19.4"></script>
+</body>
+</html>

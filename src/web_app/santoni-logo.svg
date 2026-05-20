@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 170" role="img" aria-label="Santoni">
+  <rect width="960" height="170" fill="#ffffff"/>
+  <defs>
+    <clipPath id="markClip">
+      <circle cx="84" cy="85" r="68"/>
+    </clipPath>
+  </defs>
+  <circle cx="84" cy="85" r="68" fill="#008c45"/>
+  <g clip-path="url(#markClip)" fill="none" stroke="#fff" stroke-width="5">
+    <path d="M18 143 L143 18"/>
+    <path d="M30 151 L151 30"/>
+    <path d="M9 126 L126 9"/>
+    <path d="M46 158 L158 46"/>
+    <path d="M28 80c16-42 80-54 102-18 22 37-24 72-56 45-18-15-2-38 20-24"/>
+    <path d="M39 91c13 24 43 35 72 21 27-13 36-47 18-73"/>
+    <path d="M51 68c20-26 64-24 80 4"/>
+  </g>
+  <text x="185" y="122" fill="#008c45" font-family="Georgia, 'Times New Roman', serif" font-size="112" font-weight="800" letter-spacing="3">SANTONI</text>
+  <text x="902" y="63" fill="#008c45" font-family="Arial, sans-serif" font-size="44" font-weight="700">®</text>
+</svg>
