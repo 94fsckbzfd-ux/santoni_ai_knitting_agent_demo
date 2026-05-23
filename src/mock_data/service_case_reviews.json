@@ -1,0 +1,107 @@
+{
+  "SVC-IMPORT-202605-001": {
+    "review_status": "approved",
+    "customer_visible": true,
+    "review_note": "",
+    "reviewed_at": "2026-05-22T07:28:15+00:00",
+    "case_updates": {
+      "title": "Pattern error / wrong selection caused by actuator or selector issue",
+      "issue_category": "fabric_defect",
+      "severity": "P2",
+      "online_solvable": true,
+      "machine_models": [
+        "TOP2-FAST",
+        "SM8 TOP2 MP2",
+        "HS-EX8"
+      ],
+      "symptom_keywords": [
+        "错花",
+        "选针错误",
+        "漏选",
+        "选针器",
+        "actuator",
+        "selector",
+        "wrong selection",
+        "pattern error"
+      ],
+      "alarm_codes": [],
+      "recommended_parts": [
+        "actuator",
+        "actuator cable",
+        "actuator board"
+      ],
+      "online_resolution_steps": [
+        "先确认错花是否固定出现在同一路/同一位置",
+        "还是随机出现在布面。",
+        "暂停生产",
+        "保留能看清错花方向和循环间距的布面照片。",
+        "低速重启前",
+        "先检查选针器线缆是否松动、折损或明显接触不良。",
+        "确认程序和花型文件正确后",
+        "再做低速测试。"
+      ],
+      "safety_warnings": [
+        "接触选针器线缆或选针区域前必须停机。",
+        "如果怀疑撞针或打选针器",
+        "不要强行继续生产。"
+      ],
+      "dispatch_triggers": [
+        "检查线缆并确认程序后错花仍重复出现",
+        "选针器、选针器线缆或选针器板有明显损坏",
+        "同时伴随撞针、异响或坏针",
+        "客户无法安全检查选针区域"
+      ],
+      "estimated_resolution_time": "如果只是线缆或程序问题，在线排查约 15-30 分钟；如果选针器硬件损坏，需要现场处理。",
+      "confidence_notes": "Derived from 2026-04-18 to 2026-05-18 service data: frequent wrong-selection cases with actuator/selector actions."
+    }
+  },
+  "SVC-MOCK-0001": {
+    "review_status": "approved",
+    "customer_visible": true,
+    "review_note": "",
+    "reviewed_at": "2026-05-23T05:59:41+00:00",
+    "case_updates": {
+      "title": "Yarn tension alarm stops SM8-TOP2V production",
+      "issue_category": "alarm",
+      "severity": "P1",
+      "online_solvable": true,
+      "machine_models": [
+        "SM8-TOP2V"
+      ],
+      "symptom_keywords": [
+        "yarn tension alarm",
+        "张力报警",
+        "停机",
+        "断纱",
+        "feed tension"
+      ],
+      "alarm_codes": [
+        "TENSION_ALARM_MOCK"
+      ],
+      "recommended_parts": [
+        "yarn tension sensor",
+        "standard needle set"
+      ],
+      "online_resolution_steps": [
+        "复位前先拍照记录报警界面。",
+        "确认报警只出现在单路纱",
+        "还是多路纱同时出现。",
+        "检查纱路、张力器和纱筒退绕阻力是否异常。",
+        "确认没有机械卡阻后",
+        "再尝试安全重启。"
+      ],
+      "safety_warnings": [
+        "不要短接或绕过安全门、护罩或传感器。",
+        "接触纱路或运动部件前必须停机。"
+      ],
+      "dispatch_triggers": [
+        "安全重启和基础纱路检查后报警仍重复出现",
+        "多路纱同时异常",
+        "可见传感器或线缆损坏",
+        "客户无法安全完成检查"
+      ],
+      "estimated_resolution_time": "如果是纱路/张力器问题，在线排查约 30-60 分钟；如果怀疑传感器或线缆问题，建议当天现场处理。",
+      "confidence_notes": "Mock case for workflow design. Needs validation by Santoni service team."
+    }
+  }
+}

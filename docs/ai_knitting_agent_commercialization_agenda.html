@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Knitting Agent 商业化落地内部讨论 Agenda</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6f7d;
+      --line: #d9e1e8;
+      --panel: #f7f9fb;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --accent-3: #1d4ed8;
+      --bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 42px 28px 72px;
+    }
+
+    header {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 24px 0 0;
+    }
+
+    .meta-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: var(--panel);
+    }
+
+    .meta-item strong {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-item span {
+      font-weight: 700;
+    }
+
+    section {
+      margin-top: 34px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .band {
+      border-left: 5px solid var(--accent);
+      background: var(--panel);
+      padding: 18px 20px;
+      border-radius: 8px;
+      margin-top: 14px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tag.accent {
+      border-color: rgba(15, 118, 110, 0.32);
+      color: var(--accent);
+      background: rgba(15, 118, 110, 0.08);
+    }
+
+    .tag.warn {
+      border-color: rgba(180, 83, 9, 0.32);
+      color: var(--accent-2);
+      background: rgba(180, 83, 9, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--panel);
+      font-weight: 800;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .phase {
+      border-top: 5px solid var(--accent-3);
+    }
+
+    .phase:nth-child(2) {
+      border-top-color: var(--accent);
+    }
+
+    .phase:nth-child(3) {
+      border-top-color: var(--accent-2);
+    }
+
+    .decision {
+      border-left: 5px solid var(--accent-2);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .agenda-list {
+      counter-reset: agenda;
+      list-style: none;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .agenda-list li {
+      counter-increment: agenda;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px 14px 54px;
+      position: relative;
+      margin: 0;
+    }
+
+    .agenda-list li::before {
+      content: counter(agenda);
+      position: absolute;
+      left: 16px;
+      top: 15px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .footer-note {
+      margin-top: 36px;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media print {
+      .page {
+        padding: 20px;
+      }
+
+      .card,
+      .meta-item,
+      .agenda-list li {
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .meta,
+      .grid,
+      .grid-3,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Internal Discussion Agenda</p>
+      <h1>AI Knitting Agent 商业化落地方案讨论</h1>
+      <p class="subtitle">
+        本材料用于内部讨论 AI Knitting Agent 从免费入口、3 个月 MVP、付费模块、试点客户到长期商业化路径的落地方案。
+      </p>
+      <div class="meta">
+        <div class="meta-item">
+          <strong>讨论目标</strong>
+          <span>形成 MVP 测试与试点共识</span>
+        </div>
+        <div class="meta-item">
+          <strong>时间窗口</strong>
+          <span>3 个月后推出 MVP</span>
+        </div>
+        <div class="meta-item">
+          <strong>首批客户</strong>
+          <span>现有大客户与关系好的 OEM/ODM 工厂</span>
+        </div>
+        <div class="meta-item">
+          <strong>核心商业模式</strong>
+          <span>SaaS + 模块包 + 积分</span>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <h2>一、已形成的基本判断</h2>
+      <div class="band">
+        <p>
+          AI Knitting Agent 应被定位为面向针织产业链的智能生产与运营 Agent，而不是单一 AI 设计工具。它的长期价值在于连接设计、打样、排产、设备维护、工单、机器数据与订单 ROI，让工厂和品牌方在效率、确定性和经营决策上获得可衡量提升。
+        </p>
+      </div>
+      <div class="tag-row">
+        <span class="tag accent">AI 设计打样</span>
+        <span class="tag accent">MyKnit / SWS</span>
+        <span class="tag accent">Factory Intelligence Package</span>
+        <span class="tag">APS 排单优化</span>
+        <span class="tag">设备 Knowledge Base</span>
+        <span class="tag warn">订单 ROI 概念验证</span>
+        <span class="tag warn">Advanced Maintenance Package</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>二、目标客户与关键角色</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>OEM / ODM 工厂</h3>
+          <p>第一阶段商业化重点客户。尤其适合 50 台以上机器、有打样、排产、插单和设备管理复杂度的工厂。</p>
+          <ul>
+            <li>老板 / 管理层：关注订单 ROI、利润、开机率、交付确定性。</li>
+            <li>IT 部门：负责项目管理、系统落地、账号和积分分配。</li>
+            <li>打样师：减少与设计师沟通时间，快速出样。</li>
+            <li>排单人员：提升排单、插单效率和机器利用率。</li>
+            <li>挡车工 / 车间技术工：快速查询设备问题和操作建议。</li>
+            <li>机修团队：处理工单、预警机器和维护建议。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>品牌方</h3>
+          <p>品牌方不是第一优先级，但可以作为设计打样能力的外部客户与生态入口。</p>
+          <ul>
+            <li>设计师团队：快速生成服装原型，查看仿真渲染效果。</li>
+            <li>供应链团队：更清楚地向工厂表达需求，减少样衣沟通轮次。</li>
+            <li>采购 / 管理层：如果愿意采购，可放宽使用边界。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三、3 个月 MVP 建议范围</h2>
+      <div class="timeline">
+        <div class="card phase">
+          <h3>第 1 阶段：免费入口</h3>
+          <ul>
+            <li>Web 版无需登录即可使用。</li>
+            <li>接入设备相关 Knowledge Base。</li>
+            <li>支持现场技术人员快速问答。</li>
+            <li>支持基础问题诊断与工单创建。</li>
+            <li>MyKnit 作为自然入口，引导客户创建账号。</li>
+          </ul>
+        </div>
+        <div class="card phase">
+          <h3>第 2 阶段：设计打样 MVP</h3>
+          <ul>
+            <li>基于已有 SWS 和升级中的 MyKnit。</li>
+            <li>支持设计原型生成。</li>
+            <li>支持款式说明、打样沟通材料和基础工艺建议。</li>
+            <li>逐步加入仿真与渲染图生成。</li>
+            <li>主要面向 OEM/ODM 工厂，品牌方可销售。</li>
+          </ul>
+        </div>
+        <div class="card phase">
+          <h3>第 3 阶段：工厂智能包试点</h3>
+          <ul>
+            <li>APS 不独立销售，纳入 Factory Intelligence Package。</li>
+            <li>验证排单优化、插单响应和机器资源匹配。</li>
+            <li>订单 ROI 先作为概念验证，不在 MVP 中过度承诺。</li>
+            <li>面向 50 台以上机器的工厂优先试点。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>四、产品包与收费逻辑</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>目标客户</th>
+            <th>核心能力</th>
+            <th>收费逻辑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Free AI Knitting Agent</td>
+            <td>所有客户和潜在客户</td>
+            <td>设备知识库问答、基础故障辅助、工单创建、基础 MyKnit 入口</td>
+            <td>免费；不限制普通问答次数；引导创建账号</td>
+          </tr>
+          <tr>
+            <td>AI Design &amp; Sampling Module</td>
+            <td>OEM/ODM 工厂为主，品牌方可选</td>
+            <td>设计原型、款式说明、打样沟通、SWS/MyKnit 深度能力、仿真渲染</td>
+            <td>按基础版、进阶版、专业版订阅；复杂交互消耗积分</td>
+          </tr>
+          <tr>
+            <td>Factory Intelligence Package</td>
+            <td>50 台以上机器的 OEM/ODM 工厂</td>
+            <td>APS 排产优化、插单模拟、机器资源管理、管理报表、未来订单 ROI</td>
+            <td>打包销售；按版本、账号数、机器数和积分收费</td>
+          </tr>
+          <tr>
+            <td>Advanced Maintenance Package</td>
+            <td>设备规模较大、维护复杂的工厂</td>
+            <td>机器健康分、故障预警、维护工单、备件建议、远程诊断、月度报告</td>
+            <td>中长期增值包；等待 Smart Machine 与数据采集能力成熟</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>五、订阅版本与积分机制</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>基础版</h3>
+          <ul>
+            <li>适合轻量试用和小团队。</li>
+            <li>包含基础账号和机器数量。</li>
+            <li>包含免费 Agent 增强能力和基础 MyKnit 功能。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>进阶版</h3>
+          <ul>
+            <li>适合有明确打样和协作需求的工厂。</li>
+            <li>提供更多账号、机器额度和团队功能。</li>
+            <li>包含更完整的 AI 设计打样能力。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>专业版</h3>
+          <ul>
+            <li>适合 50 台以上机器的中大型工厂。</li>
+            <li>包含 Factory Intelligence Package。</li>
+            <li>未来加入订单 ROI、老板驾驶舱和高级报表。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="band">
+        <h3>积分机制建议</h3>
+        <p>
+          积分同时绑定公司账户和个人账户。公司账户拥有总积分池，客户方管理员将积分分配给设计师、打样师、排单人员、IT、机修团队等个人账户。这样可以让复杂功能用量由客户内部管理，减少 Santoni 与客户使用部门之间围绕额度不足产生的直接矛盾。
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>建议消耗积分的复杂交互</th>
+            <th>原因</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>完整服装设计方案、批量款式方案、仿真渲染</td>
+            <td>计算成本高，且直接影响客户商业效率。</td>
+          </tr>
+          <tr>
+            <td>SWS / MyKnit 高级工艺生成</td>
+            <td>属于高价值专业能力，应与免费问答区分。</td>
+          </tr>
+          <tr>
+            <td>APS 排产优化、插单影响模拟</td>
+            <td>涉及复杂算法和工厂生产决策。</td>
+          </tr>
+          <tr>
+            <td>订单 ROI 分析、老板报表</td>
+            <td>直接对应管理层付费意愿。</td>
+          </tr>
+          <tr>
+            <td>远程诊断报告、机器健康分析、月度设备运行报告</td>
+            <td>适合纳入 Advanced Maintenance Package 或高阶积分场景。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>六、订单 ROI 算法建议方向</h2>
+      <p>
+        订单 ROI 目前应作为产品力方向和老板层销售故事，不建议在 3 个月 MVP 中承诺完整算法。建议先通过内部讨论和 OEM 工厂老板访谈，确认真正影响接单决策的数据口径。
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>ROI Lite 数据需求</h3>
+          <ul>
+            <li>订单金额、数量、单价和交期。</li>
+            <li>用纱类型、用纱量和纱线单价。</li>
+            <li>预计生产时间、机器类型和机器数量。</li>
+            <li>人工成本、打样成本和编程成本。</li>
+            <li>当前排产队列和机器空闲情况。</li>
+            <li>预计毛利、交付风险和是否值得接单。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ROI Pro 数据需求</h3>
+          <ul>
+            <li>机器实际 OEE / 开机率。</li>
+            <li>换款、换纱、调机时间。</li>
+            <li>历史返工率、次品率和质量风险。</li>
+            <li>停机概率、机修风险和备件风险。</li>
+            <li>客户付款周期、复购可能性和战略价值。</li>
+            <li>接单与不接单的产能机会成本。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>七、试点销售路径</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>首批试点客户</h3>
+          <ul>
+            <li>现有 Santoni 大客户。</li>
+            <li>关系好的 OEM/ODM 工厂。</li>
+            <li>优先选择 50 台以上机器、有真实排产和打样痛点的客户。</li>
+            <li>品牌方如有明确采购意愿，可作为设计打样方向试点。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>销售价值故事</h3>
+          <ul>
+            <li>短期主打设计打样提效。</li>
+            <li>中期主打 Factory Intelligence Package。</li>
+            <li>长期主打老板能看清订单 ROI。</li>
+            <li>未来可考虑面向竞争对手设备较多的工厂提供 Smart Machine 改造服务。</li>
+          </ul>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>老板层最容易感知的指标</th>
+            <th>建议表达方式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>打样周期缩短时间</td>
+            <td>从“几天出样”变成“更快形成可讨论方案和可执行工艺方向”。</td>
+          </tr>
+          <tr>
+            <td>开机率提升</td>
+            <td>减少等待、空转、排产冲突和异常停机带来的产能损失。</td>
+          </tr>
+          <tr>
+            <td>插单响应速度</td>
+            <td>让插单影响可见，快速判断是否值得调整现有排产。</td>
+          </tr>
+          <tr>
+            <td>每月节约人工</td>
+            <td>减少重复沟通、人工排单、人工查资料和手工汇总报表。</td>
+          </tr>
+          <tr>
+            <td>订单利润更清楚</td>
+            <td>把经验判断转化成可记录、可比较、可复盘的数据决策。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>八、建议新增讨论点</h2>
+      <div class="grid">
+        <div class="card decision">
+          <h3>1. MVP 的成功标准</h3>
+          <p>3 个月后的测试不能只看功能是否上线，还要定义客户是否愿意继续使用、愿意创建账号、愿意提供数据和愿意付费试点。</p>
+        </div>
+        <div class="card decision">
+          <h3>2. 数据授权与边界</h3>
+          <p>工厂数据涉及订单、成本、排产和设备状态，需要提前定义哪些数据必须采集、哪些只做本地化处理、哪些可匿名化用于算法优化。</p>
+        </div>
+        <div class="card decision">
+          <h3>3. MyKnit 与 Agent 的入口关系</h3>
+          <p>需要明确客户第一眼看到的是 MyKnit、AI Knitting Agent，还是二者融合后的统一入口。</p>
+        </div>
+        <div class="card decision">
+          <h3>4. 内部责任分工</h3>
+          <p>研发、应用、售后、销售、IT 和产品管理需要明确谁负责知识库、谁负责客户试点、谁负责数据接口、谁负责商业报价。</p>
+        </div>
+        <div class="card decision">
+          <h3>5. 与 Smart Machine 的节奏配合</h3>
+          <p>Advanced Maintenance Package 很重要，但不应拖慢 3 个月 MVP。建议与传感器选型和数据采集系统并行推进。</p>
+        </div>
+        <div class="card decision">
+          <h3>6. 竞争对手设备接入策略</h3>
+          <p>未来如果向竞争对手设备较多的工厂提供改造服务，需要讨论技术标准、服务边界、商业风险和销售话术。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>九、内部会议建议 Agenda</h2>
+      <ol class="agenda-list">
+        <li>
+          <strong>确认产品定位</strong><br>
+          AI Knitting Agent 是免费工具、设计工具、设备服务，还是工厂智能化平台？建议统一为“针织产业链智能生产与运营 Agent”。
+        </li>
+        <li>
+          <strong>确认 3 个月 MVP 范围</strong><br>
+          是否同意 MVP 聚焦免费 Web Agent、设备 Knowledge Base、基础工单、MyKnit 入口和 AI 设计打样，而不把 Advanced Maintenance 作为首要交付。
+        </li>
+        <li>
+          <strong>确认免费版与积分边界</strong><br>
+          普通问答是否永久免费？哪些交互定义为复杂交互？积分是否按公司账户统一购买并由管理员分配？
+        </li>
+        <li>
+          <strong>确认套餐结构</strong><br>
+          基础版、进阶版、专业版分别包含哪些功能、账号数、机器数和积分额度？超出后如何收费？
+        </li>
+        <li>
+          <strong>确认试点客户名单</strong><br>
+          从现有 Santoni 大客户和关系好的 OEM/ODM 工厂中筛选 3 到 5 家试点客户，明确联系人、场景和可开放数据。
+        </li>
+        <li>
+          <strong>确认 ROI 概念验证方式</strong><br>
+          是否先访谈 OEM 工厂老板，收集接单决策、成本结构、排产风险和利润判断逻辑，再定义 ROI Lite。
+        </li>
+        <li>
+          <strong>确认内部资源与负责人</strong><br>
+          明确产品、研发、销售、售后、应用工程师和 IT 的责任边界，以及每两周的里程碑检查机制。
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>十、待内部决策问题清单</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>问题</th>
+            <th>需要谁参与</th>
+            <th>建议输出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>试点客户需要开放哪些数据？</td>
+            <td>销售、应用、IT、客户代表</td>
+            <td>最小数据清单与数据授权方案</td>
+          </tr>
+          <tr>
+            <td>3 个月 MVP 的成功标准是什么？</td>
+            <td>管理层、产品、销售、研发</td>
+            <td>功能指标、使用指标、商业指标</td>
+          </tr>
+          <tr>
+            <td>试点是免费、低价，还是收 Pilot Fee？</td>
+            <td>管理层、销售、财务</td>
+            <td>试点报价策略和转正式订阅抵扣规则</td>
+          </tr>
+          <tr>
+            <td>基础版、进阶版、专业版功能如何划分？</td>
+            <td>产品、销售、售后、研发</td>
+            <td>套餐矩阵和初始报价逻辑</td>
+          </tr>
+          <tr>
+            <td>订单 ROI 第一版到底算什么？</td>
+            <td>管理层、OEM 工厂老板、产品、应用</td>
+            <td>ROI Lite 指标定义与数据字段</td>
+          </tr>
+          <tr>
+            <td>Advanced Maintenance Package 何时进入商业化承诺？</td>
+            <td>研发、售后、产品、管理层</td>
+            <td>与 Smart Machine 开发同步的路线图</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十一、建议的下一步行动</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>会前准备</h3>
+          <ul>
+            <li>列出 3 到 5 家可试点客户。</li>
+            <li>准备 MyKnit / SWS 当前能力清单。</li>
+            <li>准备 APS 当前可交付能力和限制。</li>
+            <li>整理设备 Knowledge Base 首批内容范围。</li>
+            <li>梳理 Smart Machine 传感器与数据采集进度。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>会后输出</h3>
+          <ul>
+            <li>3 个月 MVP 功能清单。</li>
+            <li>试点客户名单和拜访计划。</li>
+            <li>基础版、进阶版、专业版草案。</li>
+            <li>积分规则草案。</li>
+            <li>ROI Lite 访谈提纲。</li>
+            <li>内部项目负责人和里程碑。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      版本说明：本 agenda 根据 AI Knitting Agent 商业化讨论初稿整理，适用于内部方案评审、MVP 范围确认和试点客户策略讨论。
+    </p>
+  </main>
+</body>
+</html>

@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 WEB_ROOT = SRC / "web_app"
-APP_VERSION = "v0.19.4"
+APP_VERSION = "v0.20.1"
 
 
 def load_local_env() -> None:
@@ -94,6 +94,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
                 case_id=body.get("case_id", ""),
                 review_status=body.get("review_status", ""),
                 review_note=body.get("review_note", ""),
+                case_updates=body.get("case_updates", {}),
             )
             self._send_json(payload)
         except ValueError as exc:

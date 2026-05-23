@@ -14,6 +14,21 @@ from pathlib import Path
 
 
 REVIEW_STATUSES = {"approved", "needs_changes", "internal_only", "draft_needs_review"}
+EDITABLE_CASE_FIELDS = {
+    "title",
+    "machine_models",
+    "issue_category",
+    "severity",
+    "online_solvable",
+    "symptom_keywords",
+    "alarm_codes",
+    "online_resolution_steps",
+    "safety_warnings",
+    "dispatch_triggers",
+    "recommended_parts",
+    "estimated_resolution_time",
+    "confidence_notes",
+}
 
 
 class ServiceCaseKnowledgeBase:
@@ -72,35 +87,47 @@ class ServiceCaseKnowledgeBase:
         for case in [*self.cases, *self._load_draft_cases()]:
             source, review_status, customer_visible = self._review_state_for_case(case, records)
             record = records.get(str(case.get("case_id", "")), {})
+            effective_case = self._effective_case(case, record)
+            original_fields = self._case_fields_for_review(case)
+            editable_fields = self._case_fields_for_review(effective_case)
             cases.append(
                 {
-                    "case_id": str(case.get("case_id", "")),
-                    "title": case.get("title", ""),
+                    "case_id": str(effective_case.get("case_id", "")),
+                    "title": effective_case.get("title", ""),
                     "source": source,
                     "review_status": review_status,
                     "customer_visible": customer_visible,
                     "review_note": record.get("review_note", ""),
                     "reviewed_at": record.get("reviewed_at", ""),
-                    "machine_models": case.get("machine_models", []),
-                    "issue_category": case.get("issue_category", ""),
-                    "severity": case.get("severity", ""),
-                    "online_solvable": case.get("online_solvable", False),
-                    "symptom_keywords": case.get("symptom_keywords", []),
-                    "alarm_codes": case.get("alarm_codes", []),
-                    "online_resolution_steps": self._localized_list(case, "online_resolution_steps", "zh"),
-                    "safety_warnings": self._localized_list(case, "safety_warnings", "zh"),
-                    "dispatch_triggers": self._localized_list(case, "dispatch_triggers", "zh"),
-                    "recommended_parts": case.get("recommended_parts", []),
-                    "estimated_resolution_time": self._localized_text(case, "estimated_resolution_time", "zh"),
-                    "confidence_notes": case.get("confidence_notes", ""),
-                    "source_row_count": case.get("source_row_count", 0),
-                    "source_wo_numbers": case.get("source_wo_numbers", []),
-                    "source_serials": case.get("source_serials", []),
+                    "machine_models": effective_case.get("machine_models", []),
+                    "issue_category": effective_case.get("issue_category", ""),
+                    "severity": effective_case.get("severity", ""),
+                    "online_solvable": effective_case.get("online_solvable", False),
+                    "symptom_keywords": effective_case.get("symptom_keywords", []),
+                    "alarm_codes": effective_case.get("alarm_codes", []),
+                    "online_resolution_steps": self._localized_list(effective_case, "online_resolution_steps", "zh"),
+                    "safety_warnings": self._localized_list(effective_case, "safety_warnings", "zh"),
+                    "dispatch_triggers": self._localized_list(effective_case, "dispatch_triggers", "zh"),
+                    "recommended_parts": effective_case.get("recommended_parts", []),
+                    "estimated_resolution_time": self._localized_text(effective_case, "estimated_resolution_time", "zh"),
+                    "confidence_notes": effective_case.get("confidence_notes", ""),
+                    "source_row_count": effective_case.get("source_row_count", 0),
+                    "source_wo_numbers": effective_case.get("source_wo_numbers", []),
+                    "source_serials": effective_case.get("source_serials", []),
+                    "original_fields": original_fields,
+                    "editable_fields": editable_fields,
+                    "changed_fields": self._changed_fields(original_fields, editable_fields),
+                    "handoff_payload_preview": self._handoff_payload(effective_case, source, review_status, customer_visible),
                 }
             )
 
+        severity_counts = {}
+        for case in cases:
+            severity = str(case.get("severity") or "unset").upper()
+            severity_counts[severity] = severity_counts.get(severity, 0) + 1
+
         return {
-            "library_name": "Service Case Online Assist Mock",
+            "library_name": "Service Manager Console",
             "case_count": len(cases),
             "implemented_count": sum(1 for case in cases if case["review_status"] == "implemented_mock"),
             "needs_review_count": sum(1 for case in cases if case["review_status"] == "needs_service_review"),
@@ -108,6 +135,9 @@ class ServiceCaseKnowledgeBase:
             "approved_count": sum(1 for case in cases if case["review_status"] == "approved"),
             "needs_changes_count": sum(1 for case in cases if case["review_status"] == "needs_changes"),
             "internal_only_count": sum(1 for case in cases if case["review_status"] == "internal_only"),
+            "online_solvable_count": sum(1 for case in cases if case["online_solvable"]),
+            "dispatch_likely_count": sum(1 for case in cases if not case["online_solvable"]),
+            "severity_counts": severity_counts,
             "planned_features": [
                 {
                     "name": "Excel auto importer",
@@ -121,14 +151,19 @@ class ServiceCaseKnowledgeBase:
                 },
                 {
                     "name": "Case edit and diff view",
-                    "status": "planned",
-                    "description": "Edit online steps, keywords, safety warnings, and dispatch triggers from the review page.",
+                    "status": "implemented_v0.20.0",
+                    "description": "Edit online steps, keywords, safety warnings, and dispatch triggers from the Service Manager Console.",
+                },
+                {
+                    "name": "Handoff payload preview",
+                    "status": "implemented_v0.20.0",
+                    "description": "Preview the structured CRM/ticket payload that future integrations can receive.",
                 },
             ],
             "cases": cases,
         }
 
-    def apply_review(self, case_id: str, review_status: str, review_note: str = "") -> dict:
+    def apply_review(self, case_id: str, review_status: str, review_note: str = "", case_updates: dict | None = None) -> dict:
         case_id = str(case_id or "").strip()
         review_status = str(review_status or "").strip()
         if review_status not in REVIEW_STATUSES:
@@ -139,11 +174,13 @@ class ServiceCaseKnowledgeBase:
             raise ValueError(f"Unknown service case: {case_id}")
 
         records = self._load_review_records()
+        previous_record = records.get(case_id, {})
         records[case_id] = {
             "review_status": review_status,
             "customer_visible": review_status == "approved",
             "review_note": str(review_note or "").strip(),
             "reviewed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "case_updates": self._clean_case_updates(case_updates) if case_updates is not None else previous_record.get("case_updates", {}),
         }
         self.review_records_path.parent.mkdir(parents=True, exist_ok=True)
         self.review_records_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -167,6 +204,91 @@ class ServiceCaseKnowledgeBase:
         if not self.review_records_path.exists():
             return {}
         return json.loads(self.review_records_path.read_text(encoding="utf-8"))
+
+    def _clean_case_updates(self, updates: dict) -> dict:
+        clean = {}
+        for key, value in (updates or {}).items():
+            if key not in EDITABLE_CASE_FIELDS:
+                continue
+            if key == "online_solvable":
+                clean[key] = bool(value)
+            elif key in {
+                "machine_models",
+                "symptom_keywords",
+                "alarm_codes",
+                "online_resolution_steps",
+                "safety_warnings",
+                "dispatch_triggers",
+                "recommended_parts",
+            }:
+                clean[key] = self._clean_list(value)
+            else:
+                clean[key] = str(value or "").strip()
+        return clean
+
+    def _clean_list(self, value) -> list[str]:
+        if isinstance(value, str):
+            raw = re.split(r"[\n,，;；]+", value)
+        elif isinstance(value, list):
+            raw = value
+        else:
+            raw = []
+        return list(dict.fromkeys(str(item).strip() for item in raw if str(item).strip()))
+
+    def _effective_case(self, case: dict, record: dict) -> dict:
+        effective = dict(case)
+        updates = record.get("case_updates", {}) if isinstance(record, dict) else {}
+        for key, value in updates.items():
+            if key in EDITABLE_CASE_FIELDS:
+                effective[key] = value
+                if key == "online_resolution_steps":
+                    effective["online_resolution_steps_zh"] = value
+                elif key == "safety_warnings":
+                    effective["safety_warnings_zh"] = value
+                elif key == "dispatch_triggers":
+                    effective["dispatch_triggers_zh"] = value
+                elif key == "estimated_resolution_time":
+                    effective["estimated_resolution_time_zh"] = value
+        return effective
+
+    def _case_fields_for_review(self, case: dict) -> dict:
+        return {
+            "title": case.get("title", ""),
+            "machine_models": case.get("machine_models", []),
+            "issue_category": case.get("issue_category", ""),
+            "severity": case.get("severity", ""),
+            "online_solvable": case.get("online_solvable", False),
+            "symptom_keywords": case.get("symptom_keywords", []),
+            "alarm_codes": case.get("alarm_codes", []),
+            "online_resolution_steps": self._localized_list(case, "online_resolution_steps", "zh"),
+            "safety_warnings": self._localized_list(case, "safety_warnings", "zh"),
+            "dispatch_triggers": self._localized_list(case, "dispatch_triggers", "zh"),
+            "recommended_parts": case.get("recommended_parts", []),
+            "estimated_resolution_time": self._localized_text(case, "estimated_resolution_time", "zh"),
+            "confidence_notes": case.get("confidence_notes", ""),
+        }
+
+    def _changed_fields(self, original: dict, effective: dict) -> list[str]:
+        return [key for key in EDITABLE_CASE_FIELDS if original.get(key) != effective.get(key)]
+
+    def _handoff_payload(self, case: dict, source: str, review_status: str, customer_visible: bool) -> dict:
+        return {
+            "case_id": case.get("case_id", ""),
+            "title": case.get("title", ""),
+            "source": source,
+            "review_status": review_status,
+            "customer_visible": customer_visible,
+            "machine_models": case.get("machine_models", []),
+            "issue_category": case.get("issue_category", ""),
+            "severity": case.get("severity", ""),
+            "online_solvable": case.get("online_solvable", False),
+            "symptom_keywords": case.get("symptom_keywords", []),
+            "online_resolution_steps": self._localized_list(case, "online_resolution_steps", "zh"),
+            "safety_warnings": self._localized_list(case, "safety_warnings", "zh"),
+            "dispatch_triggers": self._localized_list(case, "dispatch_triggers", "zh"),
+            "recommended_parts": case.get("recommended_parts", []),
+            "estimated_resolution_time": self._localized_text(case, "estimated_resolution_time", "zh"),
+        }
 
     def _review_state_for_case(self, case: dict, records: dict) -> tuple[str, str, bool]:
         case_id = str(case.get("case_id", ""))
@@ -195,16 +317,20 @@ class ServiceCaseKnowledgeBase:
         records = self._load_review_records()
         agent_cases = []
         for case in self.cases:
+            case_id = str(case.get("case_id", ""))
+            record = records.get(case_id, {})
             _, review_status, customer_visible = self._review_state_for_case(case, records)
             if review_status in {"needs_changes", "internal_only", "draft_needs_review"}:
                 continue
             if customer_visible:
-                agent_cases.append(case)
+                agent_cases.append(self._effective_case(case, record))
 
         for case in self._load_draft_cases():
+            case_id = str(case.get("case_id", ""))
+            record = records.get(case_id, {})
             _, review_status, customer_visible = self._review_state_for_case(case, records)
             if review_status == "approved" and customer_visible:
-                agent_cases.append(case)
+                agent_cases.append(self._effective_case(case, record))
         return agent_cases
 
     def _search_text(self, parsed: dict, issue_text: str) -> str:

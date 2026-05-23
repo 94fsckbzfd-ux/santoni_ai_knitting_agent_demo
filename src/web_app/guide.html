@@ -24,7 +24,7 @@
       <ul>
         <li>Designer：通过自然语言描述设计目标，进行设计意图澄清、产品开发 brief 探索、模拟针织/SWS 方向建议。</li>
         <li>Customer Equipment Engineer：描述设备问题，Agent 先尝试在线协助，再判断是否需要派工或生成服务工单。</li>
-        <li>Service Case Review：查看当前 mock service case 的审核状态、在线处理步骤、安全提醒和派工触发条件。</li>
+        <li>Service Manager Console：查看和编辑当前 service case 的审核状态、在线处理步骤、安全提醒、派工触发条件和未来工单 payload。</li>
         <li>锁机激活密码：在受控流程下测试机器锁定后的激活密码生成场景，可使用 mock 或实验性真实平台连接。</li>
       </ul>
     </section>
@@ -59,7 +59,7 @@
         <li>Designer Agent 会先追问设计意图，避免过早生成方案。</li>
         <li>Service Agent 会收集工单必要信息，并优先尝试安全的在线协助。</li>
         <li>Service Case Online Assist Mock 可以匹配结构化服务案例并给出下一步检查建议。</li>
-        <li>Service Case Library 页面可以查看案例状态和 Excel 自动导入后的待审核 draft cases。</li>
+        <li>Service Manager Console 页面可以查看案例状态、编辑案例知识、对比 diff，并预览未来 CRM / ticket handoff payload。</li>
         <li>支持中文和英文测试输入。</li>
         <li>支持导出测试日志，日志不包含上传图片内容和平台密码。</li>
       </ul>
@@ -71,7 +71,7 @@
         <li>当前版本支持通过本地脚本把服务 Excel 转换成待审核 draft service cases。</li>
         <li>默认输出文件是 src/mock_data/service_cases.draft_import.json。</li>
         <li>导入结果会显示在 Service Case Library，状态为 draft_needs_review。</li>
-        <li>draft cases 不会自动进入客户回答逻辑，必须先在 Service Case Library 标记为 approved。</li>
+        <li>draft cases 不会自动进入客户回答逻辑，必须先在 Service Manager Console 标记为 approved。</li>
         <li>needs_changes 和 internal_only 会保留在审核页，但不会进入客户回答逻辑。</li>
       </ul>
     </section>

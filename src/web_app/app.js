@@ -10,6 +10,7 @@ const exportLogButton = document.querySelector("#exportLogButton");
 const clearMemoryButton = document.querySelector("#clearMemoryButton");
 const detectedRoleEl = document.querySelector("#detectedRole");
 const operatingModelProgressEl = document.querySelector("#operatingModelProgress");
+const developerChangelogEl = document.querySelector("#developerChangelog");
 const realPlatformToggleEl = document.querySelector("#realPlatformToggle");
 const platformUsernameEl = document.querySelector("#platformUsername");
 const platformPasswordEl = document.querySelector("#platformPassword");
@@ -17,7 +18,7 @@ const platformPasswordEl = document.querySelector("#platformPassword");
 let currentRole = "auto";
 let currentLanguage = "en";
 let pendingAttachment = null;
-let appVersion = "v0.19.4";
+let appVersion = "v0.20.1";
 let runtimeStatus = {};
 let sessionId = createSessionId();
 const conversationLog = [];
@@ -426,6 +427,7 @@ setRole(currentRole);
 loadVersion();
 loadStatus();
 loadOperatingModel();
+loadDeveloperChangelog();
 addMessage(
   "agent",
   "Main Agent",
@@ -490,5 +492,33 @@ async function loadOperatingModel() {
     });
   } catch {
     operatingModelProgressEl.innerHTML = "<p>Operating model status unavailable.</p>";
+  }
+}
+
+async function loadDeveloperChangelog() {
+  if (!developerChangelogEl) return;
+  try {
+    const response = await fetch(`/changelog.html?ts=${Date.now()}`);
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const entries = [...doc.querySelectorAll(".version-entry")].slice(0, 4);
+    if (!entries.length) throw new Error("No changelog entries found");
+
+    developerChangelogEl.innerHTML = "";
+    entries.forEach((entry) => {
+      const version = entry.querySelector("h2")?.textContent || "Unknown version";
+      const date = entry.querySelector(".version-entry-header span")?.textContent || "";
+      const title = entry.querySelector("h3")?.textContent || "Untitled";
+      const item = document.createElement("article");
+      item.className = "developer-changelog-item";
+      item.innerHTML = `
+        <strong>${version}</strong>
+        <span>${date}</span>
+        <p>${title}</p>
+      `;
+      developerChangelogEl.append(item);
+    });
+  } catch {
+    developerChangelogEl.innerHTML = "<p>Changelog preview unavailable. Open the Changelog page for full version history.</p>";
   }
 }

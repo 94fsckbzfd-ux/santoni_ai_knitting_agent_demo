@@ -189,15 +189,21 @@ def test_service_case_knowledge_reports_no_match_for_unknown_case():
 def test_service_case_review_library_marks_imported_cases_for_review():
     review = ServiceCaseKnowledgeBase().review_cases()
     assert review["case_count"] >= 10
-    assert review["implemented_count"] >= 2
-    assert review["needs_review_count"] >= 8
+    assert review["implemented_count"] >= 1
+    assert review["approved_count"] >= 1
+    assert review["needs_review_count"] >= 1
+    assert review["online_solvable_count"] >= 1
+    assert review["dispatch_likely_count"] >= 1
+    assert "severity_counts" in review
     assert any(case["review_status"] == "needs_service_review" for case in review["cases"])
+    assert all("handoff_payload_preview" in case for case in review["cases"])
     assert any(item["name"] == "Excel auto importer" for item in review["planned_features"])
+    assert any(item["name"] == "Case edit and diff view" for item in review["planned_features"])
 
 
 def test_project_docs_track_done_and_planned_features():
     docs = project_documentation()
-    assert docs["version"] == "v0.19.4"
+    assert docs["version"] == "v0.20.1"
     assert any(item["name"] == "Service Case Library review page" for item in docs["implemented_features"])
     assert any(item["name"] == "Operation guide page" for item in docs["implemented_features"])
     assert any(item["name"] == "Excel auto importer" for item in docs["implemented_features"])
@@ -207,6 +213,9 @@ def test_project_docs_track_done_and_planned_features():
     assert any(item["name"] == "Unlock intent credential trigger" for item in docs["implemented_features"])
     assert any(item["name"] == "Natural lock activation routing" for item in docs["implemented_features"])
     assert any(item["name"] == "Lock-machine activation wording" for item in docs["implemented_features"])
+    assert any(item["name"] == "Full Santoni logo asset" for item in docs["implemented_features"])
+    assert any(item["name"] == "Service Manager Console" for item in docs["implemented_features"])
+    assert any(item["name"] == "Developer changelog preview" for item in docs["implemented_features"])
 
 
 def test_excel_importer_generates_draft_cases():
@@ -300,6 +309,56 @@ def test_approved_draft_case_enters_customer_facing_matching():
         after = kb.match({"machine_model": "TOP2-FAST", "symptoms": ["testwrongpattern"]}, "testwrongpattern", "en")
         assert after["case_database_status"] == "mock_matched"
         assert after["matched_case_id"] == "SVC-DRAFT-TEST-001"
+
+
+def test_service_manager_console_edits_case_and_reports_diff():
+    with TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        draft_path = temp_path / "draft_cases.json"
+        review_path = temp_path / "reviews.json"
+        draft_case = {
+            "case_id": "SVC-DRAFT-EDIT-001",
+            "title": "Draft oil issue",
+            "machine_models": ["TOP2-FAST"],
+            "issue_category": "mechanical",
+            "symptom_keywords": ["oldleak"],
+            "alarm_codes": [],
+            "production_impact": "quality_risk",
+            "severity": "P2",
+            "online_solvable": True,
+            "online_resolution_steps": ["Old check."],
+            "safety_warnings": ["Stop first."],
+            "dispatch_triggers": ["Old trigger."],
+        }
+        draft_path.write_text(json.dumps([draft_case], ensure_ascii=False), encoding="utf-8")
+
+        kb = ServiceCaseKnowledgeBase()
+        kb.cases = []
+        kb.draft_cases_path = draft_path
+        kb.review_records_path = review_path
+
+        review = kb.apply_review(
+            "SVC-DRAFT-EDIT-001",
+            "approved",
+            "Service manager revised the oil-leak case.",
+            {
+                "symptom_keywords": ["newleak"],
+                "online_resolution_steps": ["Clean oil area.", "Take photos of distributor."],
+                "dispatch_triggers": ["Leak reaches electrical components."],
+            },
+        )
+
+        edited = review["cases"][0]
+        assert edited["review_status"] == "approved"
+        assert edited["customer_visible"] is True
+        assert "symptom_keywords" in edited["changed_fields"]
+        assert edited["online_resolution_steps"] == ["Clean oil area.", "Take photos of distributor."]
+        assert edited["handoff_payload_preview"]["case_id"] == "SVC-DRAFT-EDIT-001"
+
+        match = kb.match({"machine_model": "TOP2-FAST", "symptoms": ["newleak"]}, "newleak", "en")
+        assert match["case_database_status"] == "mock_matched"
+        assert match["matched_case_id"] == "SVC-DRAFT-EDIT-001"
+        assert match["suggested_steps"] == ["Clean oil area.", "Take photos of distributor."]
 
 
 def test_imported_service_case_matches_selector_wrong_pattern():

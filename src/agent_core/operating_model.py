@@ -225,10 +225,10 @@ def operating_model_progress() -> dict:
             key="state",
             name="State",
             status="in_progress",
-            progress=65,
+            progress=72,
             purpose="Track workflow stage, known information, and missing information.",
-            current_scope="Designer and Service 8-stage state flows are captured. Designer VOC and Service case list are still pending.",
-            next_step="Connect current conversation state to explicit state labels and stage transitions.",
+            current_scope="Designer and Service state flows are captured. Service Manager Console now exposes review state, editable case state, and handoff payload previews.",
+            next_step="Connect customer conversations to explicit service stage labels and stage transitions.",
         ),
         OperatingModelCapability(
             key="guardrails",
@@ -243,10 +243,10 @@ def operating_model_progress() -> dict:
             key="handoff",
             name="Handoff",
             status="placeholder",
-            progress=5,
+            progress=25,
             purpose="Package context for designers, technicians, service leaders, SWS, or ticket systems.",
-            current_scope="No real handoff yet; only mock ticket and proposal payloads.",
-            next_step="Define handoff targets and required payload fields.",
+            current_scope="Mock ticket payloads and Service Manager Console handoff payload previews exist. Real CRM/ticket write-back is not connected.",
+            next_step="Confirm the CRM/ticket payload schema with service managers before integration.",
         ),
         OperatingModelCapability(
             key="evaluation",
@@ -260,7 +260,7 @@ def operating_model_progress() -> dict:
     ]
 
     return {
-        "version": "v0.19.4",
+        "version": "v0.20.1",
         "capabilities": [asdict(item) for item in capabilities],
         "interfaces": {
             "goal": GoalInterface.__name__,
@@ -283,7 +283,7 @@ def operating_model_progress() -> dict:
 def project_documentation() -> dict:
     model = operating_model_progress()
     return {
-        "version": "v0.19.4",
+        "version": "v0.20.1",
         "title": "AI Knitting Agent Product / Development Notes",
         "implemented_features": [
             {
@@ -347,6 +347,16 @@ def project_documentation() -> dict:
                 "description": "Service reviewers can approve, request changes, or mark cases internal-only from the Service Case Library.",
             },
             {
+                "name": "Service Manager Console",
+                "status": "done",
+                "description": "Service managers can review case readiness, edit case knowledge, inspect diffs, and preview future CRM/ticket handoff payloads.",
+            },
+            {
+                "name": "Developer changelog preview",
+                "status": "done",
+                "description": "Developer page now shows the latest changelog entries directly in the sidebar while retaining the full changelog link.",
+            },
+            {
                 "name": "Customer-facing interaction page",
                 "status": "done",
                 "description": "The root web page now provides a clean customer interaction entry with Santoni branding, quick prompts, image upload, and simplified response cards.",
@@ -371,13 +381,13 @@ def project_documentation() -> dict:
                 "status": "done",
                 "description": "Customer-facing wording now names the flow as lock-machine activation while retaining TOP2 model matching where technically required.",
             },
+            {
+                "name": "Full Santoni logo asset",
+                "status": "done",
+                "description": "The customer-facing home page now uses the provided full Santoni horizontal logo image instead of the previous simplified SVG asset.",
+            },
         ],
         "planned_features": [
-            {
-                "name": "Editable case review and diff view",
-                "status": "planned",
-                "description": "Edit keywords, online steps, safety warnings, parts, and dispatch triggers directly from the review page.",
-            },
             {
                 "name": "Formal Guardrails engine",
                 "status": "planned",
@@ -408,9 +418,12 @@ def project_documentation() -> dict:
             "The web demo includes an operation guide for business testers.",
             "Excel service reports can be imported into draft service-case JSON through scripts/import_service_cases.py.",
             "Service case review status can be saved from the web page; approved Excel drafts can enter customer-facing matching.",
+            "Service managers can edit case keywords, online steps, safety warnings, dispatch triggers, and handoff payload previews before approving customer-visible knowledge.",
+            "Developer page should show recent changelog entries in-page so testers can confirm the current iteration without leaving the debug workflow.",
             "The root web page is customer-facing, while /developer.html keeps the previous development and debugging interface.",
             "Customer-facing lock-machine activation tasks can collect platform credentials only when needed and keep them in browser memory for the session.",
             "Customer-facing wording should say lock-machine activation; TOP2 remains a technical machine-family matcher in code and mock data.",
+            "The customer-facing home page should use the full approved Santoni logo asset.",
             "Natural machine-lock wording should enter the Service activation-password intake, ask for confirmed model, serial number, and lock-screen machine code, and never invent those tool inputs.",
             "All current SWS, APS, ticket, service case, and image recognition data are mocked.",
             "DeepSeek and OpenAI provider switching is supported through local environment configuration.",
@@ -420,7 +433,7 @@ def project_documentation() -> dict:
             "Exact designer decision criteria for cost, lead time, hand feel, visual direction, and brand line need VOC input.",
             "Service online-solvable issue list is pending from Joey / Santoni service knowledge.",
             "Imported Excel-derived cases require service review before they should be treated as approved customer-visible knowledge.",
-            "Excel auto import and approval status are implemented, but web-based content editing is not implemented yet.",
+            "Web-based case editing and diff view are implemented for Service Manager Console, but formal audit permissions are not implemented yet.",
             "Real handoff payloads for SWS, suppliers, service leaders, and ticket systems are not yet defined.",
             "Real tools and data integrations are not connected yet.",
         ],
@@ -446,5 +459,6 @@ def project_documentation() -> dict:
             "Define which Service issues can be solved online and which must dispatch.",
             "Confirm Service ticket/handoff fields for Santoni service leader and onsite engineer.",
             "Review the Excel draft cases and decide which can become approved customer-visible service knowledge.",
+            "Confirm the Service Manager Console payload fields for future CRM/ticket integration.",
         ],
     }

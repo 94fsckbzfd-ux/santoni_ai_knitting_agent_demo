@@ -46,7 +46,7 @@ Main Agent is the orchestrator. It identifies role, intent, workflow state, and 
 
 ## Versioning
 
-Current version: `v0.19.4`
+Current version: `v0.20.1`
 
 Version rule: `vMajor.Feature.Patch`
 
@@ -81,7 +81,9 @@ The developer page links to `/docs.html`, which shows:
 - Service state flow
 - Next product decisions
 
-The demo also links to `/service-cases.html`, a readonly Service Case Library review page. It shows the current mock service cases, Excel draft cases, review status, customer visibility, online troubleshooting steps, safety warnings, and dispatch triggers.
+The developer page also shows a compact Latest Changelog preview sourced from `/changelog.html`, so testers can verify the current iteration without leaving the debug workflow.
+
+The demo also links to `/service-cases.html`, a Service Manager Console. It shows service case readiness, Excel draft cases, review status, customer visibility, online troubleshooting steps, safety warnings, dispatch triggers, editable case knowledge, diff view, and future CRM/ticket handoff payload previews.
 
 The demo links to `/guide.html`, which explains the Agent scope, usage method, current features, limitations, and test suggestions for business users.
 
@@ -103,7 +105,9 @@ Draft cases are shown in the Service Case Library as `draft_needs_review`. They 
 
 ## Service Case Approval
 
-Use `/service-cases.html` to mark cases as:
+Use `/service-cases.html` to review and edit cases. Service managers can update keywords, online troubleshooting steps, safety warnings, recommended parts, dispatch triggers, review notes, and customer visibility. The console keeps imported/mock source data separate from reviewer edits so the diff remains visible.
+
+Use the console to mark cases as:
 
 - `approved`: visible to customer-facing Service Agent matching when the case is online-solvable.
 - `needs_changes`: kept for review but blocked from customer-facing matching.

@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Knitting Agent 架构沟通稿</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #637083;
+      --line: #d9e0ea;
+      --soft: #f4f7fb;
+      --panel: #ffffff;
+      --blue: #1f6feb;
+      --cyan: #0f8b8d;
+      --green: #278150;
+      --amber: #b7791f;
+      --red: #c2410c;
+      --shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: #eef2f7;
+      line-height: 1.62;
+    }
+
+    header {
+      background: linear-gradient(135deg, #102033 0%, #16456a 52%, #0f766e 100%);
+      color: white;
+      padding: 48px 32px 40px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: -26px auto 56px;
+      padding: 0 24px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      padding: 28px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 23px;
+      margin-bottom: 16px;
+      color: #123352;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin: 22px 0 10px;
+      color: #25415f;
+    }
+
+    p {
+      margin: 8px 0 0;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf4fb;
+      color: #18324a;
+      font-weight: 700;
+    }
+
+    code {
+      background: #edf2f7;
+      border: 1px solid #d7dee9;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 11px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .lead {
+      font-size: 17px;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary .item {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 148px;
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #17324d;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      color: white;
+      font-size: 12px;
+      line-height: 1;
+      padding: 5px 8px;
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+
+    .tag.blue {
+      background: var(--blue);
+    }
+
+    .tag.cyan {
+      background: var(--cyan);
+    }
+
+    .tag.green {
+      background: var(--green);
+    }
+
+    .tag.amber {
+      background: var(--amber);
+    }
+
+    .tag.red {
+      background: var(--red);
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .layer {
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .layer-title {
+      font-weight: 700;
+      color: #123352;
+      margin-bottom: 10px;
+    }
+
+    .boxes {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .box {
+      border: 1px solid #cad6e3;
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 86px;
+    }
+
+    .box b {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .arrow {
+      text-align: center;
+      color: #64748b;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .note {
+      background: #fff8e6;
+      border: 1px solid #f0d99b;
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #59410c;
+      margin-top: 14px;
+    }
+
+    .ok {
+      background: #ecfdf3;
+      border-color: #b8e2c7;
+      color: #174d2f;
+    }
+
+    .risk {
+      background: #fff2ed;
+      border-color: #f3c4b5;
+      color: #672414;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .step {
+      border-left: 5px solid var(--blue);
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .step:nth-child(2) {
+      border-left-color: var(--cyan);
+    }
+
+    .step:nth-child(3) {
+      border-left-color: var(--green);
+    }
+
+    .step:nth-child(4) {
+      border-left-color: var(--amber);
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 22px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        padding: 38px 22px 34px;
+      }
+
+      main {
+        padding: 0 14px;
+      }
+
+      section {
+        padding: 22px;
+      }
+
+      .summary,
+      .boxes,
+      .grid-two,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      header {
+        background: #123352;
+        print-color-adjust: exact;
+      }
+
+      main {
+        margin: 0;
+        max-width: none;
+      }
+
+      section {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Knitting Agent 架构沟通稿</h1>
+    <p class="subtitle">
+      面向技术团队的讨论材料：统一说明 AI Knitting Agent 的目标、入口设计、部署架构、核心能力，以及未来需要接入的内外部系统。
+    </p>
+    <div class="meta">
+      <span class="pill">会议日期：2026-05-22</span>
+      <span class="pill">讨论对象：技术团队 / 子系统负责人</span>
+      <span class="pill">核心原则：多个入口，共用一个 Agent Core</span>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>0. 一句话结论</h2>
+      <p class="lead">
+        AI Knitting Agent 不应该被定义成一个单独聊天机器人，而应该是连接品牌设计、MyKnit 参数化定制、SWS 高级打样、OEM 工厂服务和 Santoni 内部系统的智能工作层。
+      </p>
+      <div class="summary">
+        <div class="item">
+          <strong>业务价值</strong>
+          缩短从设计意图到无缝打样、生产文件、订单 ROI 判断和服务响应之间的沟通链路。
+        </div>
+        <div class="item">
+          <strong>技术原则</strong>
+          SWS、Web、MyKnit、飞书只是不同入口，底层应复用同一个 Agent Core 和工具接口。
+        </div>
+        <div class="item">
+          <strong>当前策略</strong>
+          先稳定 Agent Core、状态机、工具契约、Guardrails，再考虑 Hermes 和生产部署。
+        </div>
+        <div class="item">
+          <strong>部署判断</strong>
+          开发阶段可本地跑；内部试用可放公司服务器；外部访问和正式 Bot 需要公网 HTTPS 或公司网关。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>1. 做 AI Knitting Agent 的目标和目的</h2>
+      <h3>1.1 行业背景</h3>
+      <p>
+        针织行业的 value chain 从品牌方、OEM/ODM 工厂、纱线供应商延伸到原材料。品牌方设计师在设计衣服时，通常先根据用途和功能判断使用无缝工艺还是布料缝合工艺。如果选择无缝工艺，设计稿需要进一步转化为无缝织机可以识别的打样程序。
+      </p>
+      <p>
+        当前痛点在于：设计师或 ODM 先通过 Adobe Illustrator、CLO 3D 等软件形成效果图，再交给工厂打样工程师。打样工程师需要使用 Diagraph、i-Polaris 或 SWS 等软件，把设计图、纱线型号、机器能力和工艺限制转化成打样程序。这个过程中需要不断判断设计是否可织、样品和设计图会有什么差异，并反复沟通修改。
+      </p>
+
+      <h3>1.2 Agent 要解决的问题</h3>
+      <ul>
+        <li>减少设计师和打样师之间关于设计可行性、纱线、组织结构、机器参数和样衣差异的反复沟通。</li>
+        <li>帮助品牌方或 ODM 更早判断设计图能否转化为无缝工艺，以及转化后可能出现的差异。</li>
+        <li>把 SWS、MyKnit、服务案例库、机器数据、工单系统等子系统通过统一 Agent Core 串起来。</li>
+        <li>帮助 OEM 工厂老板判断订单是否值得接、是否有能力接，以及接单后的 ROI、利润和产能风险。</li>
+        <li>让客户服务场景从“人工理解问题”转向“Agent 先收集信息、匹配案例、尝试安全在线排查、再决定是否派工”。</li>
+        <li>沉淀 Santoni 的工艺知识、服务经验和工具使用流程，形成可复用的数字化能力。</li>
+      </ul>
+
+      <h3>1.3 面向三类核心业务场景</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>场景</th>
+            <th>核心用户</th>
+            <th>Agent 目标</th>
+            <th>业务输出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>设计 / 打样</td>
+            <td>品牌设计师、ODM 设计团队、OEM 打样工程师、SWS 用户</td>
+            <td>把设计意图、参考图、纱线和机器能力转化为可执行的无缝打样方向。</td>
+            <td>可行性判断、纱线/组织/机器建议、SWS 打样程序方向、仿真差异说明、修改建议。</td>
+          </tr>
+          <tr>
+            <td>服务 / 售后</td>
+            <td>客户设备工程师、Santoni 服务工程师、服务经理</td>
+            <td>快速理解设备问题，优先安全在线排查，必要时创建工单并派工。</td>
+            <td>服务 intake、案例匹配、在线排查步骤、备件建议、工单摘要、工程师派工建议。</td>
+          </tr>
+          <tr>
+            <td>订单 ROI / 接单决策</td>
+            <td>OEM 工厂老板、业务负责人、计划负责人、报价负责人</td>
+            <td>评估订单是否值得接、产能是否能承接、资源瓶颈在哪里、接单后预计收益和风险。</td>
+            <td>ROI、毛利/贡献毛利、机器小时收益、产能占用、交期风险、建议报价或接单条件。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>2. Agent 架构和部署</h2>
+      <p class="lead">
+        建议架构不是“每个入口各做一个 Agent”，而是“多个入口 + 统一 Agent Gateway + 统一 Agent Core + 标准工具适配层”。
+      </p>
+
+      <div class="architecture">
+        <div class="layer">
+          <div class="layer-title">入口层 Entry Channels</div>
+          <div class="boxes">
+            <div class="box"><b>MyKnit 入口</b>当前 demo 的设计闭环：款式、纱线、面料结构、3D 静态展示和生产文件。</div>
+            <div class="box"><b>SWS 入口</b>未来高级包：专业打样、强仿真、更多参数和工艺修改。</div>
+            <div class="box"><b>Web 入口</b>客户试用、销售 demo、轻量设计和服务交互。</div>
+            <div class="box"><b>飞书 Bot</b>内部协作、通知、审批、服务状态跟踪。</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="layer">
+          <div class="layer-title">Agent Gateway / Runtime</div>
+          <div class="boxes">
+            <div class="box"><b>身份与权限</b>账号、角色、客户、项目、工具权限。</div>
+            <div class="box"><b>Session 管理</b>匿名会话、登录会话、项目上下文、长期记忆边界。</div>
+            <div class="box"><b>Hermes 可选</b>作为运行时、记忆、MCP 工具调度和自动化层。</div>
+            <div class="box"><b>审计与日志</b>工具调用、敏感操作、错误、人工确认记录。</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="layer">
+          <div class="layer-title">AI Knitting Agent Core</div>
+          <div class="boxes">
+            <div class="box"><b>Main Agent</b>识别角色、意图、语言、入口、workflow state。</div>
+            <div class="box"><b>Designer Agent</b>设计意图理解、SWS/纱线/组织/机器建议。</div>
+            <div class="box"><b>Service Agent</b>服务 intake、案例匹配、在线排查、派工准备。</div>
+            <div class="box"><b>OEM ROI Agent</b>订单 ROI、接单能力、产能瓶颈和收益风险判断。</div>
+            <div class="box"><b>Evaluation & Guardrails</b>安全规则、缺失信息检查、动作确认。</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="layer">
+          <div class="layer-title">Tool / Adapter Layer</div>
+          <div class="boxes">
+            <div class="box"><b>SWS Adapter</b>文件解析、程序生成、仿真结果、版本对比。</div>
+            <div class="box"><b>MyKnit Adapter</b>款式/图案/颜色选择、生产文件生成、订单上下文。</div>
+            <div class="box"><b>Service Tooling</b>案例库、激活密码、工单、备件、工程师排班。</div>
+            <div class="box"><b>Data Connectors</b>CRM(SQL)、CPQ(主要数据在 MongoDB)、Service System(MySQL)、纱线、APS、DPP、设备数据。</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>2.1 Hermes 的位置</h3>
+      <p>
+        Hermes 可以作为 Agent Runtime，而不是替代 Santoni 自己的业务 Agent Core。建议第一阶段让 Hermes 通过 HTTP API 或 MCP tool 调用当前 Agent Core；等状态机、工具契约和 Guardrails 稳定后，再逐步把 SOP、技能和工具注册到 Hermes。
+      </p>
+      <div class="note ok">
+        推荐路线：先做 <code>Hermes → Santoni Agent Core</code> 适配，不要一开始就把 Designer / Service 业务逻辑全部重写进 Hermes。
+      </div>
+
+      <h3>2.2 部署阶段</h3>
+      <div class="timeline">
+        <div class="step">
+          <strong>阶段 1：个人电脑开发</strong>
+          <p>验证 Agent Core、Hermes 适配、API schema、工具调用逻辑。只适合开发者本机使用。</p>
+        </div>
+        <div class="step">
+          <strong>阶段 2：公司内网服务器</strong>
+          <p>团队连入公司网络或 VPN 后访问。适合内部 demo、服务团队测试、SWS/MyKnit 联调。</p>
+        </div>
+        <div class="step">
+          <strong>阶段 3：Staging 云环境</strong>
+          <p>用于飞书 webhook、外部客户试用、公网 HTTPS、日志和权限验证。</p>
+        </div>
+        <div class="step">
+          <strong>阶段 4：生产环境</strong>
+          <p>接入真实工单、客户数据、敏感工具、审计、监控、备份和高可用。</p>
+        </div>
+      </div>
+
+      <div class="note risk">
+        不建议现在直接把所有能力部署到 VPS 并开放给外部客户。应先完成接口契约、权限、Guardrails、测试基线和敏感工具审计。
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Agent 将具备的功能与计划接入系统</h2>
+      <h3>3.1 计划具备的核心功能</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>能力模块</th>
+            <th>功能说明</th>
+            <th>优先级</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>自然语言理解</td>
+            <td>识别用户角色、入口、语言、意图、缺失信息；支持中文和英文。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>设计意图理解</td>
+            <td>提取产品类型、目标用户、使用场景、功能需求、材料偏好、成本/交期限制。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>MyKnit 参数化设计辅助</td>
+            <td>通过自然语言定义 MyKnit 所需参数变量，覆盖款式、纱线、面料结构、图案、颜色、3D 静态展示和生产文件生成。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>SWS 高级打样辅助</td>
+            <td>未来在 SWS 成熟后，支持更完整的设计文件转换、纱线纹理级仿真、更多参数选项和专业打样程序修改。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>服务案例匹配</td>
+            <td>根据机器型号、症状、报警、图片和历史案例，给出安全在线排查步骤。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>服务工单与派工</td>
+            <td>收集最小必要信息，确认后创建工单，推荐工程师、备件和 ETA。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>OEM 订单 ROI 与接单能力判断</td>
+            <td>根据订单数量、价格、交期、工艺难度、机器产能、纱线/人工/能耗/换款成本、良率和机会成本，判断订单是否值得接、是否有能力接，以及预计收益。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>锁机激活密码工具</td>
+            <td>根据序列号、机器码和平台规则生成或申请激活密码，必须带权限和审计。</td>
+            <td><span class="tag amber">P1 高风险</span></td>
+          </tr>
+          <tr>
+            <td>图片/文件理解</td>
+            <td>识别设计参考图、报警截图、锁屏照片、CLO/Illustrator/SWS 文件元数据。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>评估与 Guardrails</td>
+            <td>检查是否缺信息、是否过早生成方案、是否触发危险维修建议或敏感工具调用。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 计划接入的内部和外部系统</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>系统</th>
+            <th>系统类型</th>
+            <th>Agent 接入价值</th>
+            <th>建议阶段</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SWS</td>
+            <td>新一代无缝打样软件 / 未来高级包</td>
+            <td>未来提供更完整的设计文件转打样程序、设计修改、纱线纹理级仿真、AI 交互设计和高级参数能力。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>MyKnit</td>
+            <td>客户自助定制 Web 应用</td>
+            <td>客户选择款式、花纹、图案、颜色后，一键生成无缝织机生产文件；当前 demo 可优先使用 MyKnit 覆盖部分 SWS 能力，包括款式设计、纱线选择、面料结构和 3D 静态展示。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>CRM</td>
+            <td>客户关系系统 / SQL 数据库</td>
+            <td>提供客户、联系人、账号、客户分层、销售机会和历史沟通上下文。Agent 应通过 CRM API 或只读 Adapter 获取，不建议直接读写生产 SQL。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>CPQ</td>
+            <td>配置报价系统 / 主要数据在 MongoDB</td>
+            <td>提供产品配置、报价规则、选项约束、成本和方案版本。可服务于 SWS/MyKnit 的配置校验和报价建议。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>OEM ROI Engine</td>
+            <td>订单收益算法服务 / 新增核心算法</td>
+            <td>基于订单、报价、产能、成本、良率、交期和机会成本，输出接单建议、ROI、利润、瓶颈和风险解释。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>ERP / MES / 成本数据</td>
+            <td>生产与财务数据源</td>
+            <td>提供机器负荷、班次、历史产量、人工成本、能耗、换款时间、良率、实际成本和交付记录。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>Service Case Library</td>
+            <td>服务知识库</td>
+            <td>沉淀历史故障、在线排查步骤、安全警告、派工触发条件。</td>
+            <td><span class="tag blue">P0</span></td>
+          </tr>
+          <tr>
+            <td>Service System</td>
+            <td>售后服务系统 / MySQL</td>
+            <td>创建工单、派工、状态跟踪、维修闭环、客户反馈。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>锁机激活密码平台</td>
+            <td>受控工具系统</td>
+            <td>处理锁屏、租赁状态、激活密码生成。需要严格权限、日志和人工确认。</td>
+            <td><span class="tag amber">P1 高风险</span></td>
+          </tr>
+          <tr>
+            <td>机器主数据</td>
+            <td>客户/设备数据</td>
+            <td>确认客户、机器型号、序列号、安装历史、保修/租赁状态。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>纱线库</td>
+            <td>材料数据</td>
+            <td>用于设计可行性、仿真纹理、成本、性能和供应可得性判断。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>APS / 排产系统</td>
+            <td>生产计划系统</td>
+            <td>估算打样周期、产能、交期、生产资源。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>DPP / 产品数据系统</td>
+            <td>产品生命周期数据</td>
+            <td>沉淀产品开发资料、材料信息、工艺数据和版本记录。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>设备数据 / IoT</td>
+            <td>机器遥测</td>
+            <td>读取报警、运行状态、停机、历史故障、关键参数。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>备件 / 库存系统</td>
+            <td>供应链数据</td>
+            <td>判断备件库存、仓库位置、随工携带可能性。</td>
+            <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>飞书 / 邮件 / 企业微信</td>
+            <td>协作通知</td>
+            <td>审批、派工通知、状态提醒、日报总结。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        数据库类型用于帮助技术团队评估 Adapter 方案。Agent 层不应直接暴露 SQL、MongoDB 或 MySQL 的生产库写权限；推荐由各子系统提供受控 API，或先建立只读/受限权限的 Adapter 服务。
+      </div>
+
+      <h3>3.3 Demo 策略调整：MyKnit-first，SWS Advanced</h3>
+      <p>
+        当前 demo 不必强依赖 SWS。MyKnit 已经具备客户选择款式、花纹、图案、颜色并生成无缝织机生产文件的能力；如果进一步把 MyKnit 内所有可变参数设计成清晰 schema，Agent 就可以用自然语言定义这些参数，并在用户交互层实现 3D 静态图的呈现和修改。
+      </p>
+      <p>
+        因此建议当前设计侧 demo 采用 <strong>MyKnit-first</strong> 路线：先用 MyKnit 承载款式设计、纱线选择、面料结构、颜色/图案配置、3D 静态展示和生产文件生成。未来 SWS 成熟后，再作为 <strong>SWS Advanced Package</strong> 引入更丰富的参数、更强仿真和专业打样能力。
+      </p>
+      <div class="note ok">
+        这样可以降低 demo 依赖风险：现在用 MyKnit 做可见、可交互、可出文件的闭环；未来用 SWS 增强专业打样和高阶商业化套餐。
+      </div>
+
+      <h3>3.4 新增产品力算法：OEM 订单 ROI / 接单决策</h3>
+      <p>
+        这是面向 OEM 工厂老板和经营管理层的重要功能。Agent 不只回答“这个产品怎么做”，还要回答“这个订单值不值得接、有没有能力接、接了能产生多少效益”。该能力建议设计成可审计的 ROI Engine，而不是完全依赖 LLM 自由计算。
+      </p>
+      <div class="grid-two">
+        <div class="note ok">
+          <strong>核心输入</strong>
+          <p>订单数量、目标价格、交期、产品参数、工艺难度、机器型号与产能、纱线成本、人工成本、能耗、换款时间、预计良率、当前产能占用、付款条款。</p>
+        </div>
+        <div class="note">
+          <strong>核心输出</strong>
+          <p>是否建议接单、预计 ROI、毛利/贡献毛利、机器小时收益、产能瓶颈、交期风险、建议报价、可接受条件和风险解释。</p>
+        </div>
+      </div>
+      <p>
+        技术实现上建议采用“规则/公式/数据模型 + Agent 解释层”：算法服务负责确定性计算，Agent 负责收集缺失参数、解释假设、生成 what-if 对比，例如“如果交期延长 5 天，ROI 是否改善”“如果换用另一种纱线，毛利会变多少”。
+      </p>
+    </section>
+
+    <section>
+      <h2>4. 入口设计与目标客户</h2>
+      <p class="lead">
+        四类入口的定位应该清晰区分：MyKnit 面向当前可落地的客户自助定制和参数化设计，SWS 面向未来高级专业打样，Web 面向轻量交互和 demo，飞书面向内部协作。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>入口</th>
+            <th>目标用户</th>
+            <th>典型任务</th>
+            <th>特点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SWS 入口</td>
+            <td>品牌设计师、ODM 设计师、OEM 打样师、Santoni 应用工程师</td>
+            <td>设计修改、文件转换、可织性判断、纱线纹理仿真、打样程序生成、版本差异解释。</td>
+            <td>未来高级专业入口。适合在 SWS 成熟后承载更复杂参数、更强仿真和更专业的打样程序修改。</td>
+          </tr>
+          <tr>
+            <td>MyKnit 入口</td>
+            <td>品牌客户、小批量定制客户、电商/定制业务客户、OEM 业务团队</td>
+            <td>选择款式、纱线、面料结构、花纹、图案、颜色，获得搭配建议和生产可行性提示，查看 3D 静态图并一键生成生产文件。</td>
+            <td>当前 demo 的优先设计入口。Agent 可做智能导购、参数定义助手、3D 修改助手、生产文件生成前检查。</td>
+          </tr>
+          <tr>
+            <td>Web 入口</td>
+            <td>潜在客户、销售 demo 对象、非 SWS 用户、客户设备工程师</td>
+            <td>轻量设计咨询、上传参考图、服务报修、案例排查、订单 ROI 测算、测试 Agent 能力。</td>
+            <td>低门槛入口。支持登录模式和免登录模式；登录模式保留项目历史和订单测算记录，免登录模式每次新会话。</td>
+          </tr>
+          <tr>
+            <td>飞书 Bot</td>
+            <td>Santoni 内部服务、销售、项目、管理团队</td>
+            <td>工单通知、派工审批、项目状态查询、客户问题摘要、订单 ROI 摘要、每日服务风险提醒。</td>
+            <td>协作入口，不适合复杂 3D 或图形编辑。重点是任务流、通知、审批和状态同步。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>4.1 登录与匿名使用</h3>
+      <div class="grid-two">
+        <div class="note ok">
+          <strong>登录模式</strong>
+          <p>适合 SWS、MyKnit、Web 的正式用户。可关联客户、项目、历史文件、机器、权限和长期上下文。</p>
+        </div>
+        <div class="note">
+          <strong>免登录模式</strong>
+          <p>适合销售 demo、首次试用、轻量咨询。每次都是新的交互过程，不保留长期记忆和敏感信息。</p>
+        </div>
+      </div>
+      <p>
+        对外表达时建议使用“账号体系记录身份、项目历史和授权信息”，避免使用“记录账号密码”这类说法。密码应由认证系统处理，Agent 不保存明文密码。
+      </p>
+    </section>
+
+    <section>
+      <h2>5. 给各子系统开发负责人的接口准备清单</h2>
+      <p class="lead">
+        每个子系统不需要一开始就完整接入，但需要尽早确认可被 Agent 调用的最小接口、权限边界和数据格式。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>准备项</th>
+            <th>建议说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>API / Tool Contract</td>
+            <td>明确输入 schema、输出 schema、错误码、超时、幂等规则和版本号。</td>
+          </tr>
+          <tr>
+            <td>权限模型</td>
+            <td>明确哪些角色可以读数据、创建任务、修改数据、执行高风险工具。</td>
+          </tr>
+          <tr>
+            <td>人工确认</td>
+            <td>派工、生成激活密码、提交生产文件、修改真实工单等动作必须定义确认流程。</td>
+          </tr>
+          <tr>
+            <td>审计日志</td>
+            <td>记录谁在什么入口、什么 session、调用了什么工具、使用了什么输入、得到什么结果。</td>
+          </tr>
+          <tr>
+            <td>测试数据</td>
+            <td>提供 mock 数据、脱敏真实案例和 golden conversation，用于回归测试。</td>
+          </tr>
+          <tr>
+            <td>数据边界</td>
+            <td>定义哪些数据可以进入 Agent 长期记忆，哪些只能短期使用，哪些绝不能保存。</td>
+          </tr>
+          <tr>
+            <td>数据库接入方式</td>
+            <td>CRM(SQL)、CPQ(主要数据在 MongoDB)、Service System(MySQL) 应优先通过各自业务 API 或 Adapter 暴露能力；如需直连数据库，先从只读账号、白名单字段和审计日志开始。</td>
+          </tr>
+          <tr>
+            <td>失败策略</td>
+            <td>外部系统不可用时，Agent 应明确告知用户、保留上下文，并提供人工处理或稍后重试选项。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>5.1 接入前建议完成的技术准备</h3>
+      <ol>
+        <li>修复中文编码和中文关键词，确保中英文路由稳定。</li>
+        <li>把当前隐式 session state 改成显式 workflow state。</li>
+        <li>补正式 Guardrails：设计生成边界、服务安全边界、敏感工具边界。</li>
+        <li>将 Service Case、Activation Password、SWS、MyKnit、CRM、CPQ、Service System、OEM ROI Engine 等能力抽象为标准工具接口。</li>
+        <li>建立回归测试：设计入口、服务入口、MyKnit 定制入口、订单 ROI 测算、锁机激活、派工确认、异常场景。</li>
+        <li>确认部署策略：开发本机、公司内网服务器、staging 云环境、生产环境分别承担什么职责。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>6. 建议会议讨论结论</h2>
+      <ul>
+        <li>确认 AI Knitting Agent 是统一 Agent Core，而不是 SWS Agent、MyKnit Agent、Web Agent、飞书 Agent 四套独立系统。</li>
+        <li>确认第一阶段优先做 Web + Service Case + MyKnit 参数化设计闭环，用于快速验证业务闭环。</li>
+        <li>确认 MyKnit 是当前 demo 的优先设计入口；SWS 在未来成熟后作为 Advanced Package，承载更强仿真、更多参数和专业打样能力。</li>
+        <li>确认 OEM 订单 ROI / 接单决策是新增核心产品力算法，应作为可审计的算法服务接入 Agent，而不是单纯让 LLM 做财务估算。</li>
+        <li>确认 Hermes 可作为运行时和工具调度层，但不替代 Santoni 自己的业务知识、状态机和工具规则。</li>
+        <li>确认每个子系统负责人需要提供可调用接口、权限边界、测试数据和异常策略。</li>
+      </ul>
+    </section>
+
+    <p class="footer">
+      Prepared for AI Knitting Agent architecture discussion. This page is a working discussion draft, not a final production specification.
+    </p>
+  </main>
+</body>
+</html>
