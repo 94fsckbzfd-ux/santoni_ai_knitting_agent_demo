@@ -1,0 +1,30 @@
+请基于以下新定位更新 Athena (Knitting Agent) 的产品架构:
+
+Athena 不是 generic natural-language design agent，也不是另一个 Style3D。Athena 应该被定义为 Santoni 的 knitting onsite digital workforce，服务 seamless、hosiery、circular knitting 三个核心业务，把 Santoni 的机器、SWS/Arachne、工艺、纱线、质量、报警、售后和生产 know-how 产品化。
+
+核心观点:
+
+1. 自然语言只是交互层，不是护城河。
+2. 护城河是 Santoni knitting know-how、SWS/Arachne 文件和工作流、Santoni IoT/APS、机器参数、工艺经验、质量追溯和 onsite deployment。
+3. Athena 部署到 OEM/ODM 工厂后，应形成 Santoni onsite digital employees，与客户设计师、打样师、工程师、生产主管、质量团队、维修人员和职能部门协同工作，提高效率，而不是替代客户人员。
+4. 客户可以通过自然语言配置和触发工作流，但底层必须是结构化、可审计、可维护的 workflow templates，不能变成随意搭建的不可控自动化。
+5. 需要重点防止 scope creep: Athena 不能变成泛数字化总包商，也不能变成每个客户一个定制软件项目。
+
+请使用以下架构方向:
+
+- Athena Core: Santoni 自有知识与工具层，包括 seamless、hosiery、circular knitting、SWS、Arachne、机器、组织、纱线、缺陷、报警、打样、试产、维修等 know-how。
+- Workflow Template Layer: 设计需求到打样任务、文件审查、可制造性检查、打样问题到改版建议、机器报警到维修建议、生产异常到根因分析、质检缺陷到追溯、订单到交期风险等模板。
+- Integration Layer: 优先接入 SWS/Arachne + Santoni IoT + 样衣/质量反馈，其次 APS + ERP，再到 WMS、CRM、PLM/MES。
+- Onsite Digital Employees: Sampling Assistant、Pattern Engineering Assistant、Application Engineer Assistant、Production Supervisor Assistant、Quality Traceability Assistant、Maintenance Assistant、Customer Collaboration Assistant。
+
+请特别分析:
+
+- 接入 Santoni IoT、APS、客户 ERP、CRM 之后，Athena 能力如何增强。
+- 哪些能力是 P0/P1/P2，哪些应该延后。
+- 怎么避免 Athena 变成 chatbot 或 digitalization contractor。
+- 怎么把 seamless/hosiery value chain 更短但 engineering coupling 更深这个特点转化成 Santoni 的产品护城河。
+
+支持文件:
+
+- athena_knitting_agent_structure_handoff_v2.md
+- style3d_ai3d_summit_santoni_agent_report.html

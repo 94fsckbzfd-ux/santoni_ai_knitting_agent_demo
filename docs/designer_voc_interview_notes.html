@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Santoni Designer VOC Interview Notes</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1b2733;
+      --muted: #5f6f7d;
+      --line: #d8e1e8;
+      --soft: #f6f8fb;
+      --panel: #ffffff;
+      --accent: #0f766e;
+      --accent-2: #1d4ed8;
+      --warn: #a16207;
+      --shadow: 0 14px 36px rgba(31, 42, 55, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #edf2f7;
+      font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 24px 26px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 24px 70px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    button {
+      min-height: 38px;
+      border: 1px solid #bfd0dd;
+      border-radius: 7px;
+      padding: 8px 13px;
+      color: var(--ink);
+      background: #ffffff;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      color: #ffffff;
+      background: var(--accent);
+    }
+
+    button.warning {
+      border-color: #d6b165;
+      color: #6b4600;
+      background: #fff8e7;
+    }
+
+    button:hover {
+      filter: brightness(0.98);
+    }
+
+    .save-state {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    section {
+      margin: 0 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+    }
+
+    .section-number {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      color: #ffffff;
+      background: var(--accent-2);
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    .section-note {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 22px 24px 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field,
+    .question {
+      display: grid;
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+
+    .question {
+      padding: 16px;
+      border: 1px solid #e1e8ef;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    label,
+    .question-title {
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .question-title {
+      color: #182635;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #c8d5df;
+      border-radius: 7px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: #ffffff;
+      font: inherit;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .textarea-large {
+      min-height: 140px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      color: #25384a;
+      background: #f2f6fa;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    td textarea {
+      min-height: 74px;
+      border-color: #d6e0e8;
+    }
+
+    td input,
+    td select {
+      min-width: 92px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pill-list li {
+      border: 1px solid #c8d7e2;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #31475c;
+      background: #f8fbfd;
+      font-size: 13px;
+    }
+
+    @media (max-width: 820px) {
+      .grid,
+      .answer-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .save-state {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .toolbar {
+        display: none;
+      }
+
+      main,
+      .header-inner {
+        max-width: none;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      section {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      textarea {
+        min-height: 110px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <p class="eyebrow">Designer VOC</p>
+      <h1>Santoni 内部设计师 VOC 访谈记录表</h1>
+      <p class="subtitle">目标：梳理设计师真实工作流程、客户沟通方式、核心痛点、AI 态度与可落地的产品机会。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar" aria-label="Form actions">
+      <button type="button" id="toggleLanguage">English</button>
+      <button type="button" class="primary" id="exportMarkdown">导出 Markdown</button>
+      <button type="button" id="exportJson">导出 JSON</button>
+      <button type="button" id="printPage">打印 / 保存 PDF</button>
+      <button type="button" class="warning" id="clearForm">清空记录</button>
+      <span class="save-state" id="saveState">未保存</span>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">0</div>
+        <div>
+          <h2>会议基本信息</h2>
+          <p class="section-note">用于后续整理 VOC 结论、追踪需求来源和回访确认。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid">
+          <div class="field">
+            <label for="meeting-date">日期</label>
+            <input id="meeting-date" data-label="日期" type="date">
+          </div>
+          <div class="field">
+            <label for="interviewer">访谈人</label>
+            <input id="interviewer" data-label="访谈人" type="text" placeholder="例如：Cici">
+          </div>
+          <div class="field">
+            <label for="designer-name">受访设计师</label>
+            <input id="designer-name" data-label="受访设计师" type="text" placeholder="Italian internal designer">
+          </div>
+          <div class="field">
+            <label for="duration">访谈时长</label>
+            <input id="duration" data-label="访谈时长" type="text" placeholder="例如：60 minutes">
+          </div>
+        </div>
+        <div class="field">
+          <label for="meeting-context">会议背景 / 本次想验证的问题</label>
+          <textarea id="meeting-context" data-label="会议背景 / 本次想验证的问题" placeholder="记录本次 VOC 的背景、已知假设、想重点验证的内容。"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">1</div>
+        <div>
+          <h2>角色与协作背景</h2>
+          <p class="section-note">先了解设计师职责边界，以及她和市场团队、软件团队如何协作。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="question">
+          <div class="question-title">How would you describe your main responsibilities as an internal Santoni designer?</div>
+          <div class="hint">中文提示：她主要负责什么？设计、打样、客户方案、市场支持、软件沟通分别占多少？</div>
+          <textarea data-label="Main responsibilities" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Which teams do you collaborate with most often, and at which stage?</div>
+          <div class="hint">中文提示：重点追问市场团队、软件团队分别在哪些阶段参与。</div>
+          <textarea data-label="Team collaboration stages" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What information do you usually receive from marketing or software teams?</div>
+          <div class="hint">中文提示：他们给的是趋势、客户需求、技术限制、软件能力，还是具体任务？</div>
+          <textarea data-label="Information from marketing or software teams" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Where does collaboration usually work well, and where does it become difficult?</div>
+          <div class="hint">中文提示：找出跨团队流程中的顺畅点和卡点。</div>
+          <textarea data-label="Collaboration works well or difficult" placeholder="记录回答..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">2</div>
+        <div>
+          <h2>真实项目流程 Walkthrough</h2>
+          <p class="section-note">让她讲一个最近真实项目，从需求来源到最终交付。不要只收集观点。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="question">
+          <div class="question-title">Could you walk me through a recent design project from the first request to the final delivery?</div>
+          <div class="hint">中文提示：请她按时间线讲完整项目。记录关键节点、参与人、交付物。</div>
+          <textarea class="textarea-large" data-label="Recent project walkthrough" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Who usually gives you the initial brief?</div>
+          <div class="hint">中文提示：客户、销售、市场、管理层、软件团队还是内部项目？</div>
+          <textarea data-label="Initial brief owner" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What information do you need before you can start designing?</div>
+          <div class="hint">中文提示：产品类型、风格、功能、尺寸、纱线、目标机器、成本、交付时间等。</div>
+          <textarea data-label="Information needed before design" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What do you usually receive, and what is often missing?</div>
+          <div class="hint">中文提示：记录客户 brief 的完整度，以及最常缺失的信息。</div>
+          <textarea data-label="Received and missing brief information" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">How do you interpret the brief and turn it into a design direction?</div>
+          <div class="hint">中文提示：她如何把模糊需求转成设计语言、结构方向和技术方案？</div>
+          <textarea data-label="Brief interpretation process" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">How do you decide yarn, structure, machine type, and technical constraints?</div>
+          <div class="hint">中文提示：哪些判断靠经验？哪些有规则、资料或工具支持？</div>
+          <textarea data-label="Yarn structure machine decision process" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">How do you move from design concept or artwork to machine program?</div>
+          <div class="hint">中文提示：从图、版、组织结构到程序的转换过程，软件团队是否参与？</div>
+          <textarea data-label="Concept to machine program" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">How many sampling rounds are typical, and what changes in each round?</div>
+          <div class="hint">中文提示：记录平均打样轮次、每轮修改原因、返工类型。</div>
+          <textarea data-label="Sampling rounds and changes" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What is the final deliverable, and who receives it?</div>
+          <div class="hint">中文提示：交付样衣、图片、技术说明、程序、设计文件，给客户还是内部团队？</div>
+          <textarea data-label="Final deliverable and receiver" placeholder="记录回答..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">3</div>
+        <div>
+          <h2>客户沟通流程</h2>
+          <p class="section-note">重点了解客户如何表达需求，以及设计师如何澄清、转译和确认。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="question">
+          <div class="question-title">How do customers usually describe what they want?</div>
+          <div class="hint">中文提示：客户用图片、样衣、文字、趋势方向、功能描述，还是很模糊的概念？</div>
+          <textarea data-label="How customers describe needs" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What do you usually need to clarify with customers?</div>
+          <div class="hint">中文提示：功能、审美、价格、机器限制、交付时间、材料、量产可行性等。</div>
+          <textarea data-label="Customer clarification topics" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Do customers understand the technical limitations of the machine, yarn, or structure?</div>
+          <div class="hint">中文提示：客户是否理解机器能力边界？误解会导致什么？</div>
+          <textarea data-label="Customer understanding of technical limits" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Which misunderstandings happen most often?</div>
+          <div class="hint">中文提示：记录高频误解，如效果不可实现、纱线不适合、时间预期不合理。</div>
+          <textarea data-label="Common customer misunderstandings" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">How do customers approve, reject, or request changes to a design?</div>
+          <div class="hint">中文提示：确认方式、反馈周期、谁做最终决定、反馈是否清晰。</div>
+          <textarea data-label="Customer approval and feedback process" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What would make customer communication faster or clearer?</div>
+          <div class="hint">中文提示：brief 模板、图片示例、技术限制说明、自动总结、翻译等。</div>
+          <textarea data-label="Ideas to improve customer communication" placeholder="记录回答..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">4</div>
+        <div>
+          <h2>痛点与证据</h2>
+          <p class="section-note">每个痛点都追问案例、频率、影响和返工成本，避免只得到笼统评价。</p>
+        </div>
+      </div>
+      <div class="content">
+        <ul class="pill-list">
+          <li>慢在哪里</li>
+          <li>错在哪里</li>
+          <li>谁被影响</li>
+          <li>多久发生一次</li>
+          <li>有没有最近案例</li>
+        </ul>
+        <div class="question">
+          <div class="question-title">Which step usually takes the longest?</div>
+          <div class="hint">中文提示：追问原因、平均耗时、是否可缩短。</div>
+          <textarea data-label="Longest step" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Which step creates the most rework?</div>
+          <div class="hint">中文提示：返工来自设计理解、客户反馈、程序、纱线、机器限制，还是样品效果？</div>
+          <textarea data-label="Most rework step" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What information is most often missing or unclear?</div>
+          <div class="hint">中文提示：记录缺失信息类型，以及缺失会造成什么后果。</div>
+          <textarea data-label="Missing or unclear information" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What repeated problems do you see across different projects?</div>
+          <div class="hint">中文提示：跨项目重复问题是产品机会和流程改进重点。</div>
+          <textarea data-label="Repeated problems across projects" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Can you share a recent case where a project was delayed or failed?</div>
+          <div class="hint">中文提示：记录具体项目背景、原因、影响、最后如何解决。</div>
+          <textarea class="textarea-large" data-label="Recent delay or failure case" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Do you have any rough numbers: sampling cycle, rework rounds, communication rounds, or error types?</div>
+          <div class="hint">中文提示：不一定要精准，范围也有价值。</div>
+          <textarea data-label="Rough metrics and evidence" placeholder="记录回答..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">5</div>
+        <div>
+          <h2>AI 态度与产品机会</h2>
+          <p class="section-note">先问真实工作，再问 AI，能减少“为了创新而创新”的回答偏差。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="question">
+          <div class="question-title">Are you currently using any AI tools in your design work?</div>
+          <div class="hint">中文提示：工具名称、使用频率、用在哪些步骤、是否真的有帮助。</div>
+          <textarea data-label="Current AI usage" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What is your general attitude toward AI in design work?</div>
+          <div class="hint">中文提示：积极拥抱、谨慎尝试、消极抵触，原因是什么？</div>
+          <textarea data-label="General attitude toward AI" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">In which part of your work do you think AI could be useful?</div>
+          <div class="hint">中文提示：brief 分析、灵感、趋势、纱线/组织推荐、客户沟通、样品修改建议、文档生成。</div>
+          <textarea data-label="Useful AI areas" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Which parts should remain fully controlled by the designer?</div>
+          <div class="hint">中文提示：审美判断、创意方向、客户关系、技术可行性判断等。</div>
+          <textarea data-label="Designer controlled areas" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What would make you trust or not trust an AI tool?</div>
+          <div class="hint">中文提示：准确性、可解释性、数据来源、是否懂机器和纱线、是否能给出可执行方案。</div>
+          <textarea data-label="AI trust factors" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">Would you see AI more as a creative assistant, a technical assistant, or a communication assistant?</div>
+          <div class="hint">中文提示：让她选择并解释原因，也可以多选排序。</div>
+          <textarea data-label="AI assistant role preference" placeholder="记录回答..."></textarea>
+        </div>
+        <div class="question">
+          <div class="question-title">What concerns would you have about AI products?</div>
+          <div class="hint">中文提示：版权、审美同质化、客户数据、替代设计师、错误建议、学习成本。</div>
+          <textarea data-label="AI concerns" placeholder="记录回答..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div class="section-number">6</div>
+        <div>
+          <h2>优先级与改进方案</h2>
+          <p class="section-note">会后产出需要问题清单、流程图、需求优先级和改进方案，这里直接记录可转化内容。</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="summary-grid">
+          <div class="field">
+            <label for="top-pain-points">Top 3 最大痛点</label>
+            <textarea id="top-pain-points" data-label="Top 3 最大痛点" placeholder="1.&#10;2.&#10;3."></textarea>
+          </div>
+          <div class="field">
+            <label for="top-tool-needs">Top 3 最希望工具改善的环节</label>
+            <textarea id="top-tool-needs" data-label="Top 3 最希望工具改善的环节" placeholder="1.&#10;2.&#10;3."></textarea>
+          </div>
+          <div class="field">
+            <label for="top-ai-opportunities">Top 3 AI 最可能有用的地方</label>
+            <textarea id="top-ai-opportunities" data-label="Top 3 AI 最可能有用的地方" placeholder="1.&#10;2.&#10;3."></textarea>
+          </div>
+        </div>
+
+        <h3>需求优先级记录</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 27%;">问题 / 机会</th>
+              <th style="width: 26%;">证据 / 案例</th>
+              <th>业务影响</th>
+              <th>AI/工具可行性</th>
+              <th>优先级</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><textarea data-label="Priority 1 problem or opportunity" placeholder="记录问题或机会..."></textarea></td>
+              <td><textarea data-label="Priority 1 evidence" placeholder="记录证据..."></textarea></td>
+              <td>
+                <select data-label="Priority 1 business impact">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 1 feasibility">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 1 priority">
+                  <option value="">选择</option>
+                  <option>P0</option>
+                  <option>P1</option>
+                  <option>P2</option>
+                  <option>Later</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><textarea data-label="Priority 2 problem or opportunity" placeholder="记录问题或机会..."></textarea></td>
+              <td><textarea data-label="Priority 2 evidence" placeholder="记录证据..."></textarea></td>
+              <td>
+                <select data-label="Priority 2 business impact">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 2 feasibility">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 2 priority">
+                  <option value="">选择</option>
+                  <option>P0</option>
+                  <option>P1</option>
+                  <option>P2</option>
+                  <option>Later</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><textarea data-label="Priority 3 problem or opportunity" placeholder="记录问题或机会..."></textarea></td>
+              <td><textarea data-label="Priority 3 evidence" placeholder="记录证据..."></textarea></td>
+              <td>
+                <select data-label="Priority 3 business impact">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 3 feasibility">
+                  <option value="">选择</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </td>
+              <td>
+                <select data-label="Priority 3 priority">
+                  <option value="">选择</option>
+                  <option>P0</option>
+                  <option>P1</option>
+                  <option>P2</option>
+                  <option>Later</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="field" style="margin-top: 18px;">
+          <label for="workflow-notes">会后流程图草稿</label>
+          <textarea id="workflow-notes" class="textarea-large" data-label="会后流程图草稿" placeholder="例如：Brief received -> Clarify missing information -> Design direction -> Yarn/structure/machine decision -> Program/sample -> Review -> Rework -> Final delivery"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="improvement-plan">初步改进方案</label>
+          <textarea id="improvement-plan" class="textarea-large" data-label="初步改进方案" placeholder="分为流程改进、知识沉淀、AI 产品机会三类记录。"></textarea>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = "santoni-designer-voc-interview-notes-v1";
+    const languageKey = "santoni-designer-voc-language-v1";
+    const fields = Array.from(document.querySelectorAll("input, textarea, select"));
+    const saveState = document.getElementById("saveState");
+    const languageButton = document.getElementById("toggleLanguage");
+    let currentLanguage = localStorage.getItem(languageKey) || "zh";
+
+    const translations = {
+      "Santoni 内部设计师 VOC 访谈记录表": {
+        zh: "Santoni 内部设计师 VOC 访谈记录表",
+        en: "Santoni Internal Designer VOC Interview Notes"
+      },
+      "目标：梳理设计师真实工作流程、客户沟通方式、核心痛点、AI 态度与可落地的产品机会。": {
+        zh: "目标：梳理设计师真实工作流程、客户沟通方式、核心痛点、AI 态度与可落地的产品机会。",
+        en: "Goal: capture the designer's real workflow, customer communication, pain points, AI attitude, and practical product opportunities."
+      },
+      "English": { zh: "English", en: "中文" },
+      "导出 Markdown": { zh: "导出 Markdown", en: "Export Markdown" },
+      "导出 JSON": { zh: "导出 JSON", en: "Export JSON" },
+      "打印 / 保存 PDF": { zh: "打印 / 保存 PDF", en: "Print / Save PDF" },
+      "清空记录": { zh: "清空记录", en: "Clear Notes" },
+      "未保存": { zh: "未保存", en: "Not saved" },
+      "已恢复本地记录": { zh: "已恢复本地记录", en: "Local notes restored" },
+      "本地记录读取失败": { zh: "本地记录读取失败", en: "Failed to read local notes" },
+      "已清空": { zh: "已清空", en: "Cleared" },
+      "会议基本信息": { zh: "会议基本信息", en: "Meeting Information" },
+      "用于后续整理 VOC 结论、追踪需求来源和回访确认。": {
+        zh: "用于后续整理 VOC 结论、追踪需求来源和回访确认。",
+        en: "Use this to organize VOC findings, trace requirement sources, and confirm follow-ups."
+      },
+      "日期": { zh: "日期", en: "Date" },
+      "访谈人": { zh: "访谈人", en: "Interviewer" },
+      "受访设计师": { zh: "受访设计师", en: "Designer Interviewee" },
+      "访谈时长": { zh: "访谈时长", en: "Duration" },
+      "会议背景 / 本次想验证的问题": {
+        zh: "会议背景 / 本次想验证的问题",
+        en: "Meeting Context / Questions to Validate"
+      },
+      "角色与协作背景": { zh: "角色与协作背景", en: "Role and Collaboration Context" },
+      "先了解设计师职责边界，以及她和市场团队、软件团队如何协作。": {
+        zh: "先了解设计师职责边界，以及她和市场团队、软件团队如何协作。",
+        en: "First understand the designer's responsibility boundaries and how she works with marketing and software teams."
+      },
+      "How would you describe your main responsibilities as an internal Santoni designer?": {
+        zh: "你会如何描述自己作为 Santoni 内部设计师的主要职责？",
+        en: "How would you describe your main responsibilities as an internal Santoni designer?"
+      },
+      "Which teams do you collaborate with most often, and at which stage?": {
+        zh: "你最常和哪些团队协作？分别发生在哪些阶段？",
+        en: "Which teams do you collaborate with most often, and at which stage?"
+      },
+      "What information do you usually receive from marketing or software teams?": {
+        zh: "你通常会从市场团队或软件团队收到哪些信息？",
+        en: "What information do you usually receive from marketing or software teams?"
+      },
+      "Where does collaboration usually work well, and where does it become difficult?": {
+        zh: "协作中哪些地方通常比较顺畅？哪些地方会变得困难？",
+        en: "Where does collaboration usually work well, and where does it become difficult?"
+      },
+      "真实项目流程 Walkthrough": { zh: "真实项目流程 Walkthrough", en: "Real Project Workflow Walkthrough" },
+      "让她讲一个最近真实项目，从需求来源到最终交付。不要只收集观点。": {
+        zh: "让她讲一个最近真实项目，从需求来源到最终交付。不要只收集观点。",
+        en: "Ask her to walk through a recent real project from request source to final delivery. Do not collect opinions only."
+      },
+      "Could you walk me through a recent design project from the first request to the final delivery?": {
+        zh: "你能不能按时间线讲一个最近的设计项目，从最初需求到最终交付？",
+        en: "Could you walk me through a recent design project from the first request to the final delivery?"
+      },
+      "Who usually gives you the initial brief?": {
+        zh: "最初的 brief 通常是谁给你的？",
+        en: "Who usually gives you the initial brief?"
+      },
+      "What information do you need before you can start designing?": {
+        zh: "开始设计前，你需要哪些信息？",
+        en: "What information do you need before you can start designing?"
+      },
+      "What do you usually receive, and what is often missing?": {
+        zh: "你通常会收到哪些信息？哪些信息经常缺失？",
+        en: "What do you usually receive, and what is often missing?"
+      },
+      "How do you interpret the brief and turn it into a design direction?": {
+        zh: "你如何理解 brief，并把它转化成设计方向？",
+        en: "How do you interpret the brief and turn it into a design direction?"
+      },
+      "How do you decide yarn, structure, machine type, and technical constraints?": {
+        zh: "你如何决定纱线、组织结构、机器型号和技术限制？",
+        en: "How do you decide yarn, structure, machine type, and technical constraints?"
+      },
+      "How do you move from design concept or artwork to machine program?": {
+        zh: "你如何从设计概念或图稿推进到机器程序？",
+        en: "How do you move from design concept or artwork to machine program?"
+      },
+      "How many sampling rounds are typical, and what changes in each round?": {
+        zh: "通常会打样几轮？每一轮主要修改什么？",
+        en: "How many sampling rounds are typical, and what changes in each round?"
+      },
+      "What is the final deliverable, and who receives it?": {
+        zh: "最终交付物是什么？交付给谁？",
+        en: "What is the final deliverable, and who receives it?"
+      },
+      "客户沟通流程": { zh: "客户沟通流程", en: "Customer Communication Process" },
+      "重点了解客户如何表达需求，以及设计师如何澄清、转译和确认。": {
+        zh: "重点了解客户如何表达需求，以及设计师如何澄清、转译和确认。",
+        en: "Focus on how customers express needs, and how designers clarify, translate, and confirm them."
+      },
+      "How do customers usually describe what they want?": {
+        zh: "客户通常如何描述他们想要的东西？",
+        en: "How do customers usually describe what they want?"
+      },
+      "What do you usually need to clarify with customers?": {
+        zh: "你通常需要和客户澄清哪些内容？",
+        en: "What do you usually need to clarify with customers?"
+      },
+      "Do customers understand the technical limitations of the machine, yarn, or structure?": {
+        zh: "客户是否理解机器、纱线或组织结构的技术限制？",
+        en: "Do customers understand the technical limitations of the machine, yarn, or structure?"
+      },
+      "Which misunderstandings happen most often?": {
+        zh: "最常发生哪些误解？",
+        en: "Which misunderstandings happen most often?"
+      },
+      "How do customers approve, reject, or request changes to a design?": {
+        zh: "客户如何确认、拒绝或要求修改一个设计？",
+        en: "How do customers approve, reject, or request changes to a design?"
+      },
+      "What would make customer communication faster or clearer?": {
+        zh: "什么能让客户沟通更快或更清晰？",
+        en: "What would make customer communication faster or clearer?"
+      },
+      "痛点与证据": { zh: "痛点与证据", en: "Pain Points and Evidence" },
+      "每个痛点都追问案例、频率、影响和返工成本，避免只得到笼统评价。": {
+        zh: "每个痛点都追问案例、频率、影响和返工成本，避免只得到笼统评价。",
+        en: "For each pain point, ask for cases, frequency, impact, and rework cost instead of broad comments."
+      },
+      "慢在哪里": { zh: "慢在哪里", en: "Where it is slow" },
+      "错在哪里": { zh: "错在哪里", en: "Where errors happen" },
+      "谁被影响": { zh: "谁被影响", en: "Who is affected" },
+      "多久发生一次": { zh: "多久发生一次", en: "How often it happens" },
+      "有没有最近案例": { zh: "有没有最近案例", en: "Recent example" },
+      "Which step usually takes the longest?": {
+        zh: "哪个步骤通常最耗时？",
+        en: "Which step usually takes the longest?"
+      },
+      "Which step creates the most rework?": {
+        zh: "哪个步骤最容易产生返工？",
+        en: "Which step creates the most rework?"
+      },
+      "What information is most often missing or unclear?": {
+        zh: "哪些信息最常缺失或不清楚？",
+        en: "What information is most often missing or unclear?"
+      },
+      "What repeated problems do you see across different projects?": {
+        zh: "你在不同项目中反复看到哪些问题？",
+        en: "What repeated problems do you see across different projects?"
+      },
+      "Can you share a recent case where a project was delayed or failed?": {
+        zh: "你能分享一个最近项目延期或失败的案例吗？",
+        en: "Can you share a recent case where a project was delayed or failed?"
+      },
+      "Do you have any rough numbers: sampling cycle, rework rounds, communication rounds, or error types?": {
+        zh: "你有没有一些大概数据：打样周期、返工轮次、沟通轮次或错误类型？",
+        en: "Do you have any rough numbers: sampling cycle, rework rounds, communication rounds, or error types?"
+      },
+      "AI 态度与产品机会": { zh: "AI 态度与产品机会", en: "AI Attitude and Product Opportunities" },
+      "先问真实工作，再问 AI，能减少“为了创新而创新”的回答偏差。": {
+        zh: "先问真实工作，再问 AI，能减少“为了创新而创新”的回答偏差。",
+        en: "Ask about real work first, then AI, to reduce innovation-for-innovation's-sake answers."
+      },
+      "Are you currently using any AI tools in your design work?": {
+        zh: "你现在是否在设计工作中使用任何 AI 工具？",
+        en: "Are you currently using any AI tools in your design work?"
+      },
+      "What is your general attitude toward AI in design work?": {
+        zh: "你对 AI 进入设计工作的总体态度是什么？",
+        en: "What is your general attitude toward AI in design work?"
+      },
+      "In which part of your work do you think AI could be useful?": {
+        zh: "你认为 AI 在你工作的哪些环节可能有用？",
+        en: "In which part of your work do you think AI could be useful?"
+      },
+      "Which parts should remain fully controlled by the designer?": {
+        zh: "哪些部分应该完全由设计师掌控？",
+        en: "Which parts should remain fully controlled by the designer?"
+      },
+      "What would make you trust or not trust an AI tool?": {
+        zh: "什么会让你信任或不信任一个 AI 工具？",
+        en: "What would make you trust or not trust an AI tool?"
+      },
+      "Would you see AI more as a creative assistant, a technical assistant, or a communication assistant?": {
+        zh: "你更愿意把 AI 看作创意助手、技术助手，还是沟通助手？",
+        en: "Would you see AI more as a creative assistant, a technical assistant, or a communication assistant?"
+      },
+      "What concerns would you have about AI products?": {
+        zh: "你对 AI 产品会有哪些担心？",
+        en: "What concerns would you have about AI products?"
+      },
+      "优先级与改进方案": { zh: "优先级与改进方案", en: "Priority and Improvement Plan" },
+      "会后产出需要问题清单、流程图、需求优先级和改进方案，这里直接记录可转化内容。": {
+        zh: "会后产出需要问题清单、流程图、需求优先级和改进方案，这里直接记录可转化内容。",
+        en: "Record content that can directly become the post-meeting issue list, workflow map, requirement priority, and improvement plan."
+      },
+      "Top 3 最大痛点": { zh: "Top 3 最大痛点", en: "Top 3 Pain Points" },
+      "Top 3 最希望工具改善的环节": { zh: "Top 3 最希望工具改善的环节", en: "Top 3 Tool Improvement Areas" },
+      "Top 3 AI 最可能有用的地方": { zh: "Top 3 AI 最可能有用的地方", en: "Top 3 AI Opportunities" },
+      "需求优先级记录": { zh: "需求优先级记录", en: "Requirement Priority Notes" },
+      "问题 / 机会": { zh: "问题 / 机会", en: "Problem / Opportunity" },
+      "证据 / 案例": { zh: "证据 / 案例", en: "Evidence / Case" },
+      "业务影响": { zh: "业务影响", en: "Business Impact" },
+      "AI/工具可行性": { zh: "AI/工具可行性", en: "AI / Tool Feasibility" },
+      "优先级": { zh: "优先级", en: "Priority" },
+      "选择": { zh: "选择", en: "Select" },
+      "会后流程图草稿": { zh: "会后流程图草稿", en: "Post-meeting Workflow Draft" },
+      "初步改进方案": { zh: "初步改进方案", en: "Initial Improvement Plan" },
+      "记录本次 VOC 的背景、已知假设、想重点验证的内容。": {
+        zh: "记录本次 VOC 的背景、已知假设、想重点验证的内容。",
+        en: "Record the VOC context, known assumptions, and key questions to validate."
+      },
+      "例如：Cici": { zh: "例如：Cici", en: "Example: Cici" },
+      "例如：60 minutes": { zh: "例如：60 minutes", en: "Example: 60 minutes" },
+      "记录回答...": { zh: "记录回答...", en: "Record answer..." },
+      "记录问题或机会...": { zh: "记录问题或机会...", en: "Record problem or opportunity..." },
+      "记录证据...": { zh: "记录证据...", en: "Record evidence..." },
+      "例如：Brief received -> Clarify missing information -> Design direction -> Yarn/structure/machine decision -> Program/sample -> Review -> Rework -> Final delivery": {
+        zh: "例如：Brief received -> Clarify missing information -> Design direction -> Yarn/structure/machine decision -> Program/sample -> Review -> Rework -> Final delivery",
+        en: "Example: Brief received -> Clarify missing information -> Design direction -> Yarn/structure/machine decision -> Program/sample -> Review -> Rework -> Final delivery"
+      },
+      "分为流程改进、知识沉淀、AI 产品机会三类记录。": {
+        zh: "分为流程改进、知识沉淀、AI 产品机会三类记录。",
+        en: "Record in three categories: process improvement, knowledge capture, and AI product opportunities."
+      },
+      "中文提示：她主要负责什么？设计、打样、客户方案、市场支持、软件沟通分别占多少？": {
+        zh: "中文提示：她主要负责什么？设计、打样、客户方案、市场支持、软件沟通分别占多少？",
+        en: "Prompt: What does she mainly own? How much time goes to design, sampling, customer solutions, marketing support, and software communication?"
+      },
+      "中文提示：重点追问市场团队、软件团队分别在哪些阶段参与。": {
+        zh: "中文提示：重点追问市场团队、软件团队分别在哪些阶段参与。",
+        en: "Prompt: Ask specifically where marketing and software teams get involved."
+      },
+      "中文提示：他们给的是趋势、客户需求、技术限制、软件能力，还是具体任务？": {
+        zh: "中文提示：他们给的是趋势、客户需求、技术限制、软件能力，还是具体任务？",
+        en: "Prompt: Do they provide trends, customer needs, technical limits, software capabilities, or specific tasks?"
+      },
+      "中文提示：找出跨团队流程中的顺畅点和卡点。": {
+        zh: "中文提示：找出跨团队流程中的顺畅点和卡点。",
+        en: "Prompt: Identify smooth points and bottlenecks in cross-team collaboration."
+      },
+      "中文提示：请她按时间线讲完整项目。记录关键节点、参与人、交付物。": {
+        zh: "中文提示：请她按时间线讲完整项目。记录关键节点、参与人、交付物。",
+        en: "Prompt: Ask for the full timeline. Capture key steps, participants, and deliverables."
+      },
+      "中文提示：客户、销售、市场、管理层、软件团队还是内部项目？": {
+        zh: "中文提示：客户、销售、市场、管理层、软件团队还是内部项目？",
+        en: "Prompt: Customer, sales, marketing, management, software team, or internal project?"
+      },
+      "中文提示：产品类型、风格、功能、尺寸、纱线、目标机器、成本、交付时间等。": {
+        zh: "中文提示：产品类型、风格、功能、尺寸、纱线、目标机器、成本、交付时间等。",
+        en: "Prompt: Product type, style, function, size, yarn, target machine, cost, delivery time, etc."
+      },
+      "中文提示：记录客户 brief 的完整度，以及最常缺失的信息。": {
+        zh: "中文提示：记录客户 brief 的完整度，以及最常缺失的信息。",
+        en: "Prompt: Record brief completeness and the most commonly missing information."
+      },
+      "中文提示：她如何把模糊需求转成设计语言、结构方向和技术方案？": {
+        zh: "中文提示：她如何把模糊需求转成设计语言、结构方向和技术方案？",
+        en: "Prompt: How does she translate fuzzy needs into design language, structure direction, and technical solution?"
+      },
+      "中文提示：哪些判断靠经验？哪些有规则、资料或工具支持？": {
+        zh: "中文提示：哪些判断靠经验？哪些有规则、资料或工具支持？",
+        en: "Prompt: Which decisions rely on experience? Which are supported by rules, documents, or tools?"
+      },
+      "中文提示：从图、版、组织结构到程序的转换过程，软件团队是否参与？": {
+        zh: "中文提示：从图、版、组织结构到程序的转换过程，软件团队是否参与？",
+        en: "Prompt: How does artwork, pattern, or structure become a program? Does the software team participate?"
+      },
+      "中文提示：记录平均打样轮次、每轮修改原因、返工类型。": {
+        zh: "中文提示：记录平均打样轮次、每轮修改原因、返工类型。",
+        en: "Prompt: Record average sampling rounds, reasons for each change, and rework types."
+      },
+      "中文提示：交付样衣、图片、技术说明、程序、设计文件，给客户还是内部团队？": {
+        zh: "中文提示：交付样衣、图片、技术说明、程序、设计文件，给客户还是内部团队？",
+        en: "Prompt: Sample, images, technical notes, program, design files? Delivered to customer or internal teams?"
+      },
+      "中文提示：客户用图片、样衣、文字、趋势方向、功能描述，还是很模糊的概念？": {
+        zh: "中文提示：客户用图片、样衣、文字、趋势方向、功能描述，还是很模糊的概念？",
+        en: "Prompt: Do customers use pictures, samples, text, trend direction, functional descriptions, or vague concepts?"
+      },
+      "中文提示：功能、审美、价格、机器限制、交付时间、材料、量产可行性等。": {
+        zh: "中文提示：功能、审美、价格、机器限制、交付时间、材料、量产可行性等。",
+        en: "Prompt: Function, aesthetic, price, machine limits, delivery time, material, mass production feasibility, etc."
+      },
+      "中文提示：客户是否理解机器能力边界？误解会导致什么？": {
+        zh: "中文提示：客户是否理解机器能力边界？误解会导致什么？",
+        en: "Prompt: Do customers understand machine capability boundaries? What do misunderstandings cause?"
+      },
+      "中文提示：记录高频误解，如效果不可实现、纱线不适合、时间预期不合理。": {
+        zh: "中文提示：记录高频误解，如效果不可实现、纱线不适合、时间预期不合理。",
+        en: "Prompt: Capture frequent misunderstandings, such as impossible effects, unsuitable yarn, or unrealistic timeline."
+      },
+      "中文提示：确认方式、反馈周期、谁做最终决定、反馈是否清晰。": {
+        zh: "中文提示：确认方式、反馈周期、谁做最终决定、反馈是否清晰。",
+        en: "Prompt: Approval method, feedback cycle, final decision maker, and feedback clarity."
+      },
+      "中文提示：brief 模板、图片示例、技术限制说明、自动总结、翻译等。": {
+        zh: "中文提示：brief 模板、图片示例、技术限制说明、自动总结、翻译等。",
+        en: "Prompt: Brief template, visual examples, technical limitation notes, automatic summaries, translation, etc."
+      },
+      "中文提示：追问原因、平均耗时、是否可缩短。": {
+        zh: "中文提示：追问原因、平均耗时、是否可缩短。",
+        en: "Prompt: Ask why, average time, and whether it can be shortened."
+      },
+      "中文提示：返工来自设计理解、客户反馈、程序、纱线、机器限制，还是样品效果？": {
+        zh: "中文提示：返工来自设计理解、客户反馈、程序、纱线、机器限制，还是样品效果？",
+        en: "Prompt: Does rework come from design interpretation, customer feedback, programming, yarn, machine limits, or sample effect?"
+      },
+      "中文提示：记录缺失信息类型，以及缺失会造成什么后果。": {
+        zh: "中文提示：记录缺失信息类型，以及缺失会造成什么后果。",
+        en: "Prompt: Record missing information types and consequences."
+      },
+      "中文提示：跨项目重复问题是产品机会和流程改进重点。": {
+        zh: "中文提示：跨项目重复问题是产品机会和流程改进重点。",
+        en: "Prompt: Repeated cross-project issues are key product and process improvement opportunities."
+      },
+      "中文提示：记录具体项目背景、原因、影响、最后如何解决。": {
+        zh: "中文提示：记录具体项目背景、原因、影响、最后如何解决。",
+        en: "Prompt: Record project background, cause, impact, and final resolution."
+      },
+      "中文提示：不一定要精准，范围也有价值。": {
+        zh: "中文提示：不一定要精准，范围也有价值。",
+        en: "Prompt: Exact data is not required; ranges are useful too."
+      },
+      "中文提示：工具名称、使用频率、用在哪些步骤、是否真的有帮助。": {
+        zh: "中文提示：工具名称、使用频率、用在哪些步骤、是否真的有帮助。",
+        en: "Prompt: Tool names, usage frequency, workflow steps, and whether it truly helps."
+      },
+      "中文提示：积极拥抱、谨慎尝试、消极抵触，原因是什么？": {
+        zh: "中文提示：积极拥抱、谨慎尝试、消极抵触，原因是什么？",
+        en: "Prompt: Actively embracing, cautiously trying, or resistant? Why?"
+      },
+      "中文提示：brief 分析、灵感、趋势、纱线/组织推荐、客户沟通、样品修改建议、文档生成。": {
+        zh: "中文提示：brief 分析、灵感、趋势、纱线/组织推荐、客户沟通、样品修改建议、文档生成。",
+        en: "Prompt: Brief analysis, inspiration, trends, yarn/structure recommendation, customer communication, sample change suggestions, document generation."
+      },
+      "中文提示：审美判断、创意方向、客户关系、技术可行性判断等。": {
+        zh: "中文提示：审美判断、创意方向、客户关系、技术可行性判断等。",
+        en: "Prompt: Aesthetic judgment, creative direction, customer relationship, technical feasibility decisions, etc."
+      },
+      "中文提示：准确性、可解释性、数据来源、是否懂机器和纱线、是否能给出可执行方案。": {
+        zh: "中文提示：准确性、可解释性、数据来源、是否懂机器和纱线、是否能给出可执行方案。",
+        en: "Prompt: Accuracy, explainability, data sources, machine/yarn knowledge, and ability to provide executable solutions."
+      },
+      "中文提示：让她选择并解释原因，也可以多选排序。": {
+        zh: "中文提示：让她选择并解释原因，也可以多选排序。",
+        en: "Prompt: Ask her to choose and explain why; multiple choices can be ranked."
+      },
+      "中文提示：版权、审美同质化、客户数据、替代设计师、错误建议、学习成本。": {
+        zh: "中文提示：版权、审美同质化、客户数据、替代设计师、错误建议、学习成本。",
+        en: "Prompt: Copyright, aesthetic homogenization, customer data, replacing designers, wrong suggestions, learning cost."
+      }
+    };
+
+    function translateText(value, language) {
+      const normalized = value.trim();
+      return translations[normalized]?.[language] || value;
+    }
+
+    function prepareTranslatableElements() {
+      const textSelectors = [
+        "h1",
+        ".subtitle",
+        "button",
+        "h2",
+        "h3",
+        ".section-note",
+        "label",
+        ".question-title",
+        ".hint",
+        "th",
+        ".pill-list li",
+        "option",
+        "#saveState"
+      ].join(", ");
+
+      document.querySelectorAll(textSelectors).forEach((element) => {
+        const key = element.textContent.trim();
+        if (translations[key] && !element.dataset.i18nKey) {
+          element.dataset.i18nKey = key;
+        }
+      });
+
+      document.querySelectorAll("[placeholder]").forEach((element) => {
+        const key = element.getAttribute("placeholder");
+        if (translations[key] && !element.dataset.i18nPlaceholder) {
+          element.dataset.i18nPlaceholder = key;
+        }
+      });
+    }
+
+    function applyLanguage(language) {
+      currentLanguage = language;
+      localStorage.setItem(languageKey, language);
+
+      document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+      document.querySelectorAll("[data-i18n-key]").forEach((element) => {
+        const key = element.dataset.i18nKey;
+        element.textContent = translations[key]?.[language] || element.textContent;
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+        const key = element.dataset.i18nPlaceholder;
+        element.setAttribute("placeholder", translations[key]?.[language] || element.getAttribute("placeholder"));
+      });
+      languageButton.textContent = language === "zh" ? "English" : "中文";
+      document.title = language === "zh"
+        ? "Santoni Designer VOC Interview Notes"
+        : "Santoni Designer VOC Interview Notes";
+    }
+
+    function fieldKey(field, index) {
+      return field.id || field.dataset.label || `field-${index}`;
+    }
+
+    function collectData() {
+      return fields.reduce((data, field, index) => {
+        data[fieldKey(field, index)] = field.value;
+        return data;
+      }, {});
+    }
+
+    function restoreData() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+
+      try {
+        const data = JSON.parse(raw);
+        fields.forEach((field, index) => {
+          const key = fieldKey(field, index);
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            field.value = data[key];
+          }
+        });
+        saveState.textContent = translateText("已恢复本地记录", currentLanguage);
+      } catch (error) {
+        saveState.textContent = translateText("本地记录读取失败", currentLanguage);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(storageKey, JSON.stringify(collectData()));
+      const prefix = currentLanguage === "zh" ? "已自动保存" : "Saved";
+      saveState.textContent = `${prefix} ${new Date().toLocaleTimeString()}`;
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function buildMarkdown() {
+      const data = collectData();
+      const lines = [
+        "# Santoni Designer VOC Interview Notes",
+        "",
+        `Exported at: ${new Date().toLocaleString()}`,
+        ""
+      ];
+
+      fields.forEach((field, index) => {
+        const label = field.dataset.label || field.previousElementSibling?.textContent?.trim() || fieldKey(field, index);
+        const value = data[fieldKey(field, index)] || "";
+        if (!value.trim()) return;
+        lines.push(`## ${label}`);
+        lines.push("");
+        lines.push(value.trim());
+        lines.push("");
+      });
+
+      return lines.join("\n");
+    }
+
+    prepareTranslatableElements();
+    applyLanguage(currentLanguage);
+    restoreData();
+
+    fields.forEach((field) => {
+      field.addEventListener("input", saveData);
+      field.addEventListener("change", saveData);
+    });
+
+    document.getElementById("exportMarkdown").addEventListener("click", () => {
+      downloadFile("designer-voc-interview-notes.md", buildMarkdown(), "text/markdown;charset=utf-8");
+    });
+
+    document.getElementById("exportJson").addEventListener("click", () => {
+      downloadFile(
+        "designer-voc-interview-notes.json",
+        JSON.stringify(collectData(), null, 2),
+        "application/json;charset=utf-8"
+      );
+    });
+
+    document.getElementById("printPage").addEventListener("click", () => {
+      window.print();
+    });
+
+    languageButton.addEventListener("click", () => {
+      applyLanguage(currentLanguage === "zh" ? "en" : "zh");
+    });
+
+    document.getElementById("clearForm").addEventListener("click", () => {
+      const message = currentLanguage === "zh"
+        ? "确定要清空当前页面记录和本地自动保存吗？"
+        : "Clear the current page notes and local autosave?";
+      const ok = window.confirm(message);
+      if (!ok) return;
+      fields.forEach((field) => {
+        field.value = "";
+      });
+      localStorage.removeItem(storageKey);
+      saveState.textContent = translateText("已清空", currentLanguage);
+    });
+  </script>
+</body>
+</html>

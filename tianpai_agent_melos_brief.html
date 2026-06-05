@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>天派 Agent Demo 给 Melos 的技术备忘</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #172033;
+      --muted: #5f6878;
+      --line: #d8dee8;
+      --band: #f5f7fa;
+      --accent: #b3252d;
+      --blue: #1f5f99;
+      --green: #22735f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background: #ffffff;
+      line-height: 1.65;
+      font-size: 16px;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 28px 56px;
+    }
+
+    header {
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    h2 {
+      margin: 32px 0 12px;
+      padding-left: 10px;
+      border-left: 4px solid var(--accent);
+      font-size: 21px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 22px 0 8px;
+      font-size: 17px;
+      color: var(--blue);
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    ul {
+      margin: 8px 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .callout {
+      margin: 18px 0;
+      padding: 14px 16px;
+      background: var(--band);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .callout strong {
+      color: var(--accent);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    code {
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      background: #eef2f7;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    pre {
+      margin: 14px 0 18px;
+      padding: 16px;
+      overflow-x: auto;
+      background: #f2f5f9;
+      color: #172033;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    pre code {
+      display: block;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+      white-space: pre;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 2px 4px 2px 0;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      background: #fff;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+
+    .box h3 {
+      margin-top: 0;
+    }
+
+    .ok {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 28px 18px 44px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>天派 Agent Demo 技术备忘</h1>
+      <p class="subtitle">给 Melos 参考：重点是 Agent 架构、Demo 边界、Nautilus 数据接口和落地风险，不重复天派背景。</p>
+    </header>
+
+    <section>
+      <h2>1. 当前共识</h2>
+      <p>这次先做一个面向天派总经理展示的 Demo。目标不是一次性做完整产品，也不是展示一个很漂亮的 UI，而是把“智能工厂运营 Agent”这个故事讲清楚，并借此确认客户真实需求。</p>
+      <div class="callout">
+        <strong>一句话目标：</strong>让总经理看到，如果这个系统接上天派全厂数据，她可以每天用它监控工厂、追问异常、定位原因、找到责任部门，并推动处理。
+      </div>
+      <p>产品叙事可以围绕“总经理驾驶舱”，但最终产品不能只给总经理用。后续要覆盖入单、排单、库存、采购、财务、机修、车间负责人等角色。</p>
+    </section>
+
+    <section>
+      <h2>2. Demo 版本的 Agent 架构</h2>
+      <p>Demo 可以先做三层 Agent，先把故事跑通。</p>
+      <pre><code>主 Agent
+  负责理解总经理问题、拆解任务、组织回答
+
+Data Agent
+  类似 Chat BI
+  负责查询 Nautilus 数据、分析生产订单、机台状态、废品率等指标
+
+Service Agent
+  负责把分析结果转成建议动作
+  Demo 阶段只给建议，不真正改排产、不派单、不发正式通知</code></pre>
+
+      <p>可以参考 Athena 的思路：一个主 Agent 做中枢，多个专业 Agent 做工具化能力。重点不是让一个大模型自由发挥，而是让它调用受控工具。</p>
+
+      <div class="two-col">
+        <div class="box">
+          <h3>主 Agent</h3>
+          <ul>
+            <li>理解用户问题。</li>
+            <li>判断需要查数据、解释原因还是生成行动建议。</li>
+            <li>把 Data Agent 和 Service Agent 的结果组织成管理者能看懂的答案。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Data Agent</h3>
+          <ul>
+            <li>调用 Nautilus 接口。</li>
+            <li>返回订单、机台、废品率、运行状态等事实数据。</li>
+            <li>尽量让指标计算在数据层完成，LLM 只负责解释。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Service Agent</h3>
+          <ul>
+            <li>根据异常原因生成下一步建议。</li>
+            <li>建议通知排单、机修、库存、采购等角色。</li>
+            <li>Demo 阶段不做写操作，避免安全和责任问题。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>后续角色 Agent</h3>
+          <ul>
+            <li>排单 Agent、库存 Agent、采购 Agent、机修 Agent 等。</li>
+            <li>每个角色只看到自己权限范围内的数据和任务。</li>
+            <li>总经理看到全局，岗位人员看到可执行事项。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Nautilus 数据接口切入</h2>
+      <p>目前 Demo 的数据源优先用天派 Nautilus 接口。这个切入点很重要，因为它能体现 Santoni 的优势：我们不是泛泛做 AI，而是从 Santoni 设备和 Seamless 生产数据出发。</p>
+      <p>Demo 阶段建议优先拿这些数据：</p>
+      <ul>
+        <li>生产订单信息。</li>
+        <li>机台当前状态。</li>
+        <li>机台运行记录、停机、报警。</li>
+        <li>废品率、良率、产能利用率。</li>
+        <li>订单与机台之间的关联。</li>
+      </ul>
+      <p>如果接口暂时不完整，可以先用真实接口 + 部分模拟数据混合，但在内部要标清楚哪些是真数据、哪些是模拟逻辑。</p>
+    </section>
+
+    <section>
+      <h2>4. 建议的 Demo 故事线</h2>
+      <p>不要在 Demo 里堆很多功能，建议只讲一个完整故事。</p>
+      <pre><code>1. 总经理打开驾驶舱，看到“今日订单交付风险”提醒。
+2. 她问：为什么这个订单风险最高？
+3. 主 Agent 调用 Data Agent。
+4. Data Agent 查询 Nautilus：
+   - 相关机台运行异常
+   - 废品率高于正常水平
+   - 实际产能低于计划
+5. 主 Agent 总结：
+   - 风险来自某些机台状态和废品率异常
+   - 可能影响交期
+   - 影响范围包括哪些订单或生产任务
+6. Service Agent 给出建议：
+   - 优先检查相关机台
+   - 通知机修
+   - 提醒排单员评估是否换机台或调整计划
+   - 后续可扩展到通知库存、采购、财务等岗位</code></pre>
+      <p>这个故事的价值在于：从“看到异常”到“追问原因”再到“下一步行动”，形成闭环。</p>
+    </section>
+
+    <section>
+      <h2>5. UI 策略</h2>
+      <p>UI 不需要做得太精美。Demo 的目标是讲故事和确认需求，不是让客户误以为产品已经完成。</p>
+      <ul>
+        <li><span class="ok">建议：</span>界面干净、可信、像一个管理驾驶舱。</li>
+        <li><span class="ok">建议：</span>左侧是核心指标和异常列表，右侧是 Agent 对话框。</li>
+        <li><span class="ok">建议：</span>点击异常后，可以在对话框里追问。</li>
+        <li><span class="ok">建议：</span>图表和表格保持低保真，但数据逻辑要可信。</li>
+      </ul>
+      <p>不要把时间花在复杂动效、过度视觉包装或完整权限页面上。Demo 成功标准不是“好看”，而是“总经理觉得这个逻辑能帮她管工厂”。</p>
+    </section>
+
+    <section>
+      <h2>6. 和天派 IT 的边界</h2>
+      <p>这一点需要特别注意。天派有自己的 IT 团队和自研 ERP，之前 MES 的经验说明：我们要和他们协作，但也要保护 Santoni 自己的行业逻辑和产品资产。</p>
+      <div class="callout">
+        <strong>建议边界：</strong>Demo 阶段可以开放接口需求、数据字段、展示逻辑，但不要过早交付可复制的完整业务规则、Agent 编排细节、提示词资产、责任追踪逻辑和设备知识库。
+      </div>
+      <p>对外表述不要说“替换 ERP”或“替代天派 IT”。更稳的定位是：</p>
+      <pre><code>天派 ERP / MES / IoT 负责原始业务系统和数据
+Santoni Agent 负责 Seamless 工厂运营智能层
+Nautilus / Santoni 设备数据负责形成行业优势
+双方通过接口协作，不改变天派既有系统所有权</code></pre>
+      <p>这样既能降低客户内部阻力，也避免 Santoni 的核心方案被简单拆走。</p>
+    </section>
+
+    <section>
+      <h2>7. 数据安全思路</h2>
+      <p>天派考虑云服务，不考虑本地私有 AI，所以必须从架构上限制 LLM 能看到的数据。</p>
+      <ul>
+        <li>LLM 不直接访问生产数据库。</li>
+        <li>Agent 只调用受控接口。</li>
+        <li>敏感信息进入 LLM 前先做 mapping 和脱敏。</li>
+        <li>客户名、订单号、价格、员工、供应商、敏感工艺参数等可以映射为脱敏 ID。</li>
+        <li>mapping 表不能给 LLM，只放在天派或 Santoni 控制的安全服务里。</li>
+        <li>不同 Agent 或 LLM 可以用不同 API key、不同工具权限、不同日志空间，做隔离。</li>
+        <li>利用率、良率、损耗等关键指标由数据层或规则引擎计算，LLM 负责解释，不自由编公式。</li>
+      </ul>
+      <p>合同层面，Santoni 作为和天派签约的一方，需要和云服务商、LLM 服务商明确数据不用于训练、数据保留周期、处理地域、加密、审计、子处理方、安全事件责任等条款。</p>
+    </section>
+
+    <section>
+      <h2>8. Demo 阶段建议固定的问题</h2>
+      <p>为了减少现场翻车，Demo 可以准备几类固定问题，先保证回答稳定。</p>
+      <ul>
+        <li>今天哪些订单有交付风险？</li>
+        <li>为什么这个订单风险最高？</li>
+        <li>哪些机台影响了这个订单？</li>
+        <li>废品率为什么升高？</li>
+        <li>下一步应该由哪个部门处理？</li>
+        <li>如果要降低风险，建议先做哪三件事？</li>
+      </ul>
+      <p>这些问题背后可以先绑定较稳定的数据查询和分析流程。Demo 不是考验模型随机发挥，而是验证业务闭环。</p>
+    </section>
+
+    <section>
+      <h2>9. Melos 这边可能需要关注的点</h2>
+      <ul>
+        <li>Nautilus 接口能稳定提供哪些字段。</li>
+        <li>生产订单、机台状态、废品率之间能不能建立关联。</li>
+        <li>哪些指标可以直接从 Nautilus 算，哪些需要额外业务规则。</li>
+        <li>Demo 用真实数据、脱敏数据还是模拟数据。</li>
+        <li>Data Agent 的接口最好是受控 API，不让 LLM 自由写 SQL 或直接访问底层数据库。</li>
+        <li>Service Agent 先只做建议，不做写回和自动通知。</li>
+        <li>保留后续扩展到多角色 Agent 的架构空间。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>10. 技术选型备注</h2>
+      <p>之前讨论过 Hermes 和 Supersonic：</p>
+      <ul>
+        <li><code>Hermes</code> 更适合作为 Agent runtime 或编排层。</li>
+        <li><code>Supersonic</code> 更适合作为 Data Agent / Chat BI / 语义查询层。</li>
+        <li>Demo 阶段不一定要完整引入两者，可以先用 Nautilus 接口 + 简单 Agent 编排把故事跑通。</li>
+      </ul>
+      <p>后续如果要产品化，再考虑 Supersonic 负责语义层和指标口径，Hermes 或自研框架负责 Agent 编排。</p>
+    </section>
+
+    <section>
+      <h2>11. 初步定价策略</h2>
+      <p>根据 Agnes 的反馈，总经理和采购总监可决策金额大致在 20 万到 50 万之间；超过 50 万后可能走到董事长层面，而董事长未必关心智能工厂应用。因此一期报价需要控制在 50 万以内，优先保证项目启动。</p>
+      <div class="callout">
+        <strong>建议报价口径：</strong>一期共创实施费 20 万，年订阅费 3.6 万，包含一定用量；超出后按标准分析请求和复杂分析请求计费。
+      </div>
+
+      <h3>建议报价结构</h3>
+      <ul>
+        <li>一期共创实施费：20 万人民币。</li>
+        <li>年度订阅费：建议 3.6 万人民币/年；如果客户压力较大，可谈到 2.8 万/年，但包含额度要相应减少。</li>
+        <li>基础包含额度：建议每年包含 10,000 次标准分析请求 + 1,000 次复杂分析请求。</li>
+        <li>超额标准分析请求：建议 1 元/次。</li>
+        <li>超额复杂分析请求：建议 3 元/次；如果后续模型成本或多 Agent 链路变复杂，可提高到 5 元/次。</li>
+        <li>高级用量或异常高用量：按实际云服务和模型账单 × 1.5 结算。</li>
+      </ul>
+
+      <p>不建议直接对客户说“Token 成本 + 20%”。Token 成本本身可能很低，20% 加价覆盖不了 Santoni 的运维、账单管理、模型切换、日志审计、重试、异常处理和价格波动风险。对外建议使用“标准分析请求”“复杂分析请求”“高级用量”这样的业务口径；内部再按 token、模型单价和工具调用核算成本。</p>
+
+      <h3>请求类型定义</h3>
+      <ul>
+        <li>免费请求：不触发新的数据查询，不调用 Service Agent，只解释已有结果、指标定义或看板含义。</li>
+        <li>标准分析请求：围绕单一业务问题，由 Data Agent 进行一次或少量数据查询并返回指标、列表、图表或简要解释。通常数据接口调用不超过 3 次，数据对象不超过 2 类。</li>
+        <li>复杂分析请求：需要主 Agent、Data Agent、Service Agent 多步协作，涉及跨流程追因、影响评估、责任定位或行动建议。通常数据接口调用 4 次以上，或数据对象 3 类以上，或调用 Service Agent。</li>
+        <li>高级用量：使用高阶模型、超长上下文、批量分析、长周期预测、报告生成或客户指定的大规模分析任务。</li>
+      </ul>
+
+      <h3>计量和对账</h3>
+      <p>请求类型应由系统根据实际调用轨迹自动判定，而不是人工事后解释。计量依据包括调用了几个 Agent、几次数据接口、几类数据对象、是否调用 Service Agent、是否做根因分析或行动建议、input/output token、模型名称和是否使用高级模型。</p>
+      <p>天派应能在用量看板中看到本月标准分析次数、复杂分析次数、剩余额度、超额金额、各部门/用户使用量、高频问题排行和每次请求的计量分类。Santoni 内部则需要保留更细的 usage record，用于核算 token、模型、云资源、数据库查询、日志审计和运维成本。</p>
+
+      <h3>商务边界</h3>
+      <ul>
+        <li>20 万一期应明确为共创示范价，不是完整产品买断价。</li>
+        <li>一期范围只包含 Data Agent、Service Agent、基础主 Agent 和总经理 Demo/试点视图。</li>
+        <li>不包含全岗位 Agent、完整 ERP 深度集成、自动写回、复杂权限体系和长期驻场实施。</li>
+        <li>后续每新增一个岗位 Agent、业务模块、写回动作或深度数据源集成，应单独报价。</li>
+        <li>天派获得项目使用权，不获得 Athena 平台源码、通用 Agent 架构、提示词资产、工具编排和设备知识库的所有权。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>12. 使用习惯和记忆迁移边界</h2>
+      <p>需要提前考虑一种极端情况：客户后续自己搭建 Agent，然后要求把 Athena 天派版中的使用习惯和记忆迁移到自己的 Agent。这个问题要在合同和产品设计中提前定义边界。</p>
+
+      <div class="callout">
+        <strong>核心原则：</strong>客户业务数据可以迁移，Athena 平台资产不能被整体迁移。可以导出客户拥有的数据和用户可见配置，但不导出 Santoni/Athena 的内部 Agent 编排、提示词、技能、工具策略、设备知识库和系统级记忆。
+      </div>
+
+      <h3>可以迁移的内容</h3>
+      <ul>
+        <li>天派自己的业务数据：订单、机台、指标、日志等原始或脱敏业务数据。</li>
+        <li>用户可见的历史对话记录，但需按权限和隐私规则导出。</li>
+        <li>用户显式配置的偏好：常看指标、默认时间范围、收藏问题、看板布局、提醒规则。</li>
+        <li>客户自定义的业务术语、指标口径和角色权限配置，前提是这些内容由天派提供或双方明确约定归天派所有。</li>
+        <li>用量统计和审计记录的摘要版，例如请求次数、部门使用量、计费分类。</li>
+      </ul>
+
+      <h3>不应迁移的内容</h3>
+      <ul>
+        <li>Athena 的主 Agent/子 Agent 架构和编排逻辑。</li>
+        <li>系统提示词、工具选择策略、Agent 路由策略和 Service Agent 行动建议模板。</li>
+        <li>Santoni 的 Seamless 设备知识库、行业规则、故障诊断逻辑和责任追踪方法。</li>
+        <li>内部向量索引、embedding、模型调用链、隐藏系统日志和调试轨迹。</li>
+        <li>通用平台能力、源码、SDK 内部实现和可复制的产品化配置。</li>
+      </ul>
+
+      <h3>建议合同口径</h3>
+      <pre><code>客户拥有其业务数据、用户显式输入内容及双方约定的客户专属配置。
+Santoni/Athena 保留平台软件、Agent 架构、提示词、工具编排、行业知识库、算法逻辑及通用产品能力的知识产权。
+合同终止或客户迁移时，Santoni 可提供客户数据导出服务，但不提供 Athena 平台内部实现、系统级记忆、Agent 编排逻辑和通用知识资产的迁移。
+如客户需要迁移服务，双方另行确认迁移范围、费用和交付格式。</code></pre>
+
+      <p>对客户可以用更温和的方式表达：Santoni 不做数据锁定，天派自己的数据和显式配置可以带走；但 Athena 作为 Santoni 的商业化平台，其 Agent 能力和行业知识资产不能作为项目交付物整体复制出去。</p>
+
+      <h3>可选商业处理方式</h3>
+      <ul>
+        <li>数据导出包：按一次性服务收费，例如 3 万到 8 万，具体看导出范围。</li>
+        <li>迁移顾问服务：如果客户要接入自研 Agent，可按人天或小项目报价。</li>
+        <li>Athena API 延续服务：客户自研 Agent 可以继续调用 Athena 的数据分析或设备知识 API，按年订阅或按量收费。</li>
+        <li>退出期服务：合同终止后提供 30-90 天只读和导出窗口，超过期限停止服务。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>13. 结论</h2>
+      <p>这个 Demo 的重点不是做一个漂亮 BI，也不是做一个会聊天的 AI。重点是证明 Santoni 可以在天派现有 ERP、MES、IoT 和 Nautilus 数据之上，做一个面向 Seamless 工厂运营的智能中枢。</p>
+      <div class="callout">
+        <strong>Demo 成功标准：</strong>客户认可“总经理驾驶舱 + Agent 追问 + 数据追因 + 行动建议”这个闭环，并愿意进一步开放数据、定义指标和确认第一期场景。
+      </div>
+      <p class="note">建议先把 Demo 做成低保真但可信的版本，聚焦一个完整业务故事，再用客户反馈决定第一期真正要落地的范围。</p>
+    </section>
+  </main>
+</body>
+</html>

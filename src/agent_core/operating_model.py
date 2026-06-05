@@ -172,6 +172,88 @@ def service_state_flow() -> list[dict]:
     ]
 
 
+def athena_mvp_state_flow() -> list[dict]:
+    return [
+        {
+            "stage": "Design Request / Style3D-CLO-AI-Image-TP Intake",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Normalize design-request, Style3D, CLO, AI image, reference image, or technical-package inputs into a design_request object.",
+        },
+        {
+            "stage": "SWS/Arachne Engineering Brief",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Convert the design_request object into machine, yarn, zone-structure, and parameter assumptions for SWS/Arachne review.",
+        },
+        {
+            "stage": "Manufacturability Check",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Score explicit knitting risks before sampling and keep blocked actions separate from recommendations.",
+        },
+        {
+            "stage": "Sampling Feedback",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Capture sample-round notes, defect signals, and missing physical evidence as workflow objects.",
+        },
+        {
+            "stage": "Revision Suggestion",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Generate parameter-level revision suggestions with reason, tradeoff, and next owner.",
+        },
+        {
+            "stage": "Production Readiness",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_athena_v1_architecture",
+            "description": "Calculate a readiness gate and checklist while preserving human engineer approval.",
+        },
+    ]
+
+
+def production_operations_state_flow() -> list[dict]:
+    return [
+        {
+            "stage": "Order Intake",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Normalize order demand, customer, style, quantity, due date, and priority into a production order object.",
+        },
+        {
+            "stage": "ERP Input",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Track ERP sync state, exceptions, and order completeness without writing back to ERP.",
+        },
+        {
+            "stage": "APS Scheduling",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Expose APS schedule, work-order release, machine assignment, changeover, and planner notes through a read-only contract.",
+        },
+        {
+            "stage": "IOT Execution",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Expose machine state, OEE, downtime, alarms, setup status, and .co/.cx file evidence without upload or control actions.",
+        },
+        {
+            "stage": "Production Monitoring / Service Escalation",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Monitor people, machine, material, method, environment, and measurement signals, and prepare service request candidates when production recovery needs support.",
+        },
+        {
+            "stage": "Garment Output",
+            "status": "implemented_mock",
+            "certainty": "confirmed_by_production_mvp_plan",
+            "description": "Summarize planned quantity, estimated good garments, quality holds, and output-readiness evidence.",
+        },
+    ]
+
+
 def operating_model_progress() -> dict:
     designer_goal = GoalInterface(
         primary_goal=(
@@ -240,6 +322,15 @@ def operating_model_progress() -> dict:
             next_step="Define non-negotiable rules for service, design, and customer-facing output.",
         ),
         OperatingModelCapability(
+            key="workflow_template_governance",
+            name="Workflow Template Governance",
+            status="in_progress",
+            progress=58,
+            purpose="Ensure Athena capabilities land as structured templates with inputs, outputs, owners, tools, evidence, gates, and KPIs.",
+            current_scope="Design Intake Structuring and Production Operations consoles implement deterministic local workflow templates with evidence and KPI logs.",
+            next_step="Validate the template fields with SWS/Arachne, APS, IOT, sampling, and production stakeholders.",
+        ),
+        OperatingModelCapability(
             key="handoff",
             name="Handoff",
             status="placeholder",
@@ -260,7 +351,7 @@ def operating_model_progress() -> dict:
     ]
 
     return {
-        "version": "v0.20.1",
+        "version": "v0.25.3",
         "capabilities": [asdict(item) for item in capabilities],
         "interfaces": {
             "goal": GoalInterface.__name__,
@@ -276,6 +367,8 @@ def operating_model_progress() -> dict:
         "state_flows": {
             "designer": designer_state_flow(),
             "service": service_state_flow(),
+            "athena_mvp": athena_mvp_state_flow(),
+            "production_operations": production_operations_state_flow(),
         },
     }
 
@@ -283,7 +376,7 @@ def operating_model_progress() -> dict:
 def project_documentation() -> dict:
     model = operating_model_progress()
     return {
-        "version": "v0.20.1",
+        "version": "v0.25.3",
         "title": "AI Knitting Agent Product / Development Notes",
         "implemented_features": [
             {
@@ -357,6 +450,51 @@ def project_documentation() -> dict:
                 "description": "Developer page now shows the latest changelog entries directly in the sidebar while retaining the full changelog link.",
             },
             {
+                "name": "Design Intake Structuring Console",
+                "status": "done",
+                "description": "Structured testbench and API normalize design/Style3D/CLO/AI-image/TP inputs into design_request, source_asset, engineering-brief candidate, manufacturability-check, sampling-feedback, revision-suggestion, evidence-log, and KPI objects for schema review.",
+            },
+            {
+                "name": "Production Operations Console",
+                "status": "done",
+                "description": "Management-facing console and API monitor order intake, ERP, APS, IOT, production, service escalation candidates, garment output, 人机料法环测 resource lenses, optimization signals, evidence logs, and KPI logs using local mock data.",
+            },
+            {
+                "name": "Santoni Athena production insight",
+                "status": "done",
+                "description": "Production console includes Santoni Athena as a read-only question-to-data agent that explains KPI changes such as scrap rate, OEE, downtime, material risk, and order delay through structured root causes, recommended actions, drilldowns, and evidence references.",
+            },
+            {
+                "name": "Production order-id workflow spine",
+                "status": "done",
+                "description": "Production Operations template and page explicitly state that order_id / 订单号 is the unique key joining order intake, ERP, APS, IOT, production/service candidates, and garment output.",
+            },
+            {
+                "name": "Bilingual page language switch",
+                "status": "done",
+                "description": "All current web pages include a shared Chinese / English toggle that preserves the selected language in browser local storage and translates page chrome without changing business data or exported logs.",
+            },
+            {
+                "name": "Production Console Chinese display",
+                "status": "done",
+                "description": "Production Operations Console defaults to Chinese for customer review and localizes dynamic status, workflow, resource lenses, optimization signals, service candidates, KPI logs, and evidence logs while retaining English toggle support.",
+            },
+            {
+                "name": "Production site flow layout",
+                "status": "done",
+                "description": "Production Operations Console now presents the former resource-lens area as a top-down order, scheduling, machine, and garment flow with backlog, style count, material linkage, capacity occupation, machine status, running rate, defect proxy, yield, and defect-reason summaries.",
+            },
+            {
+                "name": "APS/IOT adapter field mapping",
+                "status": "done",
+                "description": "Production Operations now includes a read-only adapter contract and field map for APS order, schedule, capacity, yarn forecast, and IOT machine, program evidence, output, scrap, and yield fields.",
+            },
+            {
+                "name": ".co/.cx program-file terminology",
+                "status": "done",
+                "description": "Production Operations now names seamless machine sample/production program files by the correct .co and .cx extensions.",
+            },
+            {
                 "name": "Customer-facing interaction page",
                 "status": "done",
                 "description": "The root web page now provides a clean customer interaction entry with Santoni branding, quick prompts, image upload, and simplified response cards.",
@@ -394,6 +532,16 @@ def project_documentation() -> dict:
                 "description": "Centralize unsafe-action rules, dispatch gates, and confidence checks for customer-facing responses.",
             },
             {
+                "name": "Real SWS/Arachne adapter",
+                "status": "planned",
+                "description": "Replace the Design Intake mock engineering-brief candidate with controlled adapters for real design files, SWS/Arachne file reading, parameter mapping, diffing, and engineer review.",
+            },
+            {
+                "name": "Real APS/IOT production adapters",
+                "status": "planned",
+                "description": "Replace the Production Operations normalized mock snapshot with controlled read-only API adapters for APS schedule/material data and Santoni IOT machine execution/output data.",
+            },
+            {
                 "name": "Real service ticket and handoff integration",
                 "status": "planned",
                 "description": "Send approved handoff payloads into the real ticket, service leader, or field engineer process.",
@@ -420,6 +568,24 @@ def project_documentation() -> dict:
             "Service case review status can be saved from the web page; approved Excel drafts can enter customer-facing matching.",
             "Service managers can edit case keywords, online steps, safety warnings, dispatch triggers, and handoff payload previews before approving customer-visible knowledge.",
             "Developer page should show recent changelog entries in-page so testers can confirm the current iteration without leaving the debug workflow.",
+            "The Design Intake Structuring Console is a Design Agent data-structuring middleware testbench, not the full Athena MVP.",
+            "Its current purpose is to test whether design requests, Style3D/CLO notes, AI/reference-image notes, or technical package summaries can be normalized into auditable data objects.",
+            "It is not intended to be a manual design-exhaustion tool; future constraint discovery and training should come from automated design, sampling, engineering, and production data.",
+            "Athena capabilities should land as workflow templates, data objects, tool interfaces, evidence logs, and KPIs rather than as generic chatbot behavior.",
+            "Production Operations Console should monitor order intake, ERP, APS, IOT, production, service escalation candidates, and garment output for management and production supervisors.",
+            "Production Operations MVP uses local mock data and read-only adapter contracts only; it must not upload .co/.cx files, confirm schedules, release orders, control machines, or create real service tickets.",
+            "Production management lens is 人机料法环测: people, machine, material, method, environment, and measurement.",
+            "Every current web page should expose a Chinese / English language switch, and the choice should persist across navigation in the browser.",
+            "Production Operations Console should display customer-facing Chinese labels by default while keeping English available through the language switch.",
+            "Production Operations Console should show production data from order to scheduling to machine execution to garment output, instead of exposing only abstract 人机料法环测 panels.",
+            "Production managers and customers should be able to ask why a KPI changed and receive structured root-cause analysis from production data objects instead of generic chatbot text.",
+            "Santoni Athena production insight must remain read-only and evidence-based; it must not change APS schedules, write IOT data, upload .co/.cx files, control machines, or auto-dispatch service tickets.",
+            "Production workflow traceability depends on one canonical order_id / 订单号 across ERP, APS, IOT, production, service candidate, and garment output records.",
+            "APS page research maps order tracking, production orders, styles, machine scheduling, auto-scheduling, machine aggregate, machine task, machine master, and yarn forecast fields into Production adapter objects.",
+            "Santoni IOT page research maps monitor, dashboard, data-analysis, device detail, factory resource, and program-interface fields into Production adapter objects.",
+            "Production landing should prefer direct APS/IOT database access or formal APIs over web-page scraping; current APS/IOT test pages only informed field mapping.",
+            "Seamless machine sample/production program files should be referred to as .co and .cx files.",
+            "Future real IOT integration should prefer the formal program-interface/API documentation route instead of browser scraping.",
             "The root web page is customer-facing, while /developer.html keeps the previous development and debugging interface.",
             "Customer-facing lock-machine activation tasks can collect platform credentials only when needed and keep them in browser memory for the session.",
             "Customer-facing wording should say lock-machine activation; TOP2 remains a technical machine-family matcher in code and mock data.",
@@ -434,11 +600,18 @@ def project_documentation() -> dict:
             "Service online-solvable issue list is pending from Joey / Santoni service knowledge.",
             "Imported Excel-derived cases require service review before they should be treated as approved customer-visible knowledge.",
             "Web-based case editing and diff view are implemented for Service Manager Console, but formal audit permissions are not implemented yet.",
+            "The Design Intake Structuring Console uses deterministic mock rules; real Style3D/CLO/design-file/SWS/Arachne adapters are not connected yet.",
+            "Production Operations Console uses deterministic mock data with APS/IOT-like normalized fields; real APS and IOT API adapters are not connected yet.",
+            "Santoni Athena production root-cause analysis is deterministic over the current local mock snapshot; real BI semantic models, time-series drilldowns, and live APS/IOT data are not connected yet.",
+            "Formal APS/IOT API documentation, token scope, rate limits, and deployment access model are not confirmed yet.",
+            "Future APS/IOT database schema, order_id join rules, access control, and refresh cadence are not confirmed yet.",
             "Real handoff payloads for SWS, suppliers, service leaders, and ticket systems are not yet defined.",
             "Real tools and data integrations are not connected yet.",
         ],
         "designer_state_flow": model["state_flows"]["designer"],
         "service_state_flow": model["state_flows"]["service"],
+        "athena_mvp_state_flow": model["state_flows"]["athena_mvp"],
+        "production_operations_state_flow": model["state_flows"]["production_operations"],
         "service_case_mock_structure": [
             "case_id and title",
             "machine_models and issue_category",
@@ -455,6 +628,12 @@ def project_documentation() -> dict:
         ],
         "next_decisions": [
             "Confirm the Product Development Brief mandatory fields.",
+            "Validate Design Intake object schemas, required fields, evidence format, and future file-import adapter assumptions with design, SWS/Arachne, sampling, and application engineering stakeholders.",
+            "Validate Production Operations resource lenses, KPIs, and APS/IOT read-only adapter fields with production, APS, and IOT owners.",
+            "Validate Santoni Athena production root-cause categories, thresholds, evidence format, and management-language output with production owners.",
+            "Confirm the canonical production order_id mapping when connecting directly to APS/IOT databases or formal APIs.",
+            "Confirm whether production integration should read APS/IOT database views directly, use formal read-only APIs, or combine both.",
+            "Request formal APS/IOT read-only API documentation and confirm whether the current field mapping matches platform API objects.",
             "Define Guardrails for Designer and Service.",
             "Define which Service issues can be solved online and which must dispatch.",
             "Confirm Service ticket/handoff fields for Santoni service leader and onsite engineer.",

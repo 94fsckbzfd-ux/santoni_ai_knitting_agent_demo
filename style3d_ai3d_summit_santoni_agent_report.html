@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Style3D AI+3D 伙伴大会洞察与 Santoni 行业 Agent 建议 v2.0</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #141824;
+      --muted: #5d6678;
+      --line: #dce2ec;
+      --blue: #124bd7;
+      --blue-2: #e8efff;
+      --green: #0b7a55;
+      --green-2: #e4f5ee;
+      --red: #c3353f;
+      --red-2: #fde8eb;
+      --gold: #a46a12;
+      --gold-2: #fff3d8;
+      --slate: #273142;
+      --shadow: 0 10px 28px rgba(20, 24, 36, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .hero {
+      color: #fff;
+      background:
+        linear-gradient(120deg, rgba(11, 21, 54, 0.95), rgba(18, 75, 215, 0.92)),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.18), transparent 28%);
+      padding: 56px 36px 44px;
+    }
+
+    .hero-inner,
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 960px;
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin: 18px 0 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 18px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.13);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .pill.strong {
+      background: rgba(255, 255, 255, 0.24);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    main {
+      padding: 30px 24px 72px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: -30px -24px 30px;
+      padding: 12px 24px;
+      background: rgba(247, 248, 251, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .toc-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .toc a {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--slate);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    section {
+      margin: 34px 0;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.32;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card.compact {
+      padding: 15px;
+      box-shadow: none;
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-bottom: 10px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--blue-2);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-2);
+    }
+
+    .tag.red {
+      color: var(--red);
+      background: var(--red-2);
+    }
+
+    .tag.gold {
+      color: var(--gold);
+      background: var(--gold-2);
+    }
+
+    .speaker {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 18px;
+      margin-bottom: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .speaker-side {
+      padding: 18px;
+      color: #fff;
+      background: linear-gradient(155deg, #14213d, #124bd7);
+    }
+
+    .speaker-side .num {
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .speaker-side h3 {
+      margin-top: 12px;
+      color: #fff;
+    }
+
+    .speaker-side p {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+    }
+
+    .speaker-body {
+      padding: 18px;
+    }
+
+    .speaker-body ul,
+    .card ul,
+    .notice ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .quote {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--blue);
+      background: var(--blue-2);
+      border-radius: 0 8px 8px 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .notice {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .notice.danger {
+      border-color: #f0c3c7;
+      background: var(--red-2);
+    }
+
+    .notice.good {
+      border-color: #b6e2d0;
+      background: var(--green-2);
+    }
+
+    .notice.gold {
+      border-color: #f0d28e;
+      background: var(--gold-2);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #fff;
+      background: var(--slate);
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .priority {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 28px;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .timeline .card {
+      border-top: 5px solid var(--blue);
+    }
+
+    .callout-title {
+      color: var(--red);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .source-list a {
+      font-weight: 800;
+    }
+
+    .version-box {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .version-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 112px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--slate);
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .foot {
+      margin-top: 48px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      .grid,
+      .grid.two,
+      .grid.four,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .speaker {
+        grid-template-columns: 1fr;
+      }
+
+      .version-box {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Style3D SIS26 Reference Report</p>
+      <h1>AI+3D 重构服装生产力: 嘉宾洞察总结与 Santoni 行业 Agent 建议</h1>
+      <p class="subtitle">基于直播期间记录的关键页、案例、QA 信息和外部公开资料校准，梳理各嘉宾观点，并对 Santoni Design Agent / Athena 的战略定位、能力缺口和优先级给出独立判断。</p>
+      <div class="meta">
+        <span class="pill strong">Version 2.0</span>
+        <span class="pill">会议主题: AI+3D 重构生产力边界</span>
+        <span class="pill">视角: 设计、供应链、制造、商品企划、零售采购</span>
+        <span class="pill">重点: Santoni 行业 Agent</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <div class="toc-inner">
+      <a href="#executive">结论先行</a>
+      <a href="#version">版本说明</a>
+      <a href="#reality">外部校准</a>
+      <a href="#speakers">嘉宾总结</a>
+      <a href="#patterns">共性趋势</a>
+      <a href="#calibration">独立校准</a>
+      <a href="#santoni">Santoni 判断</a>
+      <a href="#architecture">架构建议</a>
+      <a href="#roadmap">路线图</a>
+      <a href="#questions">关键问题</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="executive">
+      <h2>结论先行</h2>
+      <p class="lead">这场会释放的信号非常直接: 服装行业的 AI+3D 已经从“设计展示工具”进入“业务流程重构工具”。但我对 v1 的判断做一次校准: 问题不只是 Style3D 走得快，而是整个 3D 前端软件赛道已经形成多家公司竞争、企业流程绑定和资产沉淀。Santoni 如果以“自然语言生成 3D 设计”为主定位，面对的不只是 Style3D，而是 CLO、Browzwear、Adobe、通用多模态模型和客户既有工作流。</p>
+      <div class="quote">我更新后的核心判断: Santoni 不应该把 Athena 做成“另一个设计入口”，而应该做成无缝/针织生产工程层。自然语言可以是入口，但产品价值必须落在 SWS/Arachne、机型、组织、纱线、工艺、质量、交期和设备数据上。</div>
+      <div class="grid three">
+        <div class="card">
+          <span class="tag red">尖锐判断 1</span>
+          <h3>前端不是绝对赢家通吃，但 Santoni 很难赢</h3>
+          <p>企业可能同时使用 Style3D、CLO、Browzwear、Adobe 和 PLM，不是单一工具全吃。但泛服装设计工具需要设计师生态、素材库、教程、插件、客户成功和快速迭代。Santoni 的组织能力和用户反馈回路不在这里。</p>
+        </div>
+        <div class="card">
+          <span class="tag red">尖锐判断 2</span>
+          <h3>真正的风险是 Style3D 继续下探</h3>
+          <p>Style3D 已经在印花排版、生产文件、Python 自动化和 ERP 连接上有客户案例。它不一定止步于视觉确认。Santoni 要尽快锁定“无缝/针织机器可生产性”这块 Style3D 难以通吃的区域。</p>
+        </div>
+        <div class="card">
+          <span class="tag green">战略机会</span>
+          <h3>从打板到生产的 Operation Agent</h3>
+          <p>Athena 应该定位为无缝/针织的生产智能体: 把设计意图转成可打板、可生产、可追踪、可复盘的工艺与交付系统。它服务的第一对象不是设计师，而是打板师、工艺员、应用工程师、生产主管和售后工程师。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="version">
+      <h2>版本说明与 Change Log</h2>
+      <div class="card version-box">
+        <div class="version-mark">v2.0</div>
+        <div>
+          <h3>本次更新原因</h3>
+          <p>v1 更像把现场信息和你的判断快速汇总，没有充分展开我的独立判断，也没有把外部行业格局放进来校准。v2 明确区分会议观察、外部资料、我的判断和仍需验证的假设。</p>
+          <ul>
+            <li>新增外部公开资料校准，包括 Very Group、Style3D、CLO、Browzwear 和 McKinsey/BoF 相关资料。</li>
+            <li>修正“前端设计软件赢家通吃”的表述: 不是绝对赢家通吃，但 Santoni 缺少进入泛设计工具赛道的反馈飞轮。</li>
+            <li>新增“我不同意或需要修正的地方”，避免简单跟随现场判断。</li>
+            <li>加强 Santoni 的风险判断: Style3D 可能继续往生产文件和供应链协同下探。</li>
+            <li>增加 Athena 架构中的“验证性 KPI”和“不要做清单”。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="reality">
+      <h2>外部公开资料校准</h2>
+      <p class="lead">以下不是为会议结论背书，而是用公开信息校准行业格局。重点结论: 3D 前端和企业协同已经是成熟竞争区，Santoni 的差异化必须来自机器和生产工程。</p>
+      <div class="grid two">
+        <div class="card">
+          <span class="tag">Style3D</span>
+          <h3>它正在从 3D 设计工具扩展到协同与生产链路</h3>
+          <p>Style3D 公开资料强调 3D 设计、数字样衣、协同、AI 生成、面料和资产管理等能力。会议案例又补充了印花排版、生产文件、Python 自动化、ERP 打通这些更靠近生产的实践。</p>
+          <p><strong>我的判断:</strong> 不能假设 Style3D 永远只做前端。它会沿着客户 ROI 往下游走，至少会吃掉“通用服装生产准备”的一部分。</p>
+        </div>
+        <div class="card">
+          <span class="tag">CLO / Browzwear</span>
+          <h3>Style3D 不是唯一竞品</h3>
+          <p>CLO 已经有 3D 服装设计、协作和企业方案；Browzwear/VStitcher 也长期主打生产就绪 3D、版片、压力/张力可视化和减少实体样衣。</p>
+          <p><strong>我的判断:</strong> Santoni 如果把 Design Agent 做成泛设计工具，面对的是整个成熟赛道，不只是一个 Style3D。</p>
+        </div>
+        <div class="card">
+          <span class="tag">Very Group</span>
+          <h3>品牌方正在把数字化能力变成供应商门槛</h3>
+          <p>Very 的公开财报口径和现场材料一致: 它是大型英国零售与金融服务平台。QA 中 sourcing head 的表述更重要: 供应商不拥抱技术，会被更快、更敏捷的供应链淘汰。</p>
+          <p><strong>我的判断:</strong> Athena 的卖点不能只对工厂讲效率，也要帮助工厂向品牌方证明数字化供应能力。</p>
+        </div>
+        <div class="card">
+          <span class="tag">McKinsey / BoF</span>
+          <h3>AI 价值来自组织和流程重构，不是工具采购</h3>
+          <p>咨询报告普遍强调生成式 AI 在时尚行业有潜在价值，但落地需要数据、流程、治理和组织协同。今天几家企业的案例也验证了这一点。</p>
+          <p><strong>我的判断:</strong> Athena 如果没有业务流程和数据闭环，只做模型接入，很快会变成“会聊天但不改变生产”的系统。</p>
+        </div>
+      </div>
+      <div class="notice">
+        <h3>参考链接</h3>
+        <ul class="source-list">
+          <li><a href="https://www.theverygroup.com/" target="_blank">The Very Group</a>: 公司业务与品牌信息。</li>
+          <li><a href="https://www.style3d.com/" target="_blank">Style3D</a>: 官方产品与 AI+3D 平台信息。</li>
+          <li><a href="https://www.clo3d.com/" target="_blank">CLO 3D</a>: 3D 服装设计软件与生态。</li>
+          <li><a href="https://browzwear.com/" target="_blank">Browzwear</a>: VStitcher 等 3D 服装设计与生产准备能力。</li>
+          <li><a href="https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion" target="_blank">McKinsey / BoF State of Fashion</a>: 时尚行业趋势与 AI 影响。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="speakers">
+      <h2>逐位嘉宾总结</h2>
+      <p class="lead">以下按直播期间收到的信息整理。每位嘉宾后面都附上对 Santoni 的直接启发。</p>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">01</div>
+          <h3>Style3D / StyleClaw: 服装企业数字伙伴平台</h3>
+          <p>从 3D 设计工具升级为企业级 Agent 中台。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>StyleClaw 的定位是服装企业量身定做的数字伙伴平台，不只面向设计师，而是面向企业所有员工。</li>
+            <li>平台架构包括一个入口、通用助手、专家智能体、技能市场、IM/微信联通、记忆中心、资产库联通、权限治理和能力注册管理。</li>
+            <li>已展示技能覆盖款式生成、图案生成、面料检索、TP 翻译、竞品分析、提案生成、订单分析、趋势报告、选款助手、AI 生成版改版、AI 齐色齐码等。</li>
+            <li>核心叙事是把企业资产变成可调用的数据，把个人经验沉淀成组织记忆。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> Style3D 正在占据前端设计协同和企业 Agent 中台心智。Santoni 不宜从零做另一个泛服装设计 Agent，而要成为 Style3D 后面的生产交付专家层。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">02</div>
+          <h3>报喜鸟: 定制服务智能化</h3>
+          <p>高端定制从服务经验转成数据资产。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>报喜鸟把定制业务定义为服务业，不是普通零售业。核心在于理解客户需求、量体、方案、沟通、改版、试穿和售后。</li>
+            <li>AI 破局路径是构建智能服务大模型，平衡效率、品质、成本和体验。</li>
+            <li>重点智能体包括量体智能体、诊断设计智能体、试穿推荐智能体。</li>
+            <li>用户体型、偏好、购买习惯、场景和历史行为会沉淀成长期资产。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> Santoni 也有大量经验资产，只是目前散落在打板师、应用工程师、售后工程师和客户项目中。Athena 的价值不是回答问题，而是把这些经验转成可复用的生产决策。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">03</div>
+          <h3>阿里云通义千问: 真实世界智能体底座</h3>
+          <p>多模态、工具调用、GUI Agent 和长程任务能力。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>Qwen 家族覆盖 Omni、ASR、TTS、VL、Embedding、Reranker、Coder、Image Edit、Guard、Wan 视频生成等能力。</li>
+            <li>Qwen3.7-Max 强调编程智能体、通用推理和长程自主任务。</li>
+            <li>Qwen3.7-Plus 强调多模态推理、视觉搜索、视觉编程和 GUI Agent。</li>
+            <li>训练方法强调 RL Environment Scaling，让模型在浏览器、代码、工具、本地服务和公开服务中完成真实任务。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> 大模型底座会越来越通用，Santoni 不应该把研发资源耗在追模型能力上，而要把 SWS/Arachne、机器、工艺、报警、质量、样衣反馈封装成模型可调用的工具环境。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">04</div>
+          <h3>Alsico: 欧洲工装制造商的 3D 协同</h3>
+          <p>用仿真和 AI 生图视频提升客户共创。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>Alsico 的挑战是工作场景变化、员工体型多样、防护要求提升、旧版型不适配新场景。</li>
+            <li>它的转变是从 product-led 到 customer-led，从 static catalogue 到 dynamic demand-driven，从 standard 到 personalised。</li>
+            <li>Style3D 用于工装功能设计、不同体型适配、口袋位置、反光设计、压力和舒适性验证。</li>
+            <li>3D 和 AI 视频让客户更快、更直观看到成衣上身效果，减少误解、样衣迭代和审批周期。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> 客户真正买的是确定性。无缝服装也需要把弹力区、支撑区、压缩区、透气区和运动姿态前移到数字空间验证。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">05</div>
+          <h3>法良时装: 数智化制造模式</h3>
+          <p>重构人、机、料、法、环、测。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>法良指出中国服装制造的根问题是劳动力: 成本上涨、劳动时间缩短、年轻人不愿进厂、未来劳动力减少。</li>
+            <li>单独的软件、硬件、自动化设备、工业互联网、AI 都不能解决问题，必须有机整合。</li>
+            <li>数字化模式包括: 最好的经验逻辑形成软件管理系统，以自动化设备取代人工，以工业互联网形成可靠数据，以 AI 算法赋能制造。</li>
+            <li>目标是品质最优、效率成倍提升、人工大量减少。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> 这是最接近 Santoni 本质的观点。Santoni 的行业 Agent 不该只解决“设计好不好看”，而要解决制造效率和劳动替代。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">06</div>
+          <h3>杭州锦惠: ODM 数字员工矩阵</h3>
+          <p>先数字化工作，再让数字员工和物理员工协作。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>第一阶段布局四大系统: SLM 款式维度、ERP 订单维度、APS 排产维度、MDS 面料维度，构筑私域数据底座。</li>
+            <li>数字化进化路径是单点工具、在线系统协同、线下 QR Code 集成，逐步从孤岛工具变成物理数字生态。</li>
+            <li>数字员工不是替代人，而是承担计算、翻译、录入、检索、流程流转和信息巡检。</li>
+            <li>应用节点覆盖资产、营销、开发设计、订单前处理、生产质量跟踪、交付。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> Athena 不应该只是一个 Agent，而应规划成数字员工矩阵。第一批数字员工应围绕无缝打板、工艺、机器、质检和交付。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">07</div>
+          <h3>泉州望思达 YSTAR: 定制球服智能工厂</h3>
+          <p>小批量、多 SKU、快交付的样板。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>望思达做定制运动服，特点是 7 天交付、MOQ 1 件、30+ 国家覆盖、月产 250,000+ 件。</li>
+            <li>传统痛点包括周期长、人工错误、订单不透明、系统割裂、实物打样成本高。</li>
+            <li>Style3D 提供 3D Studio、GPU 渲染、3D 模型直接导出印花排版文件、Python 脚本自动化、30000+ 3D Blocks 数字资产库。</li>
+            <li>三年路径是基础建设、能力提升、全面贯通，最终从 3D 到生产排版和 ERP 打通。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> 客户会为“更快交付、少返工、可追踪、低成本”买单。Athena 的 KPI 不应是生成多少设计图，而应是减少多少打样轮次、缩短多少打板周期、降低多少生产问题。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">08</div>
+          <h3>啊咪啦 Mige: 商品企划 AI 方法论</h3>
+          <p>四看五定，把判断变成行动。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>AI 落地四步是在线化、BI 化、自动化、AI 化。很多企业喊 AI，但第一步还没过。</li>
+            <li>商品企划方法论是“四看五定”: 看行业、看竞品、看客群、看自己；定策略、定结构、定节奏、定预算、定指令。</li>
+            <li>AI 先做数据清洗和结构化，再做仪表盘、结论总结、预算计算、执行总表和群内协作。</li>
+            <li>AI 是罗盘，人是船长。AI 做数据处理、语义分析、逻辑校验，人做方向判断、审美、取舍和拍板。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> Athena 的核心用户不是 IT 或 AT，而是业务人员: 打板师、应用工程师、生产主管、售后工程师。关键是教会他们如何把业务 SOP 转成可复用的 AI 指令。</p>
+        </div>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-side">
+          <div class="num">09</div>
+          <h3>Very Group: 零售采购方的 3D 协作要求</h3>
+          <p>供应商不拥抱技术会被品牌方淘汰。</p>
+        </div>
+        <div class="speaker-body">
+          <ul>
+            <li>Very 是英国零售和金融服务平台，拥有 2000+ 品牌、400 万+ 活跃客户、FY2025 超过 20 亿英镑收入。</li>
+            <li>他们的痛点是样衣执行偏差、proto 后设计修改、样衣命中率低、开发和订单周期长。</li>
+            <li>Kashion 案例中，Style3D 将总 lead time 从 20 周缩短到 12 周，前段开发从 6 周缩短到 2 周。</li>
+            <li>落地模式包括 In-house Design、Collaborative、Supplier-led Design，说明品牌方允许不同团队用不同协作方式导入 3D。</li>
+            <li>QA 中明确表示: 如果供应商还用老方法工作，零售商未来不会再使用这类供应商。</li>
+          </ul>
+          <p><strong>对 Santoni 的启发:</strong> 对 OEM/ODM 来说，AI+3D 将从加分项变成准入门槛。Athena 的价值应翻译成品牌方语言: 更少样衣、更快确认、更低返工、更透明进度、更快 production readiness。</p>
+        </div>
+      </article>
+    </section>
+
+    <section id="patterns">
+      <h2>跨案例共性趋势</h2>
+      <div class="grid two">
+        <div class="card">
+          <span class="tag">趋势 1</span>
+          <h3>3D 正在从展示工具变成生产前置系统</h3>
+          <p>Style3D 的价值不再只是看效果，而是把设计确认、样衣评审、图案定位、齐色齐码、排料、生产文件和客户协作前移。</p>
+        </div>
+        <div class="card">
+          <span class="tag">趋势 2</span>
+          <h3>Agent 的前提是数据底座</h3>
+          <p>锦惠、啊咪啦、StyleClaw 都在讲同一件事: 数据必须在线化、结构化、自动化，AI 才有用。没有业务对象和数据治理，Agent 只是聊天窗口。</p>
+        </div>
+        <div class="card">
+          <span class="tag">趋势 3</span>
+          <h3>数字资产会成为新壁垒</h3>
+          <p>款式库、面料库、3D Blocks、客户偏好、历史订单、版型、工艺、质量问题和机器参数，都会变成企业资产。数据躺在库里是成本，被业务调用才是资产。</p>
+        </div>
+        <div class="card">
+          <span class="tag">趋势 4</span>
+          <h3>业务人员才是 AI 落地核心</h3>
+          <p>成功案例都不是 IT 部门单独推动，而是 CEO、一线业务、设计、采购、生产、质量一起改变工作流。AI 工具必须进入真实工作场景。</p>
+        </div>
+        <div class="card">
+          <span class="tag">趋势 5</span>
+          <h3>品牌方正在倒逼供应商数字化</h3>
+          <p>SHEIN 式速度让传统零售商向供应商要更快、更敏捷、更透明的响应。不会 3D/AI 协同的供应商，正在失去未来订单资格。</p>
+        </div>
+        <div class="card">
+          <span class="tag">趋势 6</span>
+          <h3>AI 的价值指标正在回到业务结果</h3>
+          <p>真正被认可的指标是 lead time、样衣轮次、返工率、审批速度、交期、良率、产能利用率和成本，而不是生成内容数量。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="calibration">
+      <h2>我对现场判断的独立校准</h2>
+      <p class="lead">这里刻意不顺着任何一方说。会议里的案例很强，但也容易让人得出过度简化的结论。下面是我认为需要修正的地方。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>原始倾向</th>
+              <th>我的修正</th>
+              <th>对 Santoni 的含义</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Style3D 比 Santoni 快，所以 Santoni 不要做设计。</td>
+              <td>更准确地说，是 Santoni 不具备做泛服装设计平台所需的用户飞轮。问题不是“晚”，而是“战场不对”。</td>
+              <td>如果 Santoni 能把 SWS/Arachne 和机器经验产品化，仍有独特位置；但这个位置不是设计师灵感入口。</td>
+            </tr>
+            <tr>
+              <td>软件对单一客户是赢家通吃。</td>
+              <td>不完全。大客户常常多工具并存，按品类、供应商、地区和团队分工。但核心工作流一旦绑定，迁移成本确实很高。</td>
+              <td>不要指望客户因为一个自然语言功能迁移设计平台。Athena 应该成为现有设计工具之后的生产工程插件或中台。</td>
+            </tr>
+            <tr>
+              <td>Santoni 的优势是设备理解和打板软件。</td>
+              <td>我同意，但这句话还不够。优势必须被产品化为接口、规则、数据模型、知识库和可验证 KPI，否则只是内部专家经验。</td>
+              <td>第一优先级不是 UI，而是把 Santoni know-how 结构化，让模型能调用，让客户能验证收益。</td>
+            </tr>
+            <tr>
+              <td>OEM/ODM 工厂反馈不足，产品会变成定制软件。</td>
+              <td>有风险，但不是必然。前提是 Santoni 抽象的是跨工厂共通问题: 打板风险、机型匹配、质量追溯、交期成本，而不是每个客户的表格字段。</td>
+              <td>产品经理必须把客户需求分成“行业共性能力”和“项目配置”，否则 Athena 会被定制项目拖死。</td>
+            </tr>
+            <tr>
+              <td>AI 重点在业务人员，不在 IT/AT。</td>
+              <td>方向正确，但容易低估技术底座。业务人员决定场景和判断，技术团队决定数据治理、工具接口、权限、安全和可维护性。</td>
+              <td>最佳组织是业务 owner + 产品经理 + AI/数据工程 + SWS/Arachne 专家 + 应用工程师，而不是把任务交给两位开发同事孤军推进。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notice danger">
+        <p class="callout-title">最需要警惕的自我安慰</p>
+        <ul>
+          <li>“我们懂设备，所以客户一定会用。” 错。客户只会为缩短周期、减少返工、提升良率和降低人工买单。</li>
+          <li>“自然语言交互就是 AI 产品。” 错。没有结构化工具能力，自然语言只是更友好的搜索框。</li>
+          <li>“先做 demo 再说。” 危险。服装制造客户看过太多 demo，真正能落地的是可重复、可追踪、可接入现有流程的能力。</li>
+          <li>“Style3D 做前端，我们做后端就行。” 也不够。Style3D 会继续向生产准备下探，Santoni 必须定义更深的无缝/针织边界。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="santoni">
+      <h2>对 Santoni 当前 Design Agent 定位的判断</h2>
+      <div class="notice danger">
+        <p class="callout-title">如果 Design Agent 被定义为“自然语言生成 3D 仿真设计工具”，战略上非常危险。</p>
+        <ul>
+          <li><strong>问题一: 设计软件 know-how 不够。</strong> Santoni 的强项不在泛服装设计审美、素材运营、设计师日常工作流和市场企划。</li>
+          <li><strong>问题二: 起步晚且用户心智不利。</strong> Style3D、CLO 已经占据设计师工具心智。设计软件学习成本高，单一客户通常不会长期并行学习多个同类工具。</li>
+          <li><strong>问题三: 研发资源不匹配。</strong> 如果 Santoni 只有少数同事负责 Design Agent，就不应进入需要大规模产品、算法、素材、社区、客户成功和生态运营的战场。</li>
+          <li><strong>问题四: 反馈闭环不足。</strong> 当前目标用户偏 OEM/ODM 工厂，天然更关注交期、打样、生产和质量。用这类用户去迭代泛设计工具，最后容易变成客户定制项目，而不是通用平台。</li>
+        </ul>
+      </div>
+
+      <div class="notice good">
+        <p class="callout-title" style="color: var(--green);">更好的定位: Athena 是 Santoni 无缝/针织的 Operation Agent。</p>
+        <p>Style3D 解决“设计看得见、客户能确认”；Santoni 解决“设计能不能做、怎么做、做得稳不稳、成本和交期怎么算、出现问题怎么追溯”。这才是 Santoni 的天然优势区。</p>
+        <p><strong>但这不等于完全放弃设计。</strong> Athena 仍然需要理解设计，只是目的不是替设计师创作，而是把设计翻译成可生产的工程语言。它应该是 Design Understanding to Production Engineering，而不是 Text to Fashion Design。</p>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <span class="tag red">不要主打</span>
+          <h3>自然语言到服装设计</h3>
+          <ul>
+            <li>前端竞争激烈，且离 Santoni 设备优势远。</li>
+            <li>难以获得足够设计师使用反馈。</li>
+            <li>容易成为 demo 漂亮但业务复用低的产品。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag green">应该主打</span>
+          <h3>设计到打板到生产</h3>
+          <ul>
+            <li>读取和理解 Style3D/CLO/Illustrator/图片/TP 输入。</li>
+            <li>转成 SWS/Arachne 可编辑方案。</li>
+            <li>推荐机型、组织、纱线、参数和工艺路线。</li>
+            <li>检查风险并沉淀样衣、试产、质量反馈。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="notice">
+        <h3>我建议的产品边界</h3>
+        <p><strong>可以做设计理解:</strong> 解析图片、技术包、Style3D/CLO 文件、Illustrator 图稿、自然语言需求，识别款式结构、功能区、颜色、组织意图和尺寸约束。</p>
+        <p><strong>谨慎做设计生成:</strong> 可以生成无缝/针织相关的局部方案、组织变化、功能分区建议，但不要把“生成一件完整服装设计”作为主卖点。</p>
+        <p><strong>必须做生产工程:</strong> 输出 SWS/Arachne 初稿、工艺路线、机型建议、参数建议、风险报告、样衣验证清单、质量追溯对象。</p>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <h2>Athena 应补齐的能力与优先级</h2>
+      <p class="lead">ERP 只是外部业务系统之一。Athena 的核心不应是 ERP，而应是无缝/针织工艺知识、SWS/Arachne 文件能力、设备数据和生产闭环。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>优先级</th>
+              <th>能力模块</th>
+              <th>为什么重要</th>
+              <th>建议做法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="priority">P0</span></td>
+              <td>统一业务数据模型</td>
+              <td>没有共同对象，Agent 无法跨设计、打板、生产、质量协作。</td>
+              <td>定义款式、部位、功能区、组织、纱线、机型、SWS/Arachne 文件、样衣版本、工艺路线、订单、质量问题、机器事件等核心对象。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P1</span></td>
+              <td>SWS/Arachne Copilot</td>
+              <td>这是 Santoni 最独特的护城河，也是打板师每天能用的入口。</td>
+              <td>实现文件读取、结构解释、区域识别、组织推荐、错误提示、局部修改、版本差异说明。先不追求全自动，先做高频辅助。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P2</span></td>
+              <td>可制造性检查与工艺推荐</td>
+              <td>品牌和工厂最关心的是能不能做、风险在哪、怎么改。</td>
+              <td>建立 Design-to-Pattern Checker，输出机型兼容性、针数约束、浮线、张力、弹性、色区切换、尺寸稳定性、生产效率风险。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P3</span></td>
+              <td>样衣与试产闭环</td>
+              <td>没有反馈，Agent 不会越来越懂生产。经验仍会停留在人脑里。</td>
+              <td>把样衣问题、改版原因、客户意见、试产参数、缺陷照片、处理方案和最终版本绑定到款式与工艺对象。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P4</span></td>
+              <td>车间数据与质量追溯</td>
+              <td>从打板助手升级为 Operation Agent 的关键。</td>
+              <td>接入机器状态、报警、停机原因、产量、良率、质检数据、纱线批次、操作记录，支持根因分析和预警。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P5</span></td>
+              <td>ERP/MES/PLM/Style3D 集成</td>
+              <td>集成重要，但不应先做成中心。先有工艺价值，再接外部系统。</td>
+              <td>与 ERP 同步订单、BOM、交期、成本；与 Style3D/CLO 接收设计资产；与 MES 同步生产执行。重点是接口标准化。</td>
+            </tr>
+            <tr>
+              <td><span class="priority">P6</span></td>
+              <td>自然语言与多模态入口</td>
+              <td>这是使用体验，不是核心能力。必须服务业务动作。</td>
+              <td>支持用户用文字、图片、TP、截图和文件询问: 怎么打板、哪里有风险、如何改、用什么机型、预计成本和交期。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top: 24px;">验证性 KPI: 不用这些指标，Athena 很容易跑偏</h3>
+      <div class="grid four">
+        <div class="card compact">
+          <span class="tag green">KPI 1</span>
+          <h3>打板周期</h3>
+          <p>从客户输入到 SWS/Arachne 初稿的时间，目标应按小时或天缩短，而不是按“生成内容数量”衡量。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag green">KPI 2</span>
+          <h3>样衣轮次</h3>
+          <p>减少因理解偏差、组织选择、尺寸风险和生产限制导致的返工。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag green">KPI 3</span>
+          <h3>生产问题闭环率</h3>
+          <p>报警、停机、缺陷、改版是否能回连到文件、工艺、纱线和机器参数。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag green">KPI 4</span>
+          <h3>专家时间释放</h3>
+          <p>应用工程师、打板师、售后工程师是否减少重复解释、重复排查和重复文档整理。</p>
+        </div>
+      </div>
+
+      <div class="notice danger">
+        <h3>不要做清单</h3>
+        <ul>
+          <li>不要先做一个漂亮聊天界面，再回头找业务场景。</li>
+          <li>不要把“能生成 3D 设计图”当成 Athena 的核心 demo。</li>
+          <li>不要把 ERP 集成当作第一优先级；没有工艺和文件能力，ERP 只是同步数据。</li>
+          <li>不要让客户项目把通用产品拖成定制报表和定制字段。</li>
+          <li>不要只依赖两位开发同事推进。这个项目需要产品、业务专家、数据、AI、SWS/Arachne 和客户成功协同。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>建议的数字员工矩阵</h2>
+      <div class="grid four">
+        <div class="card compact">
+          <span class="tag">01</span>
+          <h3>打板智能体</h3>
+          <p>读写 SWS/Arachne，生成初稿，解释结构，推荐组织，比较版本。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">02</span>
+          <h3>工艺智能体</h3>
+          <p>推荐机型、纱线、针距、张力、功能分区和生产 recipe。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">03</span>
+          <h3>可制造性智能体</h3>
+          <p>检查浮线、弹性、尺寸、色区、组织冲突、效率和稳定性风险。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">04</span>
+          <h3>样衣闭环智能体</h3>
+          <p>记录试样问题、改版原因、客户反馈和最终确认逻辑。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">05</span>
+          <h3>质量追溯智能体</h3>
+          <p>把缺陷、报警、机器参数、纱线批次和工艺版本关联起来。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">06</span>
+          <h3>报价交期智能体</h3>
+          <p>根据复杂度、机型、工时、材料和产能估算成本与交付风险。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">07</span>
+          <h3>设备服务智能体</h3>
+          <p>辅助售后工程师做报警诊断、维修建议、备件和知识检索。</p>
+        </div>
+        <div class="card compact">
+          <span class="tag">08</span>
+          <h3>客户协同智能体</h3>
+          <p>把品牌设计意图翻译成工厂语言，并把生产风险翻译回品牌语言。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <h2>落地路线图</h2>
+      <div class="timeline">
+        <div class="card">
+          <span class="tag gold">0-90 天</span>
+          <h3>先证明 Santoni know-how 的价值</h3>
+          <ul>
+            <li>选 2 到 3 个真实客户款式做样板。</li>
+            <li>建立最小工艺知识库和 SWS/Arachne 文件解释能力。</li>
+            <li>做一个打板风险检查报告: 机器、组织、纱线、尺寸、张力、生产稳定性。</li>
+            <li>衡量指标: 打板师是否愿意每天用，是否减少沟通和返工。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag gold">3-6 个月</span>
+          <h3>做成打板到样衣的闭环</h3>
+          <ul>
+            <li>接入样衣反馈、改版记录、问题照片和最终确认版本。</li>
+            <li>上线工艺推荐和版本差异解释。</li>
+            <li>设计一套业务人员提示词模板，让应用工程师和打板师能复用。</li>
+            <li>衡量指标: 样衣轮次、改版时间、问题重复率。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag gold">6-12 个月</span>
+          <h3>升级为生产 Operation Agent</h3>
+          <ul>
+            <li>接入机器报警、停机、产量、质检和订单数据。</li>
+            <li>实现质量追溯、产能风险、报价交期估算。</li>
+            <li>与 Style3D/CLO/Illustrator 做输入集成，与 ERP/MES 做输出集成。</li>
+            <li>衡量指标: 交期准确率、良率、停机原因闭环率、客户确认周期。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>对外叙事建议</h2>
+      <div class="notice gold">
+        <p><strong>不要说:</strong> “我们也有一个自然语言 3D 设计 Agent。”</p>
+        <p><strong>应该说:</strong> “Athena 是 Santoni seamless knitting 的生产智能体，帮助工厂把 Style3D/CLO/AI/图片/技术包中的设计意图快速转成可打板、可生产、可追踪、可优化的 Santoni 工艺与机器方案。”</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <span class="tag green">给 OEM/ODM 工厂的话术</span>
+          <ul>
+            <li>更快从客户设计到打板初稿。</li>
+            <li>提前发现生产风险，减少样衣和返工。</li>
+            <li>沉淀工艺经验，降低对少数老师傅的依赖。</li>
+            <li>让品牌方看到更透明、更专业、更可控的供应商能力。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag green">给品牌方的话术</span>
+          <ul>
+            <li>更快确认无缝/针织产品是否可生产。</li>
+            <li>更清楚看到设计修改对成本、交期、质量的影响。</li>
+            <li>供应商能用数字化方式响应，而不是靠邮件和经验反复沟通。</li>
+            <li>从设计确认到 production readiness 的周期更短。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="questions">
+      <h2>必须尽快回答的内部问题</h2>
+      <div class="notice danger">
+        <ul>
+          <li>Design Agent 还要不要继续把“自然语言生成 3D 设计”作为主定位？如果继续，资源、用户反馈、生态和差异化从哪里来？</li>
+          <li>SWS/Arachne 文件是否有稳定的读取、解析、修改和生成接口？如果没有，这件事比做聊天界面更优先。</li>
+          <li>Santoni 的应用工程、售后、打板经验是否已经结构化？谁负责把经验变成知识库和业务提示词？</li>
+          <li>第一批试点客户是谁？是设计导向客户，还是愿意用 Athena 改善打板、试样、生产和质量的 OEM/ODM 工厂？</li>
+          <li>Athena 的核心 KPI 是什么？如果仍然用“生成效果”衡量，会偏离真正价值。建议用打样周期、返工率、生产问题、交期、良率和工程师效率衡量。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>最终建议</h2>
+      <div class="quote">Santoni 不需要成为下一个 Style3D。Santoni 应该成为 Style3D、CLO、Illustrator 和 AI 设计工具之后，最懂无缝/针织生产的智能交付层。</div>
+      <p class="lead">今天这些案例已经说明，领先公司正在执行的策略不是“做一个 AI 功能”，而是重构业务流程、数据资产、组织协作和生产交付。Santoni 如果继续把行业 Agent 做成单点设计工具，会错过更大的机会。真正应该做的是让 Athena 成为 OEM/ODM 工厂的生产智能伙伴，让 Santoni 的设备理解、打板软件和工艺经验变成行业无法绕开的能力。</p>
+    </section>
+
+    <div class="foot">
+      <p>Version 2.0. Prepared for internal discussion on 2026-06-04. Source: live-session notes and screenshots provided during Style3D AI+3D partner summit, plus public reality-check references listed above.</p>
+    </div>
+  </main>
+</body>
+</html>

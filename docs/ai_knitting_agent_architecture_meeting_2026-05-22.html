@@ -373,16 +373,16 @@
     <section>
       <h2>0. 一句话结论</h2>
       <p class="lead">
-        AI Knitting Agent 不应该被定义成一个单独聊天机器人，而应该是连接品牌设计、MyKnit 参数化定制、SWS 高级打样、OEM 工厂服务和 Santoni 内部系统的智能工作层。
+        AI Knitting Agent 不应该被定义成一个单独聊天机器人，而应该是连接品牌设计、Arachne Knit Pilot 参数化定制、SWS 高级打样、OEM 工厂服务和 Santoni 内部系统的智能工作层。
       </p>
       <div class="summary">
         <div class="item">
           <strong>业务价值</strong>
-          缩短从设计意图到无缝打样、生产文件、订单 ROI 判断和服务响应之间的沟通链路。
+          缩短从设计意图到无缝打样、生产文件、订单 ROI 判断、行业机会识别和服务响应之间的沟通链路。
         </div>
         <div class="item">
           <strong>技术原则</strong>
-          SWS、Web、MyKnit、飞书只是不同入口，底层应复用同一个 Agent Core 和工具接口。
+          SWS、Web、Arachne Knit Pilot、飞书只是不同入口，底层应复用同一个 Agent Core 和工具接口。
         </div>
         <div class="item">
           <strong>当前策略</strong>
@@ -409,13 +409,14 @@
       <ul>
         <li>减少设计师和打样师之间关于设计可行性、纱线、组织结构、机器参数和样衣差异的反复沟通。</li>
         <li>帮助品牌方或 ODM 更早判断设计图能否转化为无缝工艺，以及转化后可能出现的差异。</li>
-        <li>把 SWS、MyKnit、服务案例库、机器数据、工单系统等子系统通过统一 Agent Core 串起来。</li>
+        <li>把 SWS、Arachne Knit Pilot、服务案例库、机器数据、工单系统等子系统通过统一 Agent Core 串起来。</li>
         <li>帮助 OEM 工厂老板判断订单是否值得接、是否有能力接，以及接单后的 ROI、利润和产能风险。</li>
+        <li>定期监测行业、竞品、客户、政策和海外市场动态，并转化为销售、产品、服务和市场动作建议。</li>
         <li>让客户服务场景从“人工理解问题”转向“Agent 先收集信息、匹配案例、尝试安全在线排查、再决定是否派工”。</li>
         <li>沉淀 Santoni 的工艺知识、服务经验和工具使用流程，形成可复用的数字化能力。</li>
       </ul>
 
-      <h3>1.3 面向三类核心业务场景</h3>
+      <h3>1.3 面向四类核心业务场景</h3>
       <table>
         <thead>
           <tr>
@@ -444,6 +445,12 @@
             <td>评估订单是否值得接、产能是否能承接、资源瓶颈在哪里、接单后预计收益和风险。</td>
             <td>ROI、毛利/贡献毛利、机器小时收益、产能占用、交期风险、建议报价或接单条件。</td>
           </tr>
+          <tr>
+            <td>行业情报 / 商机雷达</td>
+            <td>Santoni 销售、产品、市场、管理层、区域负责人</td>
+            <td>监测展会、竞品、客户、市场、政策、技术和海外投资动态，并判断对 Santoni 的影响。</td>
+            <td>情报摘要、影响分析、销售话术、客户名单、产品策略、demo 场景、跟进任务。</td>
+          </tr>
         </tbody>
       </table>
     </section>
@@ -458,7 +465,7 @@
         <div class="layer">
           <div class="layer-title">入口层 Entry Channels</div>
           <div class="boxes">
-            <div class="box"><b>MyKnit 入口</b>当前 demo 的设计闭环：款式、纱线、面料结构、3D 静态展示和生产文件。</div>
+            <div class="box"><b>Arachne Knit Pilot 入口</b>当前 demo 的设计闭环：款式、纱线、面料结构、3D 静态展示和生产文件。</div>
             <div class="box"><b>SWS 入口</b>未来高级包：专业打样、强仿真、更多参数和工艺修改。</div>
             <div class="box"><b>Web 入口</b>客户试用、销售 demo、轻量设计和服务交互。</div>
             <div class="box"><b>飞书 Bot</b>内部协作、通知、审批、服务状态跟踪。</div>
@@ -479,9 +486,11 @@
           <div class="layer-title">AI Knitting Agent Core</div>
           <div class="boxes">
             <div class="box"><b>Main Agent</b>识别角色、意图、语言、入口、workflow state。</div>
+            <div class="box"><b>PMO Agent</b>证据驱动项目进度、风险预警、周报、决策跟踪。</div>
             <div class="box"><b>Designer Agent</b>设计意图理解、SWS/纱线/组织/机器建议。</div>
             <div class="box"><b>Service Agent</b>服务 intake、案例匹配、在线排查、派工准备。</div>
             <div class="box"><b>OEM ROI Agent</b>订单 ROI、接单能力、产能瓶颈和收益风险判断。</div>
+            <div class="box"><b>Industry Radar Agent</b>行业情报、竞品预警、海外机会和行动建议。</div>
             <div class="box"><b>Evaluation & Guardrails</b>安全规则、缺失信息检查、动作确认。</div>
           </div>
         </div>
@@ -490,9 +499,10 @@
           <div class="layer-title">Tool / Adapter Layer</div>
           <div class="boxes">
             <div class="box"><b>SWS Adapter</b>文件解析、程序生成、仿真结果、版本对比。</div>
-            <div class="box"><b>MyKnit Adapter</b>款式/图案/颜色选择、生产文件生成、订单上下文。</div>
+            <div class="box"><b>Arachne Knit Pilot Adapter</b>款式/图案/颜色选择、生产文件生成、订单上下文。</div>
             <div class="box"><b>Service Tooling</b>案例库、激活密码、工单、备件、工程师排班。</div>
-            <div class="box"><b>Data Connectors</b>CRM(SQL)、CPQ(主要数据在 MongoDB)、Service System(MySQL)、纱线、APS、DPP、设备数据。</div>
+            <div class="box"><b>Project Evidence Adapter</b>任务、文档、PR、测试、会议纪要、Change Log。</div>
+            <div class="box"><b>Data Connectors</b>CRM(SQL)、CPQ(主要数据在 MongoDB)、Service System(MySQL)、纱线、APS、DPP、Santoni IOT / 设备数据。</div>
           </div>
         </div>
       </div>
@@ -513,7 +523,7 @@
         </div>
         <div class="step">
           <strong>阶段 2：公司内网服务器</strong>
-          <p>团队连入公司网络或 VPN 后访问。适合内部 demo、服务团队测试、SWS/MyKnit 联调。</p>
+          <p>团队连入公司网络或 VPN 后访问。适合内部 demo、服务团队测试、SWS/Arachne Knit Pilot 联调。</p>
         </div>
         <div class="step">
           <strong>阶段 3：Staging 云环境</strong>
@@ -553,8 +563,8 @@
             <td><span class="tag blue">P0</span></td>
           </tr>
           <tr>
-            <td>MyKnit 参数化设计辅助</td>
-            <td>通过自然语言定义 MyKnit 所需参数变量，覆盖款式、纱线、面料结构、图案、颜色、3D 静态展示和生产文件生成。</td>
+            <td>Arachne Knit Pilot 参数化设计辅助</td>
+            <td>通过自然语言定义 Arachne Knit Pilot 所需参数变量，覆盖款式、纱线、面料结构、图案、颜色、3D 静态展示和生产文件生成。</td>
             <td><span class="tag blue">P0</span></td>
           </tr>
           <tr>
@@ -575,6 +585,11 @@
           <tr>
             <td>OEM 订单 ROI 与接单能力判断</td>
             <td>根据订单数量、价格、交期、工艺难度、机器产能、纱线/人工/能耗/换款成本、良率和机会成本，判断订单是否值得接、是否有能力接，以及预计收益。</td>
+            <td><span class="tag green">P1</span></td>
+          </tr>
+          <tr>
+            <td>Industry Radar 行业情报雷达</td>
+            <td>定期抓取展会、竞品、客户、市场、政策、技术、原料和海外机会信息，输出“发生了什么、为什么重要、建议做什么”。</td>
             <td><span class="tag green">P1</span></td>
           </tr>
           <tr>
@@ -613,9 +628,9 @@
             <td><span class="tag cyan">P2</span></td>
           </tr>
           <tr>
-            <td>MyKnit</td>
+            <td>Arachne Knit Pilot</td>
             <td>客户自助定制 Web 应用</td>
-            <td>客户选择款式、花纹、图案、颜色后，一键生成无缝织机生产文件；当前 demo 可优先使用 MyKnit 覆盖部分 SWS 能力，包括款式设计、纱线选择、面料结构和 3D 静态展示。</td>
+            <td>客户选择款式、花纹、图案、颜色后，一键生成无缝织机生产文件；当前 demo 可优先使用 Arachne Knit Pilot 覆盖部分 SWS 能力，包括款式设计、纱线选择、面料结构和 3D 静态展示。</td>
             <td><span class="tag blue">P0</span></td>
           </tr>
           <tr>
@@ -627,7 +642,7 @@
           <tr>
             <td>CPQ</td>
             <td>配置报价系统 / 主要数据在 MongoDB</td>
-            <td>提供产品配置、报价规则、选项约束、成本和方案版本。可服务于 SWS/MyKnit 的配置校验和报价建议。</td>
+            <td>提供产品配置、报价规则、选项约束、成本和方案版本。可服务于 SWS/Arachne Knit Pilot 的配置校验和报价建议。</td>
             <td><span class="tag cyan">P2</span></td>
           </tr>
           <tr>
@@ -641,6 +656,12 @@
             <td>生产与财务数据源</td>
             <td>提供机器负荷、班次、历史产量、人工成本、能耗、换款时间、良率、实际成本和交付记录。</td>
             <td><span class="tag cyan">P2</span></td>
+          </tr>
+          <tr>
+            <td>Industry Source Registry</td>
+            <td>行业情报源管理</td>
+            <td>维护展会官网、竞品官网、品牌新闻、政策机构、行业媒体、RSS、关键词和可信度评分，供定时任务检索。</td>
+            <td><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td>Service Case Library</td>
@@ -673,10 +694,10 @@
             <td><span class="tag cyan">P2</span></td>
           </tr>
           <tr>
-            <td>APS / 排产系统</td>
-            <td>生产计划系统</td>
-            <td>估算打样周期、产能、交期、生产资源。</td>
-            <td><span class="tag cyan">P2</span></td>
+            <td><a href="APS_Development_Plan.html">APS / 排产系统</a></td>
+            <td>生产计划排单工具</td>
+            <td>从 ERP 接收订单，在物料采购/出库后由计划人员排单和插单，并生成工单下发到机台；也可为 ROI Engine 提供产能、交期、插单影响和机器资源约束。</td>
+            <td><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td>DPP / 产品数据系统</td>
@@ -685,10 +706,10 @@
             <td><span class="tag cyan">P2</span></td>
           </tr>
           <tr>
-            <td>设备数据 / IoT</td>
-            <td>机器遥测</td>
-            <td>读取报警、运行状态、停机、历史故障、关键参数。</td>
-            <td><span class="tag cyan">P2</span></td>
+            <td>Santoni IOT System / 中国本地化 Nautilus</td>
+            <td>机联网与实际执行数据</td>
+            <td>中国团队本地化的 Nautilus，用于机台实时监控、订单/程序下发、Dashboard、OEE/效率/停机/故障/产量分析、API 和工厂资源配置；支撑 Service、APS、ROI、Advanced Maintenance 和 Smart Machine。</td>
+            <td><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td>备件 / 库存系统</td>
@@ -708,15 +729,15 @@
         数据库类型用于帮助技术团队评估 Adapter 方案。Agent 层不应直接暴露 SQL、MongoDB 或 MySQL 的生产库写权限；推荐由各子系统提供受控 API，或先建立只读/受限权限的 Adapter 服务。
       </div>
 
-      <h3>3.3 Demo 策略调整：MyKnit-first，SWS Advanced</h3>
+      <h3>3.3 Demo 策略调整：Arachne Knit Pilot-first，SWS Advanced</h3>
       <p>
-        当前 demo 不必强依赖 SWS。MyKnit 已经具备客户选择款式、花纹、图案、颜色并生成无缝织机生产文件的能力；如果进一步把 MyKnit 内所有可变参数设计成清晰 schema，Agent 就可以用自然语言定义这些参数，并在用户交互层实现 3D 静态图的呈现和修改。
+        当前 demo 不必强依赖 SWS。Arachne Knit Pilot 已经具备客户选择款式、花纹、图案、颜色并生成无缝织机生产文件的能力；如果进一步把 Arachne Knit Pilot 内所有可变参数设计成清晰 schema，Agent 就可以用自然语言定义这些参数，并在用户交互层实现 3D 静态图的呈现和修改。
       </p>
       <p>
-        因此建议当前设计侧 demo 采用 <strong>MyKnit-first</strong> 路线：先用 MyKnit 承载款式设计、纱线选择、面料结构、颜色/图案配置、3D 静态展示和生产文件生成。未来 SWS 成熟后，再作为 <strong>SWS Advanced Package</strong> 引入更丰富的参数、更强仿真和专业打样能力。
+        因此建议当前设计侧 demo 采用 <strong>Arachne Knit Pilot-first</strong> 路线：先用 Arachne Knit Pilot 承载款式设计、纱线选择、面料结构、颜色/图案配置、3D 静态展示和生产文件生成。未来 SWS 成熟后，再作为 <strong>SWS Advanced Package</strong> 引入更丰富的参数、更强仿真和专业打样能力。
       </p>
       <div class="note ok">
-        这样可以降低 demo 依赖风险：现在用 MyKnit 做可见、可交互、可出文件的闭环；未来用 SWS 增强专业打样和高阶商业化套餐。
+        这样可以降低 demo 依赖风险：现在用 Arachne Knit Pilot 做可见、可交互、可出文件的闭环；未来用 SWS 增强专业打样和高阶商业化套餐。
       </div>
 
       <h3>3.4 新增产品力算法：OEM 订单 ROI / 接单决策</h3>
@@ -736,12 +757,210 @@
       <p>
         技术实现上建议采用“规则/公式/数据模型 + Agent 解释层”：算法服务负责确定性计算，Agent 负责收集缺失参数、解释假设、生成 what-if 对比，例如“如果交期延长 5 天，ROI 是否改善”“如果换用另一种纱线，毛利会变多少”。
       </p>
+
+      <h3>3.4.1 APS 排单与利润率提升</h3>
+      <p>
+        APS 是客户 ERP 接到订单、采购和库管完成物料准备后进入生产计划排单的网页版工具。原则上计划人员不需要打开 ERP，APS 自动接收 ERP 订单信息，支持排单和插单，并生成工单下发到机台进行排产。
+      </p>
+      <div class="note">
+        详细待开发需求已经整理到 <a href="APS_Development_Plan.html">APS_Development_Plan.html</a>，包括 ERP-APS 同步防丢、排单健康看板、Planner Copilot、插单影响模拟、利润率导向排单和低联网部署模式。
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>现场问题</th>
+            <th>产品/研发建议</th>
+            <th>Agent 价值</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ERP 通过 API 主动向 APS 派单；ERP 端口重启或 bug 修复时，APS 可能丢失工单。</td>
+            <td>建立 ERP push + APS pull 双通道，增加订单 ACK、重试、幂等 order_id、版本号、异常队列和同步健康看板。</td>
+            <td>Agent 可以监测“疑似漏单/同步异常”，提醒计划人员并触发 APS 向 ERP 重新拉取。</td>
+          </tr>
+          <tr>
+            <td>APS 降低排单人员工作量，但排单人员可能缺少替代自己经验流程的动力。</td>
+            <td>设计 Planner Copilot：解释排单建议、展示插单影响、对比多个方案，并保留人工最终确认权。</td>
+            <td>Agent 把 APS 定位为排单人员助手，而不是替代者，提高使用意愿。</td>
+          </tr>
+          <tr>
+            <td>客户设备联网程度不高，APS 的自动化优势无法充分发挥。</td>
+            <td>支持低联网部署模式：手动状态回填、扫码/批量导入、机台状态人工确认和联网成熟度评分。</td>
+            <td>Agent 可先在半自动场景产生价值，并逐步推动设备联网。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note ok">
+        GTM 叙事应从“APS 降低排单人工”升级为“APS + Athena 提高利润率”：帮助老板识别高利润订单、减少低价值插单、降低交期风险、提升机器小时收益，并把排单结果反馈给 ROI Engine。
+      </div>
+
+      <h3>3.4.2 Santoni IOT System / 中国本地化 Nautilus</h3>
+      <p>
+        Santoni IOT System 是中国团队本地化的机联网系统，可以理解为本地化 Nautilus。它不是 APS 的替代品，而是机器联网和实际执行数据层：APS 负责计划排单和插单模拟，IOT 负责机台状态、订单执行、报警、停机、OEE、产量、质量和现场资源数据回传。
+      </p>
+      <div class="grid-two">
+        <div class="note ok">
+          <strong>核心能力</strong>
+          <p>大圆机、无缝/袜机实时监控；订单监控、订单管理、款式管理、Send Order、独立 Weave Part Order 和 knitting program 下发；Dashboard；Production、Efficiency、Stop Event、OEE、Fabric Detect、Payroll、AI Analysis 等数据分析；API；工厂资源配置。</p>
+        </div>
+        <div class="note">
+          <strong>Athena 价值</strong>
+          <p>为 Service Agent 提供报警和停机上下文；为 APS 提供计划 vs 实际反馈；为 ROI Engine 提供机器小时收益、实际产能、良率和停机成本；为 Advanced Maintenance 和 Smart Machine 提供健康评分、故障预警和质量分析数据。</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>数据域</th>
+            <th>关键数据</th>
+            <th>接入建议</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>机台与现场资源</td>
+            <td>Machine Code、Machine SN、Machine Model、Plant、Employee、Shift、Shift Arrange、Fabric Settings。</td>
+            <td>作为 Installed Base 和客户现场上下文，支撑服务、排产和 ROI。</td>
+          </tr>
+          <tr>
+            <td>生产与效率</td>
+            <td>Order Code、Style Code、Ideal/Actual Output、Production Time、Down Time、Performance、Availability、Quality、OEE。</td>
+            <td>通过只读 API 进入 Athena，用于 ROI、APS 实际执行反馈和管理报表。</td>
+          </tr>
+          <tr>
+            <td>报警与停机</td>
+            <td>Fault Code、Fault Description、Fault Start/End Time、Fault Duration、Stop Count、Time To Repair、Missing Record Duration。</td>
+            <td>接入 Service Agent 的故障诊断和相似案例检索；未来可转成维护工单。</td>
+          </tr>
+          <tr>
+            <td>质量与验布</td>
+            <td>Defect Count、Defect Type/Detail、Roll Code、Defect Picture、Recovery Time、Fabric Type。</td>
+            <td>连接 Fabric KB、质量缺陷库和 Smartex / Smart Machine 视觉验布能力。</td>
+          </tr>
+          <tr>
+            <td>订单/程序下发</td>
+            <td>Send Order、Weave Part Order、Knitting Program Dispatch。</td>
+            <td>属于高风险写操作，必须通过权限、审计、人工确认和客户现场授权控制。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note risk">
+        架构原则：第一阶段建议 Athena 以只读方式接入 IOT 数据，优先用于诊断、分析和建议；涉及订单下发、程序下发或机器控制的动作，必须作为受控工具单独设计权限和审批流程。
+      </div>
+
+      <h3>3.4.3 PMO Agent / Project Intelligence Agent</h3>
+      <p>
+        PMO Agent 是 Athena 的内部项目管理型子 Agent，不面向客户销售。它解决的问题是：当 Athena 子模块越来越多时，项目进度不能依赖人工主观填写，也不能让 LLM 自由判断，而要基于任务、验收 checklist、文档 Change Log、代码/PR、测试结果和会议决策等证据自动计算。
+      </p>
+      <div class="grid-two">
+        <div class="note ok">
+          <strong>核心架构</strong>
+          <p>Project Evidence Adapter 读取飞书任务、Git/PR、CI、部署记录、文档 Change Log、会议纪要和项目 checklist；Project Graph 维护模块、owner、依赖、交付物、验收项、风险和决策关系；Progress Calculation Engine 用确定性规则计算进度、延期和风险。</p>
+        </div>
+        <div class="note">
+          <strong>Agent 价值</strong>
+          <p>PMO Agent 负责生成项目周报、风险预警、需要 Danny / Belotti 或跨部门确认的决策清单、owner 提醒和下一步建议。LLM 只做总结和解释，不直接“感觉”项目完成百分比。</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>输入证据</th>
+            <th>计算逻辑</th>
+            <th>输出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>任务、checklist、PR、测试、文档 Change Log、会议纪要、试点反馈。</td>
+            <td>按模块权重计算：需求定义、数据/API 准备、开发、测试验收、文档交付、决策完成度。</td>
+            <td>自动进度百分比、延期状态、风险等级、缺失证据、决策需求和周报。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note ok">
+        建议落地路径：第一阶段先让项目进度页基于 checklist 自动计算；第二阶段导入飞书任务、Git/PR 和文档 Change Log；第三阶段做定时 PMO Agent，自动生成周报、风险预警和会议议程。
+      </div>
+
+      <h3>3.5 新增子 Agent：Industry Radar 行业情报雷达</h3>
+      <p>
+        Industry Radar Agent 的定位不是新闻推送，而是“行业信号 → Santoni 影响 → 可执行动作”的情报分析系统。它应定期检索国内外高可信来源，并把信息转化为销售、产品、市场、服务和管理层可以执行的建议。
+      </p>
+      <div class="architecture">
+        <div class="layer">
+          <div class="layer-title">定时任务流水线</div>
+          <div class="boxes">
+            <div class="box"><b>Source Registry</b>维护来源、关键词、地区、可信度、抓取频率。</div>
+            <div class="box"><b>Scheduled Collector</b>每日/每周/紧急触发抓取网页、RSS、新闻和搜索结果。</div>
+            <div class="box"><b>Normalizer</b>去重、抽取日期、公司、地区、产品、政策和证据 URL。</div>
+            <div class="box"><b>Relevance Scorer</b>按 Santoni 相关性、客户影响、竞品威胁、商机价值打分。</div>
+            <div class="box"><b>Insight Writer</b>生成三层输出：发生了什么、为什么重要、建议做什么。</div>
+            <div class="box"><b>Delivery & Tasks</b>推送到 Web/飞书/邮件，并可转成 CRM 或销售跟进任务。</div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-two">
+        <div class="note ok">
+          <strong>建议定时任务</strong>
+          <p>每日晨报：工作日 08:30。每周深度报告：每周一。展会日历：每周更新并在展前 90/30/7 天提醒。竞品/政策预警：高优先级来源每 2-4 小时检查。</p>
+        </div>
+        <div class="note">
+          <strong>建议输出字段</strong>
+          <p>标题、分类、地区、来源 URL、发布日期、可信度、影响对象、重要性评分、建议负责人、建议动作、跟进截止日期。</p>
+        </div>
+      </div>
+      <h3>3.6 行业情报的检索方式</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>信息类别</th>
+            <th>检索方式</th>
+            <th>示例来源</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>展会日历</td>
+            <td>优先抓取官方展会网站、主办方新闻稿、参展商名单和论坛议程。</td>
+            <td><a href="https://www.itma.com/about-itma">ITMA</a>、<a href="https://www.itmaasiasingapore.com/about/itmaasia-citme">ITMA ASIA + CITME</a>、<a href="https://texprocess.messefrankfurt.com/frankfurt/en.html">Texprocess</a>、<a href="https://techtextil.messefrankfurt.com/frankfurt/en.html">Techtextil</a></td>
+          </tr>
+          <tr>
+            <td>竞品动态</td>
+            <td>抓取竞品官网新闻、产品页、展会新闻、LinkedIn/YouTube 官方账号和经销商公告。</td>
+            <td>Santoni、Lonati、Mayer & Cie、Shima Seiki、Stoll、KARL MAYER、Reifenhäuser 等官方来源。</td>
+          </tr>
+          <tr>
+            <td>客户侧动态</td>
+            <td>抓取品牌官网、可持续报告、投资者关系、供应链公告、材料创新新闻。</td>
+            <td><a href="https://about.nike.com/en/mission/focus-areas/sustainability">Nike Sustainability</a>、Decathlon、Adidas、Uniqlo、Shein、Temu、Lululemon 等官方来源。</td>
+          </tr>
+          <tr>
+            <td>政策与贸易风险</td>
+            <td>监测官方政策、贸易数据库、法规更新、化学品限制、碳足迹和 ESG 规则。</td>
+            <td><a href="https://www.wto.org/english/tratop_e/texti_e/texti_e.htm">WTO Textiles</a>、<a href="https://environment.ec.europa.eu/strategy/textiles-strategy_en">EU Textiles Strategy</a>、<a href="https://environment.ec.europa.eu/topics/chemicals/pfas-pollution_en">EU PFAS</a></td>
+          </tr>
+          <tr>
+            <td>海外市场机会</td>
+            <td>组合检索地区 + textile investment / garment export / factory expansion / policy incentive / machinery import 等关键词。</td>
+            <td>印度、越南、孟加拉、巴基斯坦、印尼、埃及、土耳其等政府、行业协会、园区和财经媒体。</td>
+          </tr>
+          <tr>
+            <td>技术与材料趋势</td>
+            <td>检索专利、论文、展会论坛、品牌材料新闻、供应商新品和行业媒体。</td>
+            <td>AI 工艺生成、数字孪生、视觉质检、预测性维护、节能电控、再生纤维、生物基材料、功能纱线。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note risk">
+        Guardrail：所有情报必须保留来源 URL 和发布日期；未经二次确认的传闻只能标记为“待验证”，不能作为事实推送。政策、贸易和投资建议应标明“不构成法律或投资建议”。
+      </div>
     </section>
 
     <section>
       <h2>4. 入口设计与目标客户</h2>
       <p class="lead">
-        四类入口的定位应该清晰区分：MyKnit 面向当前可落地的客户自助定制和参数化设计，SWS 面向未来高级专业打样，Web 面向轻量交互和 demo，飞书面向内部协作。
+        四类入口的定位应该清晰区分：Arachne Knit Pilot 面向当前可落地的客户自助定制和参数化设计，SWS 面向未来高级专业打样，Web 面向轻量交互和 demo，飞书面向内部协作。
       </p>
       <table>
         <thead>
@@ -760,7 +979,7 @@
             <td>未来高级专业入口。适合在 SWS 成熟后承载更复杂参数、更强仿真和更专业的打样程序修改。</td>
           </tr>
           <tr>
-            <td>MyKnit 入口</td>
+            <td>Arachne Knit Pilot 入口</td>
             <td>品牌客户、小批量定制客户、电商/定制业务客户、OEM 业务团队</td>
             <td>选择款式、纱线、面料结构、花纹、图案、颜色，获得搭配建议和生产可行性提示，查看 3D 静态图并一键生成生产文件。</td>
             <td>当前 demo 的优先设计入口。Agent 可做智能导购、参数定义助手、3D 修改助手、生产文件生成前检查。</td>
@@ -777,6 +996,12 @@
             <td>工单通知、派工审批、项目状态查询、客户问题摘要、订单 ROI 摘要、每日服务风险提醒。</td>
             <td>协作入口，不适合复杂 3D 或图形编辑。重点是任务流、通知、审批和状态同步。</td>
           </tr>
+          <tr>
+            <td>Industry Radar 看板 / 推送</td>
+            <td>Santoni 销售、产品、市场、区域负责人、管理层</td>
+            <td>查看每日/每周行业情报、竞品预警、展会日历、海外市场机会、政策风险和商机任务。</td>
+            <td>不作为独立客户入口，而是内部决策入口。可嵌入 Web 后台、飞书推送或 CRM follow-up。</td>
+          </tr>
         </tbody>
       </table>
 
@@ -784,7 +1009,7 @@
       <div class="grid-two">
         <div class="note ok">
           <strong>登录模式</strong>
-          <p>适合 SWS、MyKnit、Web 的正式用户。可关联客户、项目、历史文件、机器、权限和长期上下文。</p>
+          <p>适合 SWS、Arachne Knit Pilot、Web 的正式用户。可关联客户、项目、历史文件、机器、权限和长期上下文。</p>
         </div>
         <div class="note">
           <strong>免登录模式</strong>
@@ -849,8 +1074,9 @@
         <li>修复中文编码和中文关键词，确保中英文路由稳定。</li>
         <li>把当前隐式 session state 改成显式 workflow state。</li>
         <li>补正式 Guardrails：设计生成边界、服务安全边界、敏感工具边界。</li>
-        <li>将 Service Case、Activation Password、SWS、MyKnit、CRM、CPQ、Service System、OEM ROI Engine 等能力抽象为标准工具接口。</li>
-        <li>建立回归测试：设计入口、服务入口、MyKnit 定制入口、订单 ROI 测算、锁机激活、派工确认、异常场景。</li>
+        <li>将 Service Case、Activation Password、SWS、Arachne Knit Pilot、CRM、CPQ、Service System、OEM ROI Engine、Industry Radar、PMO Agent 等能力抽象为标准工具接口。</li>
+        <li>新增待办：整理 SWS chain file 的 AI 协助开发方案。chain file 本质是控制无缝机初始化、送纱、吹气等动作的 motion command sequence，短期不让 LLM 自由生成原始命令，而是先建设 chain file 样本库、motion command 语义说明、chain parser/validator、可复用 chain module library、SDI/四色图/chain 映射关系、规则校验和工程师审核流程，用于实现 AI-assisted chain programming。</li>
+        <li>建立回归测试：设计入口、服务入口、Arachne Knit Pilot 定制入口、订单 ROI 测算、行业情报摘要、锁机激活、派工确认、异常场景。</li>
         <li>确认部署策略：开发本机、公司内网服务器、staging 云环境、生产环境分别承担什么职责。</li>
       </ol>
     </section>
@@ -858,10 +1084,12 @@
     <section>
       <h2>6. 建议会议讨论结论</h2>
       <ul>
-        <li>确认 AI Knitting Agent 是统一 Agent Core，而不是 SWS Agent、MyKnit Agent、Web Agent、飞书 Agent 四套独立系统。</li>
-        <li>确认第一阶段优先做 Web + Service Case + MyKnit 参数化设计闭环，用于快速验证业务闭环。</li>
-        <li>确认 MyKnit 是当前 demo 的优先设计入口；SWS 在未来成熟后作为 Advanced Package，承载更强仿真、更多参数和专业打样能力。</li>
+        <li>确认 AI Knitting Agent 是统一 Agent Core，而不是 SWS Agent、Arachne Knit Pilot Agent、Web Agent、飞书 Agent 四套独立系统。</li>
+        <li>确认第一阶段优先做 Web + Service Case + Arachne Knit Pilot 参数化设计闭环，用于快速验证业务闭环。</li>
+        <li>确认 Arachne Knit Pilot 是当前 demo 的优先设计入口；SWS 在未来成熟后作为 Advanced Package，承载更强仿真、更多参数和专业打样能力。</li>
         <li>确认 OEM 订单 ROI / 接单决策是新增核心产品力算法，应作为可审计的算法服务接入 Agent，而不是单纯让 LLM 做财务估算。</li>
+        <li>确认 PMO Agent 是内部项目管理型子 Agent，用证据和规则自动计算 Athena 项目进度、延期状态、风险和决策需求。</li>
+        <li>确认 Industry Radar 是新的内部决策型子 Agent，通过定时任务把行业信息转化成 Santoni 的销售、产品、市场和服务动作建议。</li>
         <li>确认 Hermes 可作为运行时和工具调度层，但不替代 Santoni 自己的业务知识、状态机和工具规则。</li>
         <li>确认每个子系统负责人需要提供可调用接口、权限边界、测试数据和异常策略。</li>
       </ul>

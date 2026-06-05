@@ -1,0 +1,102 @@
+SCENE 1 — THE BEGINNING (HUMAN + PROMPT) [00:00 – 00:10] — Opening
+“It starts with a prompt.Not to a designer… but to intelligence.”
+Sound:Soft keyboard typing. Minimal ambient tone.
+Visual:Close-up of fingers typing. Screen glow reflected in the eyes.
+On screen (prompt):
+“Design an innovative sports T-shirt based on latest web trends.High moisture absorption. High breathability. Terry structure.”
+SCENE 2 — INSTANT CREATION [00:10 – 00:25] — Prompt & Creation
+“A single prompt becomes a garment.Not in weeks.In seconds.”
+Visual:UI explodes into life. Multiple T-shirt variations appear instantly.
+Menus:
+Style
+Structure
+Performance
+Fit
+SCENE 3 — INTERACTION & CONTROL [00:25 – 00:40] — Exploration
+“Every variation is computed.Every option already tested.Design is no longer trial and error…It is guided possibility. Control is no longer technical.It becomes intuitive.”
+Visual:User adjusts:
+Sleeve length → long sleeve
+Structure → terry zones
+Fit → dynamic sizing
+3D garment adapts in real-time.
+SCENE 4 — TECHNOLOGY DECISION [00:40 – 00:55] — Interaction
+“The user adjusts.Fit, structure, performance.And the system responds instantly.”
+Visual:Split screen:
+Circular knitting
+Flat knitting
+User selects circular knitting.
+Visual:Garment morphs subtly based on machine capability.
+Optional submenu appears:Machine specs, gauge, feeders.
+SCENE 6 — MATERIAL & PATTERN INTELLIGENCE [00:55 – 01:10] — Constraint Moment
+“The garment adapts…not to imagination…but to what machines can truly produce.”
+“Yarn, structure, pattern.Each choice impacts performance, cost, and speed.Instantly visible.”
+Visual:Yarn selection interface:
+Cotton blends
+Technical fibers
+Performance indicators
+Pattern editor overlays garment.
+Narration:
+“Material is no longer a limitation.It becomes a variable.”
+SCENE 7 — FITTING & DIGITAL TWIN [01:10 – 01:25] — Fitting
+Before production…the garment already exists.Tested. Fitted. Validated.”
+Visual:3D mannequin appears.Garment tested dynamically.
+Fit adjustments auto-suggested.
+SCENE 8 — COST & OPTIMIZATION [01:25 – 01:40] — Fitting
+“Design and cost are no longer separate.Every decision carries a consequence.Every consequence is visible.”
+Visual:Dashboard:
+Cost breakdown
+Time to produce
+Alternative scenarios
+System suggests:
+Reduce colors → faster production
+Use existing yarn → lower cost
+SCENE 9 — DIGITAL ASSET & PROTECTION [01:40 – 02:00] — Digital Asset
+“The product becomes a digital asset.Shareable.But protected.”
+“Value is not just creation…It is what you choose to share.”
+Visual:“Create Digital Asset” → confirmation
+Security layer activates:
+Data protection
+Selective sharing
+Narration:
+SCENE 10 — MATERIAL ALLIANCE (COLLABORATION) [02:00 – 02:15] — Collaboration
+“A new space emerges.Where collaboration happens…without losing ownership.”
+Visual:Platform opens → multiple stakeholders interact.
+Annotations appear:
+Supplier
+Designer
+Engineer
+SCENE 11 — TRANSITION TO MANUFACTURING AGENT [02:15 – 02:35] — Manufacturing Transition
+“Where should this be produced?”
+“Design is only half the equation.Execution defines reality.”
+Visual:System asks:
+Global machine network appears.
+SCENE 12 — MACHINE SELECTION & APS [02:35 – 02:55] — Factory Selection
+“Factories compete in real time.Cost. Speed. Capacity.The system decides.”
+“Every decision becomes measurable.Every outcome… predictable.”
+Visual:Different factories → different lead times.
+APS calculates:
+Delivery time
+Cost
+Capacity
+SCENE 13 — SMART FACTORY ACTIVATION [02:55 – 03:15] — Production
+“Production begins.Without friction.Without delay.”
+Visual:
+AGV feeds yarn
+Santoni machine running
+Robot collects garments
+SCENE 14 — QUALITY & SELF-OPTIMIZATION [03:15 – 03:30] — Smart Factory
+“Machines don’t just produce.They learn. And adjust themselves.Robots collaborate.Quality is not inspected…It is ensured.”
+Visual:
+Scanner checks size
+Machine auto-adjusts
+System creates ticket OR self-corrects
+SCENE 15 — AGENT-DRIVEN ORGANIZATION [03:30 – 03:50] — Agent Organization
+“The factory becomes a system of agents and evolves from hierarchy to intelligence.Each with a goal.Each optimizing continuously.”
+Visual:Company org chart → transforms into AI agents
+Each agent:
+KPI
+Responsibility
+SCENE 16 — FINAL EXPERIENCE (C2M LOOP) [03:50 – 04:15] — Customer Loop
+“The product reaches the user.And the loop begins again.”
+Visual:Customer wears garment.Simultaneously interacts with platform.
+Adjusts → system responds.

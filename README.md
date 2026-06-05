@@ -9,15 +9,30 @@ This project is designed around one shared Agent Core with two product entries:
 
 ## MVP Scope
 
-The first demo focuses on two user scenarios:
+The current demo includes four local review surfaces:
 
-1. Designer workflow
+1. Design Intake Structuring Console
+   - Structured Design Request / Style3D-CLO-AI-image-TP intake
+   - Mock engineering brief candidate for SWS/Arachne review
+   - Manufacturability check with explicit risks and blocked actions
+   - Sampling feedback capture, revision suggestion, and readiness-style gate for schema review
+   - Evidence log, tool-interface contract, and KPI log for business review
+   - This is a Design Agent data-structuring testbench, not the full Athena MVP and not a manual design-exhaustion tool
+
+2. Production Operations Console
+   - Mock order intake, ERP sync, APS scheduling, IOT execution, service escalation candidate, and garment output monitoring
+   - Top-down production site flow for orders, scheduling, machines, and garment output, backed by 人机料法环测 evidence
+   - APS/IOT page-research field mapping and read-only adapter contract for future production data integration
+   - Management-facing KPI log for OEE, downtime, order delay risk, material risk, labor efficiency, quality risk, and waste/cost opportunity
+   - Read-only adapter contracts only; no APS/IOT login, no .co/.cx upload, no schedule confirmation, no machine control, and no real service ticket creation
+
+3. Designer workflow
    - Natural language design brief
    - Translation Agent converts desire into structured knitting requirements
    - Digital Twin Agent simulates SWS 3D output, process package, cost, time, yield, and machine recommendation
    - Optional reference image upload is routed through a mock Image Understanding Agent
 
-2. Customer equipment engineer workflow
+4. Customer equipment engineer workflow
    - Natural language installation or maintenance request
    - Service Dispatch Agent collects missing information
    - Agent attempts safe online assistance first, then creates and dispatches a service ticket after confirmation when onsite support is needed
@@ -46,7 +61,7 @@ Main Agent is the orchestrator. It identifies role, intent, workflow state, and 
 
 ## Versioning
 
-Current version: `v0.20.1`
+Current version: `v0.25.3`
 
 Version rule: `vMajor.Feature.Patch`
 
@@ -55,6 +70,12 @@ Version rule: `vMajor.Feature.Patch`
 - Major iterations change the first number.
 
 The customer-facing Web demo is available at `/`. The developer/debugging page is available at `/developer.html`.
+
+All current web pages include a Chinese / English language switch. The selected language is stored in browser local storage and follows the user across the demo pages.
+
+The Design Intake Structuring Console is available at `/athena-mvp.html`. It is deliberately kept as a data-structuring testbench rather than a chatbot, a full Athena MVP, or a manual design-exhaustion tool. The local API exposes `/api/athena-mvp/template` and `/api/athena-mvp/run`.
+
+The Production Operations Console is available at `/production.html`. It is a management dashboard for order intake -> ERP input -> APS scheduling -> IOT execution -> production/service escalation -> garment output. It defaults to Chinese customer-facing labels and now presents the site flow as order, scheduling, machine, and garment sections while keeping English available through the language switch. The console also includes Santoni Athena as a read-only production insight agent for KPI root-cause questions such as scrap rate, OEE, downtime, material risk, and order delay. The current production snapshot is static local mock data from `src/mock_data/production_operations.mock.json`, not dynamic APS/IOT web scraping. Future live integration should use direct APS/IOT database views and/or formal read-only APIs, not browser scraping. The workflow spine is the unique `order_id` / 订单号, which joins order intake, ERP, APS, IOT, production/service candidates, and garment output. The local API exposes `/api/production/template`, `/api/production/overview`, `/api/production/analyze`, `/api/production/adapter-contract`, and `/api/production/chatbi`.
 
 For lock-machine activation-password tasks on the customer page, the UI prompts for platform username and password only when the activation task is detected. Credentials are sent only with that request and are kept in browser memory for the current session.
 
@@ -82,6 +103,12 @@ The developer page links to `/docs.html`, which shows:
 - Next product decisions
 
 The developer page also shows a compact Latest Changelog preview sourced from `/changelog.html`, so testers can verify the current iteration without leaving the debug workflow.
+
+The demo links to `/athena-mvp.html`, which shows the Design Agent input-structuring loop: design/Style3D/CLO/AI-image/TP input -> normalized design_request and source_asset objects -> engineering brief candidate -> manufacturability check -> sampling feedback -> revision suggestion -> evidence and KPI logs. Real Style3D/CLO/SWS/Arachne adapters are not connected yet.
+
+The demo links to `/production.html`, which shows the Production Operations loop with mock APS/IOT data, APS/IOT field mapping, order/scheduling/machine/garment site-flow sections, Santoni Athena root-cause analysis, optimization signals, service request candidates, evidence logs, and KPI logs.
+
+The APS/IOT production adapter mapping note is stored at `docs/aps_iot_production_adapter_mapping.md`. It documents observed APS/IOT source pages and normalized read-only objects without storing credentials.
 
 The demo also links to `/service-cases.html`, a Service Manager Console. It shows service case readiness, Excel draft cases, review status, customer visibility, online troubleshooting steps, safety warnings, dispatch triggers, editable case knowledge, diff view, and future CRM/ticket handoff payload previews.
 

@@ -1,4 +1,4 @@
-﻿const messagesEl = document.querySelector("#messages");
+const messagesEl = document.querySelector("#messages");
 const formEl = document.querySelector("#chatForm");
 const inputEl = document.querySelector("#messageInput");
 const imageInputEl = document.querySelector("#imageInput");
@@ -16,9 +16,9 @@ const platformUsernameEl = document.querySelector("#platformUsername");
 const platformPasswordEl = document.querySelector("#platformPassword");
 
 let currentRole = "auto";
-let currentLanguage = "en";
+let conversationLanguage = "en";
 let pendingAttachment = null;
-let appVersion = "v0.20.1";
+let appVersion = "v0.25.3";
 let runtimeStatus = {};
 let sessionId = createSessionId();
 const conversationLog = [];
@@ -62,7 +62,7 @@ function renderResponse(response) {
   const fragment = document.createDocumentFragment();
   const grid = document.createElement("div");
   grid.className = "result-grid";
-  currentLanguage = response.language || currentLanguage;
+  conversationLanguage = response.language || conversationLanguage;
 
   if (response.workflow === "chat") {
     return fragment;
@@ -147,7 +147,7 @@ function renderCard(title, data) {
 }
 
 function formatKey(key) {
-  if (currentLanguage === "zh") {
+  if (conversationLanguage === "zh") {
     const zhLabels = {
       product_category: "产品品类",
       style_direction: "风格方向",
@@ -254,11 +254,11 @@ function detectLanguage(text) {
 }
 
 function t(english, chinese) {
-  return currentLanguage === "zh" ? chinese : english;
+  return conversationLanguage === "zh" ? chinese : english;
 }
 
 async function sendMessage(message) {
-  currentLanguage = detectLanguage(message);
+  conversationLanguage = detectLanguage(message);
   const attachments = pendingAttachment ? [pendingAttachment] : [];
   const attachmentText = pendingAttachment ? `\n[Image: ${pendingAttachment.name}]` : "";
   addMessage("user", currentRole === "designer" ? "Designer" : currentRole === "customer_equipment_engineer" ? "Customer Equipment Engineer" : "User", `${message}${attachmentText}`);
@@ -299,7 +299,7 @@ function recordConversationTurn({ message, attachments, response }) {
     timestamp: new Date().toISOString(),
     version: appVersion,
     role: currentRole,
-    language: response?.language || currentLanguage,
+    language: response?.language || conversationLanguage,
     user_message: message,
     attachments: attachments.map((attachment) => ({
       name: attachment.name,
@@ -412,7 +412,7 @@ function resetLocalConversation() {
   sessionId = createSessionId();
   conversationLog.length = 0;
   currentRole = "auto";
-  currentLanguage = "en";
+  conversationLanguage = "en";
   clearAttachment();
   setRole("auto");
   messagesEl.innerHTML = "";

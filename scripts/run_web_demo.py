@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 WEB_ROOT = SRC / "web_app"
-APP_VERSION = "v0.20.1"
+APP_VERSION = "v0.25.3"
 
 
 def load_local_env() -> None:
@@ -37,6 +37,8 @@ sys.path.insert(0, str(SRC))
 from agent_core.main_agent import AgentRequest, MainAgent  # noqa: E402
 from agent_core.operating_model import operating_model_progress, project_documentation  # noqa: E402
 from agent_core.tools.service_case_knowledge import ServiceCaseKnowledgeBase  # noqa: E402
+from agent_core.workflows.athena_mvp_workflow import AthenaMvpWorkflow  # noqa: E402
+from agent_core.workflows.production_operations_workflow import ProductionOperationsWorkflow  # noqa: E402
 
 
 def safe_print(message: str) -> None:
@@ -49,6 +51,8 @@ def safe_print(message: str) -> None:
 class DemoHandler(SimpleHTTPRequestHandler):
     agent = MainAgent()
     service_case_knowledge = ServiceCaseKnowledgeBase()
+    athena_mvp_workflow = AthenaMvpWorkflow()
+    production_operations_workflow = ProductionOperationsWorkflow()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(WEB_ROOT), **kwargs)
@@ -61,6 +65,18 @@ class DemoHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/service-cases/review":
             self._handle_service_case_review()
+            return
+
+        if path == "/api/athena-mvp/run":
+            self._handle_athena_mvp_run()
+            return
+
+        if path == "/api/production/analyze":
+            self._handle_production_analyze()
+            return
+
+        if path == "/api/production/chatbi":
+            self._handle_production_chatbi()
             return
 
         if path != "/api/chat":
@@ -113,6 +129,33 @@ class DemoHandler(SimpleHTTPRequestHandler):
         except Exception as exc:  # pragma: no cover - local demo guardrail
             self._send_json({"error": str(exc)}, status=500)
 
+    def _handle_athena_mvp_run(self) -> None:
+        length = int(self.headers.get("Content-Length", "0"))
+        raw_body = self.rfile.read(length).decode("utf-8")
+        try:
+            body = json.loads(raw_body) if raw_body else {}
+            self._send_json(self.athena_mvp_workflow.run(body))
+        except Exception as exc:  # pragma: no cover - local demo guardrail
+            self._send_json({"error": str(exc)}, status=500)
+
+    def _handle_production_analyze(self) -> None:
+        length = int(self.headers.get("Content-Length", "0"))
+        raw_body = self.rfile.read(length).decode("utf-8")
+        try:
+            body = json.loads(raw_body) if raw_body else {}
+            self._send_json(self.production_operations_workflow.analyze(body))
+        except Exception as exc:  # pragma: no cover - local demo guardrail
+            self._send_json({"error": str(exc)}, status=500)
+
+    def _handle_production_chatbi(self) -> None:
+        length = int(self.headers.get("Content-Length", "0"))
+        raw_body = self.rfile.read(length).decode("utf-8")
+        try:
+            body = json.loads(raw_body) if raw_body else {}
+            self._send_json(self.production_operations_workflow.chatbi(body))
+        except Exception as exc:  # pragma: no cover - local demo guardrail
+            self._send_json({"error": str(exc)}, status=500)
+
     def do_GET(self) -> None:
         path = self.path.split("?", 1)[0]
         if path == "/api/status":
@@ -138,6 +181,22 @@ class DemoHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/service-cases":
             self._send_json(self.service_case_knowledge.review_cases())
+            return
+
+        if path == "/api/athena-mvp/template":
+            self._send_json(self.athena_mvp_workflow.template())
+            return
+
+        if path == "/api/production/template":
+            self._send_json(self.production_operations_workflow.template())
+            return
+
+        if path == "/api/production/adapter-contract":
+            self._send_json(self.production_operations_workflow.adapter_contract())
+            return
+
+        if path == "/api/production/overview":
+            self._send_json(self.production_operations_workflow.overview())
             return
 
         self.path = path

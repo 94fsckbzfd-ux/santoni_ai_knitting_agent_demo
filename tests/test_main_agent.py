@@ -5,6 +5,8 @@ from agent_core.operating_model import project_documentation
 from agent_core.tools.lease_password_tool import ActivationPasswordTool
 from agent_core.tools.service_case_importer import ServiceCaseExcelImporter
 from agent_core.tools.service_case_knowledge import ServiceCaseKnowledgeBase
+from agent_core.workflows.athena_mvp_workflow import AthenaMvpWorkflow
+from agent_core.workflows.production_operations_workflow import ProductionOperationsWorkflow
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -203,7 +205,7 @@ def test_service_case_review_library_marks_imported_cases_for_review():
 
 def test_project_docs_track_done_and_planned_features():
     docs = project_documentation()
-    assert docs["version"] == "v0.20.1"
+    assert docs["version"] == "v0.25.3"
     assert any(item["name"] == "Service Case Library review page" for item in docs["implemented_features"])
     assert any(item["name"] == "Operation guide page" for item in docs["implemented_features"])
     assert any(item["name"] == "Excel auto importer" for item in docs["implemented_features"])
@@ -216,6 +218,238 @@ def test_project_docs_track_done_and_planned_features():
     assert any(item["name"] == "Full Santoni logo asset" for item in docs["implemented_features"])
     assert any(item["name"] == "Service Manager Console" for item in docs["implemented_features"])
     assert any(item["name"] == "Developer changelog preview" for item in docs["implemented_features"])
+    assert any(item["name"] == "Design Intake Structuring Console" for item in docs["implemented_features"])
+    assert any(item["name"] == "Production Operations Console" for item in docs["implemented_features"])
+    assert any(item["name"] == "Bilingual page language switch" for item in docs["implemented_features"])
+    assert any(item["name"] == "Production Console Chinese display" for item in docs["implemented_features"])
+    assert any(item["name"] == "Production site flow layout" for item in docs["implemented_features"])
+    assert any(item["name"] == "APS/IOT adapter field mapping" for item in docs["implemented_features"])
+    assert any(item["name"] == ".co/.cx program-file terminology" for item in docs["implemented_features"])
+    assert any(item["name"] == "Santoni Athena production insight" for item in docs["implemented_features"])
+    assert any(item["name"] == "Production order-id workflow spine" for item in docs["implemented_features"])
+    assert any(item["name"] == "Real SWS/Arachne adapter" for item in docs["planned_features"])
+    assert any(item["name"] == "Real APS/IOT production adapters" for item in docs["planned_features"])
+    assert len(docs["athena_mvp_state_flow"]) == 6
+    assert len(docs["production_operations_state_flow"]) == 6
+
+
+def test_all_web_pages_include_bilingual_language_switch():
+    web_root = Path("src/web_app")
+    html_files = list(web_root.glob("*.html"))
+
+    assert html_files
+    for html_file in html_files:
+        content = html_file.read_text(encoding="utf-8")
+        assert '/i18n.js?v=0.25.3' in content
+
+    i18n_script = (web_root / "i18n.js").read_text(encoding="utf-8")
+    assert "santoniDemoLanguage" in i18n_script
+    assert "language-toggle" in i18n_script
+    assert "Chinese / English" in (web_root / "README.md").read_text(encoding="utf-8")
+
+
+def test_production_page_defaults_to_chinese_customer_display():
+    web_root = Path("src/web_app")
+    production_html = (web_root / "production.html").read_text(encoding="utf-8")
+    production_script = (web_root / "production.js").read_text(encoding="utf-8")
+
+    assert '<html lang="zh-CN">' in production_html
+    assert "Athena 生产运营控制台" in production_html
+    assert '/production.js?v=0.25.3' in production_html
+    assert "attention_required" in production_script
+    assert "需关注" in production_script
+    assert "Production Console Chinese display" in (web_root / "changelog.html").read_text(encoding="utf-8")
+
+
+def test_production_page_uses_site_flow_layout():
+    web_root = Path("src/web_app")
+    production_html = (web_root / "production.html").read_text(encoding="utf-8")
+    production_script = (web_root / "production.js").read_text(encoding="utf-8")
+
+    assert "production site flow".lower() in (web_root / "changelog.html").read_text(encoding="utf-8").lower()
+    assert "生产现场链路" in production_html
+    assert 'id="operationsStack"' in production_html
+    assert "renderOperationsStack" in production_script
+    assert "Backlog Orders" in production_script
+    assert "Scheduling" in production_script
+    assert "Fault Machines" in production_script
+    assert "Average Yield" in production_script
+    assert "废料率 / 不良率代理" in production_script
+    assert "APS / IOT Field Mapping" in production_html
+    assert 'id="adapterContract"' in production_html
+    assert "/api/production/adapter-contract" in production_script
+
+
+def test_production_page_includes_santoni_athena_panel():
+    web_root = Path("src/web_app")
+    production_html = (web_root / "production.html").read_text(encoding="utf-8")
+    production_script = (web_root / "production.js").read_text(encoding="utf-8")
+    changelog = (web_root / "changelog.html").read_text(encoding="utf-8")
+
+    assert "Santoni Athena" in production_html
+    assert "订单号是串联接单、ERP、APS、IOT、生产、服务候选和成衣输出的唯一工作流主键。" in production_html
+    assert 'id="chatbiForm"' in production_html
+    assert "废弃率分析" in production_html
+    assert "/api/production/chatbi" in production_script
+    assert "renderChatbi" in production_script
+    assert "Santoni Athena Production Insight Naming" in changelog
+
+
+def test_design_intake_page_explains_structuring_scope():
+    web_root = Path("src/web_app")
+    page = (web_root / "athena-mvp.html").read_text(encoding="utf-8")
+    script = (web_root / "athena-mvp.js").read_text(encoding="utf-8")
+
+    assert "Design Intake Structuring Console" in page
+    assert "Design Agent data-structuring middleware test page" in page
+    assert "not the full Athena MVP" in page
+    assert "not a manual design-exhaustion tool" in page
+    assert "Future role after design-software or file import" in page
+    assert "Constraint discovery and training should be automated" in page
+    assert "Run Structuring Test" in page
+    assert "Engineering Brief Candidate" in page
+    assert "design-intake-structuring-evidence" in script
+
+
+def test_athena_mvp_workflow_outputs_structured_objects_and_evidence():
+    result = AthenaMvpWorkflow().run(
+        {
+            "source_type": "style3d",
+            "product_category": "seamless running top",
+            "target_user": "women performance runners",
+            "use_case": "summer running",
+            "functional_requirements": "breathability, quick dry, light compression, small logo pattern",
+            "sampling_feedback": "Round 1: support zone feels slightly stiff.",
+            "defect_signals": "support zone stiffness, logo elasticity variation",
+        }
+    )
+
+    assert result["workflow_template"]["template_id"] == "athena.design_to_production_readiness.v1"
+    assert result["workflow_instance"]["not_a_chatbot"] is True
+    assert result["workflow_instance"]["not_a_generic_design_agent"] is True
+    assert set(result["data_objects"]) == {
+        "design_request",
+        "engineering_brief",
+        "manufacturability_check",
+        "sampling_feedback",
+        "revision_suggestion",
+        "production_readiness",
+    }
+    assert result["data_objects"]["engineering_brief"]["target_system"] == "SWS/Arachne"
+    assert result["data_objects"]["manufacturability_check"]["risk_checks"]
+    assert result["data_objects"]["production_readiness"]["gate"] in {
+        "ready_for_pilot_production",
+        "sample_round_required",
+        "engineering_revision_required",
+    }
+    assert len(result["stages"]) == 6
+    assert len(result["evidence_log"]) == 6
+    assert any(item["kpi"] == "production_readiness_score" for item in result["kpi_log"])
+    assert any(tool["tool"] == "SWS/Arachne Engineering Brief Adapter" for tool in result["tool_interfaces"])
+
+
+def test_production_operations_workflow_outputs_read_only_management_console():
+    result = ProductionOperationsWorkflow().overview()
+    stage_ids = {stage["id"] for stage in result["workflow_stages"]}
+    resource_keys = set(result["resource_lens"])
+    kpis = {item["kpi"] for item in result["kpi_log"]}
+
+    assert result["workflow_template"]["template_id"] == "athena.production_operations.v1"
+    assert result["workflow_instance"]["read_only"] is True
+    assert len(result["workflow_stages"]) == 6
+    assert {"order_intake", "erp_input", "aps_scheduling", "iot_execution", "production_monitoring", "garment_output"}.issubset(stage_ids)
+    assert resource_keys == {"people", "machine", "material", "method", "environment", "measurement"}
+    assert "upload_co_file" in result["workflow_instance"]["blocked_actions"]
+    assert "upload_cx_file" in result["workflow_instance"]["blocked_actions"]
+    assert any(tool["adapter"] == "Santoni IOT Adapter" for tool in result["tool_interfaces"])
+    assert result["adapter_contract"]["contract_id"] == "athena.production_aps_iot_read_only_contract.v1"
+    assert result["workflow_template"]["workflow_primary_key"]["field"] == "order_id"
+    assert result["workflow_primary_key"]["role"] == "unique_workflow_spine"
+    assert result["production_overview"]["total_style_count"] >= 1
+    assert result["data_source"]["mode"] == "static_mock_json"
+    assert result["data_source"]["dynamic_aps_iot_scraping"] is False
+    assert "capacity_occupation_rate" in result["production_overview"]
+    assert "scrap_rate" in result["production_overview"]
+    assert all(
+        machine_signal["evidence_ref"]
+        for machine_signal in result["resource_lens"]["machine"]["signals"]
+    )
+    assert all(candidate["service_request_candidate"] is True for candidate in result["service_escalations"])
+    assert all(candidate["auto_dispatch"] is False for candidate in result["service_escalations"])
+    assert {
+        "oee",
+        "downtime_minutes",
+        "order_delay_risk",
+        "material_risk",
+        "labor_efficiency",
+        "quality_risk",
+        "waste_cost_opportunity",
+        "capacity_occupation",
+        "scrap_rate",
+        "adapter_contract_coverage",
+    }.issubset(kpis)
+    assert result["optimization_signals"]
+    assert all(item["evidence_ref"] for item in result["optimization_signals"])
+
+
+def test_production_chatbi_agent_explains_scrap_rate_with_evidence():
+    result = ProductionOperationsWorkflow().chatbi(
+        {"question": "为什么废弃率是4%？从款式、机台、物料和工艺上拆一下原因。"}
+    )
+    categories = {item["category"] for item in result["root_causes"]}
+    serialized = json.dumps(result, ensure_ascii=False)
+
+    assert result["agent"]["agent_id"] == "athena.production_chatbi_agent.v1"
+    assert result["agent"]["name"] == "Santoni Athena"
+    assert result["metric"] == "scrap_rate"
+    assert result["read_only"] is True
+    assert result["write_actions_blocked"] is True
+    assert result["metric_snapshot"]["scrap_rate"] > 0
+    assert {"style_quality", "machine", "material", "method"}.issubset(categories)
+    assert all(item["evidence_refs"] for item in result["root_causes"])
+    assert any(item["impact"].get("causal_status") == "not_primary_current_scrap_driver" for item in result["root_causes"])
+    assert ".co" in serialized
+    assert ".cx" in serialized
+    assert "confirm_schedule" in result["blocked_actions"]
+
+
+def test_production_adapter_contract_maps_aps_iot_fields_without_credentials():
+    contract = ProductionOperationsWorkflow().adapter_contract()
+    mapping_objects = {item["object"] for item in contract["field_mapping"]}
+    source_systems = {item["system"] for item in contract["source_systems"]}
+    serialized = json.dumps(contract, ensure_ascii=False).lower()
+
+    assert contract["version"] == "v0.25.3"
+    assert source_systems == {"APS", "Santoni IOT"}
+    assert {
+        "production_order",
+        "yarn_material_forecast",
+        "aps_schedule_capacity",
+        "iot_machine_execution",
+        "iot_program_evidence",
+        "garment_quality_output",
+    }.issubset(mapping_objects)
+    assert "织造监控" in serialized
+    assert "实时监控" in serialized
+    assert ".co" in serialized
+    assert ".cx" in serialized
+    assert "cn程序" not in serialized
+    assert "cn_program" not in serialized
+    assert ".cn" not in serialized
+    assert "password" not in serialized
+    assert "1qaz" not in serialized
+    assert "start_auto_scheduling" in contract["blocked_actions"]
+    assert "upload_co_file" in contract["blocked_actions"]
+
+
+def test_production_operations_analyze_keeps_filters_and_blocks_writes():
+    result = ProductionOperationsWorkflow().analyze({"filters": {"order_id": "ORD-20260605-002"}, "scenario": "quality_hold_review"})
+
+    assert result["analysis_request"]["scenario"] == "quality_hold_review"
+    assert result["analysis_request"]["write_actions_blocked"] is True
+    assert result["workflow_instance"]["filters"] == {"order_id": "ORD-20260605-002"}
+    assert result["production_overview"]["order_count"] == 1
+    assert result["service_escalations"]
 
 
 def test_excel_importer_generates_draft_cases():

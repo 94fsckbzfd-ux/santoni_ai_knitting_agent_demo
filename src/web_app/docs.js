@@ -4,8 +4,11 @@ const implementedFeatureList = document.querySelector("#implementedFeatureList")
 const plannedFeatureList = document.querySelector("#plannedFeatureList");
 const designerStateFlow = document.querySelector("#designerStateFlow");
 const serviceStateFlow = document.querySelector("#serviceStateFlow");
+const athenaMvpStateFlow = document.querySelector("#athenaMvpStateFlow");
+const productionOperationsStateFlow = document.querySelector("#productionOperationsStateFlow");
 const serviceCaseStructureList = document.querySelector("#serviceCaseStructureList");
 const nextDecisionList = document.querySelector("#nextDecisionList");
+const docsVersion = document.querySelector("#docsVersion");
 
 function addListItems(target, items) {
   target.innerHTML = "";
@@ -29,6 +32,7 @@ function addFeatureItems(target, items) {
 async function loadDocs() {
   const response = await fetch(`/api/project-docs?ts=${Date.now()}`);
   const docs = await response.json();
+  if (docsVersion) docsVersion.textContent = docs.version || "";
 
   addFeatureItems(implementedFeatureList, docs.implemented_features || []);
   addFeatureItems(plannedFeatureList, docs.planned_features || []);
@@ -39,6 +43,8 @@ async function loadDocs() {
 
   renderStateFlow(designerStateFlow, docs.designer_state_flow || []);
   renderStateFlow(serviceStateFlow, docs.service_state_flow || []);
+  renderStateFlow(athenaMvpStateFlow, docs.athena_mvp_state_flow || []);
+  renderStateFlow(productionOperationsStateFlow, docs.production_operations_state_flow || []);
 }
 
 function renderStateFlow(target, stages) {

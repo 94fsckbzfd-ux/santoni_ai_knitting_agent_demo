@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>APS 待开发计划 | Athena</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #d8e1ea;
+      --soft: #f3f7fb;
+      --panel: #ffffff;
+      --blue: #1f6feb;
+      --green: #278150;
+      --amber: #b7791f;
+      --red: #c2410c;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef3f8;
+      font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0c1f33 0%, #123a5c 58%, #0f766e 100%);
+      color: #fff;
+      padding: 42px 28px 34px;
+    }
+
+    .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto 56px;
+      padding: 24px 20px 0;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      padding: 28px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      color: #123352;
+      font-size: 23px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      color: #25415f;
+      font-size: 18px;
+      margin: 22px 0 10px;
+    }
+
+    p { margin: 8px 0 0; }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf4fb;
+      color: #17324d;
+    }
+
+    a { color: #0b65c2; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      background: #edf2f7;
+      border: 1px solid #d7dee9;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin-top: 12px;
+      color: rgba(255,255,255,0.88);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pill {
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    .lead {
+      color: #334155;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .grid-2, .grid-4 {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 15px;
+    }
+
+    .card strong {
+      display: block;
+      color: #17324d;
+      margin-bottom: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      padding: 5px 8px;
+      white-space: nowrap;
+    }
+
+    .tag.blue { background: var(--blue); }
+    .tag.green { background: var(--green); }
+    .tag.amber { background: var(--amber); }
+    .tag.red { background: var(--red); }
+
+    .note {
+      border: 1px solid #f0d99b;
+      background: #fff8e6;
+      color: #59410c;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .note.ok {
+      border-color: #b8e2c7;
+      background: #ecfdf3;
+      color: #174d2f;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-4 { grid-template-columns: 1fr; }
+      section { padding: 22px; }
+      h1 { font-size: 29px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>APS 待开发计划</h1>
+      <p class="subtitle">
+        面向 Athena / APS 研发协同的产品需求草案：把 APS 从排单效率工具升级为利润率、交期确定性和工厂经营决策工具。
+      </p>
+      <div class="meta">
+        <span class="pill">关联产品：Athena</span>
+        <span class="pill">关联模块：APS Adapter / ROI Engine / Planner Copilot</span>
+        <span class="pill">更新日期：2026-05-26</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. APS 当前定位</h2>
+      <p class="lead">
+        APS 是应用在生产计划排单步骤的网页版工具。客户 ERP 接到订单，采购完成物料采购、库管完成原材料出库后，订单进入计划人员排单环节。APS 自动接收 ERP 订单信息，支持计划人员排单和插单，并生成工单下发到机台进行排产。
+      </p>
+      <div class="grid-4">
+        <div class="card"><strong>上游</strong>ERP 订单、物料状态、采购/出库完成情况。</div>
+        <div class="card"><strong>核心用户</strong>计划人员、生产主管、工厂老板、IT/系统管理员。</div>
+        <div class="card"><strong>核心动作</strong>排单、插单、机台分配、工单生成、排产下发。</div>
+        <div class="card"><strong>Athena 价值</strong>解释排单、评估 ROI、识别风险、推动跟进动作。</div>
+      </div>
+      <div class="note ok">
+        产品叙事建议：APS 不只解决“排单人员少做事”，更要帮助老板提高利润率、减少交期风险、提升机器小时收益。
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 现场问题与产品机会</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>现场问题</th>
+            <th>风险</th>
+            <th>产品机会</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>客户自研 ERP 通过 API 主动向 APS 派单；ERP 端口重启或 bug 修复时，APS 可能丢失工单。</td>
+            <td>计划人员不信任 APS 数据完整性，需要人工补单或反复核对。</td>
+            <td>建立订单同步防丢机制和同步健康看板。</td>
+          </tr>
+          <tr>
+            <td>APS 提高排单效率，降低排单人员工作量，但排单人员未必有动力用 APS 替代自己的经验流程。</td>
+            <td>系统被视为替代人工的工具，实际 adoption 低。</td>
+            <td>把 APS 做成 Planner Copilot，帮助排单人员解释、比较和确认方案。</td>
+          </tr>
+          <tr>
+            <td>客户设备联网程度不高，APS 的自动化优势无法充分发挥。</td>
+            <td>计划和实际脱节，排程优化难以闭环。</td>
+            <td>支持低联网模式，先用人工确认、扫码、批量导入等方式产生价值。</td>
+          </tr>
+          <tr>
+            <td>GTM 叙事偏“降本”，但老板更关心订单利润、交期风险和机台资源回报。</td>
+            <td>客户老板层付费意愿不足。</td>
+            <td>与 Athena ROI Engine 联动，做利润率导向排单和插单影响模拟。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. 待开发计划优先级</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>优先级</th>
+            <th>需求</th>
+            <th>开发内容</th>
+            <th>验收指标</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag blue">P0</span></td>
+            <td>ERP-APS 订单同步可靠性</td>
+            <td>
+              ERP push + APS pull 双通道；订单 ACK；失败重试；幂等 <code>order_id</code>；订单版本号；异常队列；同步健康看板；手动 reconciliation。
+            </td>
+            <td>端口重启后不漏单；APS 能显示 ERP 与 APS 订单差异；异常订单可追踪、可恢复。</td>
+          </tr>
+          <tr>
+            <td><span class="tag blue">P0</span></td>
+            <td>排单健康看板</td>
+            <td>
+              显示最近同步时间、待排订单、已排订单、异常订单、ERP 拉取状态、工单下发状态、机台待确认状态。
+            </td>
+            <td>计划人员能在一个页面确认“今天 APS 数据是否可信”。</td>
+          </tr>
+          <tr>
+            <td><span class="tag green">P1</span></td>
+            <td>Planner Copilot</td>
+            <td>
+              生成 2-3 个排单方案；解释每个方案的交期、换款、机台占用、瓶颈和风险；支持人工调整、锁定、确认；记录人工修改原因。
+            </td>
+            <td>排单人员把 APS 视为助手，而不是替代者；人工改排原因可沉淀。</td>
+          </tr>
+          <tr>
+            <td><span class="tag green">P1</span></td>
+            <td>插单影响模拟</td>
+            <td>
+              插单后显示受影响订单、延期风险、换款/换纱/调机时间、机台占用变化、可能损失的机器小时收益。
+            </td>
+            <td>计划人员和老板能判断“这个急单值不值得插”。</td>
+          </tr>
+          <tr>
+            <td><span class="tag amber">P2</span></td>
+            <td>利润率导向排单</td>
+            <td>
+              接入 Athena ROI Engine，结合订单金额、成本、产能、交期、换款、良率和机会成本，输出高利润订单优先级和低价值占产能预警。
+            </td>
+            <td>老板能看到 APS 对利润率、机器小时收益和交付确定性的影响。</td>
+          </tr>
+          <tr>
+            <td><span class="tag amber">P2</span></td>
+            <td>针织行业专用约束模型</td>
+            <td>
+              机器型号、针数、机号、筒径、纱线可得性、款式/颜色/组织切换成本、技工技能、维护窗口、良率和返工风险。
+            </td>
+            <td>排单建议更贴近无缝针织真实生产约束。</td>
+          </tr>
+          <tr>
+            <td><span class="tag red">P3</span></td>
+            <td>低联网部署模式与实际闭环</td>
+            <td>
+              手动状态回填、扫码更新工单进度、班组长批量确认、每日产量导入、联网成熟度评分、计划 vs 实际偏差分析。
+            </td>
+            <td>客户设备未完全联网时，APS 仍可落地并逐步积累数据。</td>
+          </tr>
+          <tr>
+            <td><span class="tag red">P3</span></td>
+            <td>自学习排程优化</td>
+            <td>
+              沉淀计划工时 vs 实际工时、换款时间偏差、停机原因、延期原因、人工改排原因，用于优化未来排程参数。
+            </td>
+            <td>APS 排程参数能从真实生产结果中持续校准。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Athena 联动设计</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>APS Adapter</strong>
+          <p>负责把 APS 的订单、排单方案、机台资源、工单状态、异常同步事件结构化暴露给 Athena。</p>
+          <ul>
+            <li><code>get_orders()</code> 获取待排/已排/异常订单。</li>
+            <li><code>get_schedule()</code> 获取当前排程和机台占用。</li>
+            <li><code>simulate_insert_order()</code> 模拟插单影响。</li>
+            <li><code>confirm_schedule()</code> 人工确认后下发排程。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>ROI Engine</strong>
+          <p>负责把 APS 的产能、交期、换款和插单影响转化为老板可理解的经营指标。</p>
+          <ul>
+            <li>机器小时收益。</li>
+            <li>订单贡献毛利。</li>
+            <li>插单机会成本。</li>
+            <li>低利润订单占用瓶颈机台预警。</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Agent 输出示例</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>问题</th>
+            <th>Athena 应输出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>这个急单要不要插？</td>
+            <td>可插/不建议插；受影响订单；延期风险；损失机器小时收益；建议加价或协商交期。</td>
+          </tr>
+          <tr>
+            <td>今天 APS 数据可信吗？</td>
+            <td>ERP 最近同步时间；异常订单数；疑似漏单；需要手动 reconciliation 的订单。</td>
+          </tr>
+          <tr>
+            <td>为什么 APS 这样排？</td>
+            <td>瓶颈机台、换款成本、交期优先级、纱线到料状态、人工/班次约束。</td>
+          </tr>
+          <tr>
+            <td>这批订单利润率能不能提高？</td>
+            <td>高利润订单优先级、低价值占产能订单、可合并生产订单、建议换机/换时段方案。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. 需要 APS 研发确认的问题</h2>
+      <ol>
+        <li>当前 ERP → APS 的 API 是否已有唯一订单号、版本号和更新时间字段？</li>
+        <li>APS 是否可以主动按时间窗口向 ERP 拉取订单增量和全量对账？</li>
+        <li>工单下发到机台后，APS 能否接收机台或人工回填的执行状态？</li>
+        <li>当前排程算法是否支持有限产能、换款时间、机台兼容性和人工班次约束？</li>
+        <li>是否已有插单模拟能力？如果没有，最小可行版本需要哪些字段？</li>
+        <li>排单人员人工调整排程后，是否能记录修改原因和修改前后差异？</li>
+        <li>APS 是否可以为 Athena 提供只读 API，用于 ROI 测算和老板看板？</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>6. GTM 话术建议</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>旧说法</th>
+            <th>新说法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>APS 可以减少排单人员工作量。</td>
+            <td>APS + Athena 帮老板判断哪些订单更赚钱，哪些插单会损失利润。</td>
+          </tr>
+          <tr>
+            <td>APS 可以提高排单效率。</td>
+            <td>APS 可以让交期风险、瓶颈机台和插单影响变得可见。</td>
+          </tr>
+          <tr>
+            <td>APS 需要设备联网才能发挥作用。</td>
+            <td>APS 可以先用低联网模式落地，再逐步推动机台联网和数据闭环。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note ok">
+        对老板层的核心价值表达：提高利润率、减少错误接单、避免低价值订单占用关键产能、提高交付确定性。
+      </div>
+    </section>
+
+    <p class="footer">
+      Related portal: <a href="Athena.html">Athena.html</a>
+    </p>
+  </main>
+</body>
+</html>

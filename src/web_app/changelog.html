@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -24,6 +24,151 @@
 
     <section class="changelog-list">
       <article class="version-entry current">
+        <div class="version-entry-header">
+          <h2>v0.25.3</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Production Order ID Workflow Spine</h3>
+        <ul>
+          <li>Adds a visible Production Console note that 订单号 / order_id is the unique workflow key.</li>
+          <li>Adds `workflow_primary_key` to the Production template and overview API so future APS/IOT database integration preserves traceability.</li>
+          <li>Clarifies that order_id joins order intake, ERP, APS, IOT, production/service candidates, and garment output records.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.25.2</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Santoni Athena Production Insight Naming</h3>
+        <ul>
+          <li>Renames the production KPI question panel from BI-style wording to Santoni Athena for customer-facing presentation.</li>
+          <li>Keeps the underlying read-only `/api/production/chatbi` contract for KPI root-cause analysis compatibility.</li>
+          <li>Clarifies documentation that the current production snapshot is loaded from local static mock data, not dynamically scraped from APS or IOT web pages.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.25.1</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Design Intake Structuring Console naming</h3>
+        <ul>
+          <li>Renames the former Athena MVP page chrome to Design Intake Structuring Console so it is presented as a Design Agent data-structuring middleware testbench.</li>
+          <li>Adds top-of-page guidance explaining current usage, mock output limits, future design-software/file-import role, and why it is not a manual design-exhaustion tool.</li>
+          <li>Keeps the existing `/athena-mvp.html` URL and API paths for compatibility while narrowing navigation labels and project docs.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.25.0</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Santoni Athena Production Insight</h3>
+        <ul>
+          <li>Adds a read-only Santoni Athena panel on `/production.html` for KPI question-to-data root-cause analysis.</li>
+          <li>Adds `/api/production/chatbi` to analyze scrap rate, OEE, downtime, material risk, order delay, and overall production snapshots from structured mock APS/IOT data.</li>
+          <li>Returns metric snapshots, ranked root causes, recommended actions, next drilldowns, and evidence references instead of free-form chatbot answers.</li>
+          <li>Keeps the agent read-only: it does not change schedules, upload `.co/.cx` files, control machines, write APS/IOT data, or auto-dispatch service requests.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.24.1</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>.co / .cx Program File Terminology</h3>
+        <ul>
+          <li>Corrects seamless machine program-file terminology to `.co` / `.cx` file extensions.</li>
+          <li>Renames Production adapter contract fields to `co_file` / `cx_file`.</li>
+          <li>Updates mock APS/IOT evidence, docs, UI localization, and tests so the program-file wording stays aligned with seamless machine practice.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.24.0</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>APS / IOT Adapter Contract</h3>
+        <ul>
+          <li>Adds a read-only `/api/production/adapter-contract` endpoint based on APS and IOT page research.</li>
+          <li>Documents APS/IOT source pages and field mapping for order, scheduling, machine execution, program evidence, and garment output objects.</li>
+          <li>Updates the production mock snapshot and console metrics to use real-system-like fields such as backlog, remaining quantity, scheduled quantity, capacity occupation, .co/.cx program files, scrap quantity, and yield.</li>
+          <li>Keeps the developer changelog preview working with the shared language switch by avoiding global script variable collisions.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.23.2</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Production Site Flow Layout</h3>
+        <ul>
+          <li>Replaces the abstract resource-lens grid on `/production.html` with a top-down order, scheduling, machine, and garment layout.</li>
+          <li>Adds backlog, style count, material-risk linkage, scheduled and unscheduled order counts, capacity occupation, machine status, running rate, fault machines, yield, and defect-reason summary blocks.</li>
+          <li>Keeps 人机料法环测 evidence available, but presents it through production-flow language for customer and management review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.23.1</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Production Console Chinese display</h3>
+        <ul>
+          <li>Sets `/production.html` to default Chinese display for customer and management review.</li>
+          <li>Localizes API-driven Production status, workflow stages, resource-lens signals, garment output, optimization signals, service request candidates, KPI logs, and evidence logs.</li>
+          <li>Keeps the English language switch available without changing mock data, adapter contracts, or read-only Production API behavior.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.23.0</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Bilingual page language switch</h3>
+        <ul>
+          <li>Adds a shared Chinese / English language toggle to every current web page.</li>
+          <li>Persists the selected language in browser local storage so navigation keeps the same language.</li>
+          <li>Translates page chrome, navigation, controls, guide text, and console labels without changing business data, credentials, mock records, evidence logs, or exported test logs.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.22.0</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Production Operations Console</h3>
+        <ul>
+          <li>Adds `/production.html` as a management-facing Production Operations Console for order intake, ERP, APS, IOT, production, service escalation, and garment output monitoring.</li>
+          <li>Adds mock-backed read-only production APIs: `/api/production/template`, `/api/production/overview`, and `/api/production/analyze`.</li>
+          <li>Adds 人机料法环测 resource lenses, optimization signals, service request candidates, evidence logs, and KPI logs without APS/IOT write actions.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.21.0</h2>
+          <span>2026-06-05</span>
+        </div>
+        <h3>Athena MVP workflow console</h3>
+        <ul>
+          <li>Adds `/athena-mvp.html` as a structured Athena workflow console instead of a chatbot entry.</li>
+          <li>Adds `/api/athena-mvp/template` and `/api/athena-mvp/run` for Design Request / Style3D-CLO-AI-image-TP intake to SWS/Arachne brief, manufacturability check, sampling feedback, revision suggestion, and production readiness.</li>
+          <li>Outputs governed workflow template metadata, data objects, tool-interface contracts, evidence logs, and KPI logs for business review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
         <div class="version-entry-header">
           <h2>v0.20.1</h2>
           <span>2026-05-23</span>
@@ -709,5 +854,6 @@
       </article>
     </section>
   </main>
+  <script src="/i18n.js?v=0.25.3"></script>
 </body>
 </html>
