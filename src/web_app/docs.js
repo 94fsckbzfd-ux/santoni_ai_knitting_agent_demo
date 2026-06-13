@@ -6,6 +6,8 @@ const designerStateFlow = document.querySelector("#designerStateFlow");
 const serviceStateFlow = document.querySelector("#serviceStateFlow");
 const athenaMvpStateFlow = document.querySelector("#athenaMvpStateFlow");
 const productionOperationsStateFlow = document.querySelector("#productionOperationsStateFlow");
+const hermesIntegrationStateFlow = document.querySelector("#hermesIntegrationStateFlow");
+const trainingAutomationStateFlow = document.querySelector("#trainingAutomationStateFlow");
 const serviceCaseStructureList = document.querySelector("#serviceCaseStructureList");
 const nextDecisionList = document.querySelector("#nextDecisionList");
 const docsVersion = document.querySelector("#docsVersion");
@@ -45,6 +47,8 @@ async function loadDocs() {
   renderStateFlow(serviceStateFlow, docs.service_state_flow || []);
   renderStateFlow(athenaMvpStateFlow, docs.athena_mvp_state_flow || []);
   renderStateFlow(productionOperationsStateFlow, docs.production_operations_state_flow || []);
+  renderStateFlow(hermesIntegrationStateFlow, docs.hermes_integration_state_flow || []);
+  renderStateFlow(trainingAutomationStateFlow, docs.training_automation_state_flow || []);
 }
 
 function renderStateFlow(target, stages) {

@@ -1,7 +1,8 @@
 @echo off
 setlocal
 
-cd /d "%~dp0"
+set "ATHENA_DOCS=%~dp0"
+cd /d "%ATHENA_DOCS%"
 
 where python >nul 2>nul
 if errorlevel 1 (
@@ -11,14 +12,9 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo Starting Athena PMO Server...
-echo Project root: %cd%
-echo URL: http://127.0.0.1:8787/Athena.html
+python "tools\open_athena_pmo.py"
 echo.
-echo A server window will stay open. Close that window or press Ctrl+C there to stop Athena PMO Server.
-
-start "Athena PMO Server" cmd /k python "tools\athena_pmo_server.py" --root "." --port 8787
-timeout /t 2 /nobreak >nul
-start "" "http://127.0.0.1:8787/Athena.html"
+echo Athena PMO launcher has stopped.
+pause
 
 endlocal

@@ -25,6 +25,1576 @@
     <section class="changelog-list">
       <article class="version-entry current">
         <div class="version-entry-header">
+          <h2>v0.113.0 - Daily Brief Narrative</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Daily Brief Narrative</h3>
+        <ul>
+          <li>Adds a General Manager daily brief generated from hard risks, Evidence Review Queue, Service risk cards, and local follow-up metadata.</li>
+          <li>Shows top-three priorities, data that should not be concluded yet, suggested confirmation owners, impact focus, and evidence boundary.</li>
+          <li>Adds user-page generate and copy actions without exposing raw JSON or internal schema.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.112.0 - Local Decision Follow-up Board</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Local Decision Follow-up Board</h3>
+        <ul>
+          <li>Extends local metadata-only follow-up coverage to hard risk, evidence review, and Service risk cards.</li>
+          <li>Each follow-up records source card type, related object, confirmation owner, confirmation need, Athena reason, evidence refs, and read-only boundary.</li>
+          <li>Adds manager-facing statuses for pending confirmation, confirmed, needs more data, resolved, and dismissed while preserving read-only external boundaries.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.111.0 - General Manager Decision UI Compression</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>General Manager Decision UI Compression</h3>
+        <ul>
+          <li>Compresses drilldown answers to conclusion, evidence support, suggested confirmation owner, and next action by default.</li>
+          <li>Keeps detailed evidence, field sources, sanity flags, and checked objects in expandable details.</li>
+          <li>Reframes Evidence Review Queue cards as confirmation tasks instead of confirmed risk cards.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.110.0</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>GM First Screen Hierarchy Polish</h3>
+        <ul>
+          <li>Reorders the customer-facing General Manager page into KPI dashboard, hard risks, evidence review candidates, Service/equipment risk, and original chat stream.</li>
+          <li>Keeps drilldown answers compact by default, with detailed evidence, field sources, sanity flags, and read-only boundary inside expandable sections.</li>
+          <li>Removes customer-page stable story shortcuts from the first-screen flow while retaining full internal demo tools in Production Console.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.109.0</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Evidence Review Queue</h3>
+        <ul>
+          <li>Adds an Evidence Review Queue for APS/ERP export rows that need planning or quantity reconciliation before Athena can call them hard risks.</li>
+          <li>Exposes each review candidate with reconciliation drivers, field sources, sanity flags, suggested owner/action, and cannot-conclude reason.</li>
+          <li>Adds a read-only `/api/production/evidence-review` endpoint and customer-page drilldown into the original chat stream.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.108.3</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Delivery Risk Driver Guard</h3>
+        <ul>
+          <li>Separates hard delivery-risk orders from delivery status or quantity reconciliation candidates.</li>
+          <li>Prevents essentially completed orders from being shown as delivery risks when the evidence only supports data or order-status review.</li>
+          <li>Adds structured delivery risk drivers so Athena explains whether the trigger is due date, unscheduled quantity, low completion, or data reconciliation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.108.2</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Machine Style Root Cause Evidence</h3>
+        <ul>
+          <li>Upgrades machine/style mismatch root cause from field-name-only evidence to required-vs-actual parameter evidence.</li>
+          <li>Shows, for example, the required Style_Component cylinder diameter and the actual T_Machine_Info machine cylinder diameter.</li>
+          <li>Adds structured mismatch details for cylinder diameter and needle spacing so Athena can explain why a task is a mismatch.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.108.1</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>Actual Export Evidence Sanity Guard</h3>
+        <ul>
+          <li>Filters deleted APS/ERP export rows before Athena builds order, schedule, reporting, and machine evidence chains.</li>
+          <li>Adds sanity flags for stale delivery dates and extreme planned-vs-reported quantity gaps so unusual evidence becomes a reconciliation candidate instead of a hard production conclusion.</li>
+          <li>Keeps no-header CSV parsing tied to the `表字段` DDL field order and exposes raw vs active row counts for review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.108.0</h2>
+          <span>2026-06-12</span>
+        </div>
+        <h3>General Manager Dashboard Hierarchy</h3>
+        <ul>
+          <li>Adds a user-page General Manager daily KPI dashboard for delivery risk, scheduling, plan completion, equipment risk, Service candidates, and data confidence.</li>
+          <li>Repositions the top-three risk cards below the dashboard so they act as today's priority explanation rather than the whole operating surface.</li>
+          <li>Compresses Athena drilldown into one management-facing answer with expandable evidence, data gaps, and read-only boundary details.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.107.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Internal Demo Candidate Report</h3>
+        <ul>
+          <li>Adds the v0.107.0 internal demo candidate report with demoable features, actual APS/ERP evidence, mock/hybrid limits, data gaps, and v1.0.0 readiness recommendation.</li>
+          <li>Exposes `internal_demo_candidate` from the Production workflow for docs, tests, and presenter review.</li>
+          <li>Links the report from Athena documentation while keeping customer-facing pages free of development-progress content.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.106.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Hermes Training / Memory Review</h3>
+        <ul>
+          <li>Converts demo questions, data gaps, follow-ups, and feedback into local Hermes memory/training candidates.</li>
+          <li>Adds scope, tenant_id, factory_id, source, retention_policy, sensitivity_level, and promotion_status fields.</li>
+          <li>Keeps all candidates local and explicitly blocks live Hermes writes.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.105.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Visible Athena Skill Process</h3>
+        <ul>
+          <li>Adds manager-language skill process steps for checking orders, schedules, machine specs, materials, Service candidates, and data gaps.</li>
+          <li>Hides raw debug trace, raw payload, and internal schema from the visible skill process.</li>
+          <li>Supports a more agent-like verification story during drilldown and presenter review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.104.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Service Risk Confirmation Flow</h3>
+        <ul>
+          <li>Expands Service risk candidates into confirmation cards with machine, order impact, evidence, and maintenance questions.</li>
+          <li>States whether a real ticket should be considered only after human confirmation.</li>
+          <li>Preserves no auto-dispatch, no real ticket creation, and no machine-control boundaries.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.103.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Data Request Wizard</h3>
+        <ul>
+          <li>Adds ERP, IOT, quality, labor, cost, and shipping data request templates.</li>
+          <li>Each request includes fields, purpose, answerable questions, priority, sensitivity, and suggested owner.</li>
+          <li>Generates request templates without storing raw sensitive data.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.102.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>GM Question Regression Set</h3>
+        <ul>
+          <li>Fixes a General Manager regression question set for delivery, machine/style, Service, material, data-gap, and top-three-priority questions.</li>
+          <li>Defines the minimum answer contract: conclusion, evidence, recommendation, data gap, and read-only boundary.</li>
+          <li>Connects the set to the local test harness rather than a live Hermes runner.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.101.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Evidence Boundary Layer</h3>
+        <ul>
+          <li>Separates actual_export, mock_contract, hybrid, and data_gap evidence modes for stories, cards, and demo contracts.</li>
+          <li>Lists allowed claims and cannot-claim boundaries in manager language.</li>
+          <li>Prevents mock IOT/Service signals from being presented as live customer evidence.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.100.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Presenter Mode</h3>
+        <ul>
+          <li>Adds presenter mode with recommended narration order, test questions, and expected outputs.</li>
+          <li>Makes the internal demo repeatable without relying on ad hoc questions.</li>
+          <li>Keeps presenter content out of the customer-facing user page.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.99.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>User Page GM Demo Entry</h3>
+        <ul>
+          <li>Adds compact stable-story shortcuts to the user-page General Manager workspace.</li>
+          <li>Story clicks send questions into the original chat stream for Athena drilldown.</li>
+          <li>Keeps raw payload, debug trace, Internal Demo Mode, and development plans off the user page.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.98.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Guided Demo Flow</h3>
+        <ul>
+          <li>Adds a guided demo flow for top-three priorities, actual APS/ERP delivery risk, Athena verification, machine/style risk, hybrid Service risk, and local follow-up.</li>
+          <li>Defines a demo reset policy that only resets local demo state and never deletes actual exports or writes external systems.</li>
+          <li>Surfaces the guided flow in Production Console through the internal demo candidate panel.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.97.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Stable General Manager Demo Story Pack</h3>
+        <ul>
+          <li>Adds `stable_demo_story_pack` to the Production workflow so internal demos can follow three fixed story lines instead of ad hoc page clicking.</li>
+          <li>Separates actual APS/ERP export evidence, clearly labeled mock IOT/Service supplements, and data gaps for each demo story.</li>
+          <li>Adds a Production Console story-pack panel with one-click Santoni Athena drilldown questions for delivery risk, machine/style fit, and service-impact stories.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.96.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Athena Verification Process Visualization</h3>
+        <ul>
+          <li>Adds `verification_process` to `/api/production/chatbi` so drilldown answers show what Athena checked, what it found, evidence level, data gaps, and suggested confirmation owner.</li>
+          <li>Updates the customer-facing chat response to show a management-language Athena verification process instead of raw debug trace.</li>
+          <li>Keeps drilldown answers in the original user chat flow and preserves the read-only boundary.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.95.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>General Manager Demo UX Polish</h3>
+        <ul>
+          <li>Removes version-style content from the General Manager first-screen summary and replaces it with management-facing indicators.</li>
+          <li>Adjusts risk-card language so the first screen focuses on what the General Manager should watch today.</li>
+          <li>Keeps technical field sources inside expandable evidence details while preserving Service Risk and local follow-up actions.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.94.1</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>User Page Internal Demo Content Cleanup</h3>
+        <ul>
+          <li>Removes the Internal Demo Mode panel from the customer-facing General Manager workspace on `/`.</li>
+          <li>Keeps internal demo guidance in the Codex completion conversation and the demo readiness report instead of showing it to end users.</li>
+          <li>Adds `docs/product/athena_internal_demo_readiness_v0.94.1.md` and links it from Athena documentation.</li>
+          <li>Preserves the backend `internal_demo_readiness_mode` contract for reporting and internal review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.94.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Internal Demo Readiness Mode</h3>
+        <ul>
+          <li>Adds `internal_demo_readiness_mode` to the Production workflow so Athena can state what can be shown internally and what remains out of scope.</li>
+          <li>Adds `docs/product/athena_internal_demo_readiness_v0.94.0.md` and links it from Athena documentation.</li>
+          <li>Keeps the demo boundary explicit: no APS / ERP / IOT write-back, no service dispatch, no machine control, and no `.co` / `.cx` upload.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.93.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Evidence Detail and Data Gap Clarity</h3>
+        <ul>
+          <li>Adds expandable evidence detail to General Manager risk cards, including evidence level, field sources, evidence refs, and data gaps.</li>
+          <li>Makes missing evidence visible before Athena gives a root-cause conclusion.</li>
+          <li>Improves the user-page drilldown flow so evidence-backed analysis stays in the original conversation history.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.92.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Service Risk First Screen</h3>
+        <ul>
+          <li>Adds `first_screen_service_risk` to the Production workflow as a Service risk candidate contract.</li>
+          <li>Adds a Service Risk panel to the General Manager workspace, with drilldown and local follow-up actions.</li>
+          <li>Clarifies that Service risk cards are confirmation candidates only and do not create real service tickets.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.91.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>General Manager Follow-up Loop Demo</h3>
+        <ul>
+          <li>Adds local follow-up actions to user-page General Manager risk cards.</li>
+          <li>Shows owner, linked risk card, evidence refs, expected evidence, review time, and status in the customer-facing workspace.</li>
+          <li>Keeps follow-up review updates metadata-only with no APS / ERP / IOT write-back.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.90.3</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Developer General Manager Flow Parity</h3>
+        <ul>
+          <li>Aligns `/developer.html` with the user-page General Manager flow: selecting `总经理` now automatically loads the top-three Production priorities.</li>
+          <li>Routes developer-page General Manager follow-up messages from the original test input to `/api/production/chatbi`, matching the customer-facing Athena evidence drilldown behavior.</li>
+          <li>Adds Skill Execution Trace rendering to developer-page Production Athena responses so testers can see what Athena checked before reaching a recommendation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.90.2</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Unified General Manager Conversation Flow</h3>
+        <ul>
+          <li>Removes the separate General Manager follow-up input from the embedded Production workspace on `/`.</li>
+          <li>Routes General Manager bottom-chat messages directly to `/api/production/chatbi` so typed follow-ups use the same evidence-backed result as risk-card drilldowns.</li>
+          <li>Moves risk-card `让 Athena 下钻` results into the original chat history so the user sees one continuous Athena conversation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.90.1</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Developer General Manager Label Alignment</h3>
+        <ul>
+          <li>Renames the developer/debug page production role button from `Production Management` to `总经理` so it matches the customer-facing identity flow.</li>
+          <li>Updates the developer workflow title and no-identity guidance to use the same General Manager wording while preserving the backend `production_manager` role contract.</li>
+          <li>Refreshes version, docs, README, tests, and cache-busting parameters for the v0.90.1 patch.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.90.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>User-Page General Manager Agent Workspace</h3>
+        <ul>
+          <li>Adds a customer-facing 总经理 identity button on `/` so the Production workflow can start from the main user page instead of a separate console link.</li>
+          <li>Embeds the General Manager three-priority Production dashboard directly in the user page after the 总经理 role is selected.</li>
+          <li>Adds same-page risk-card drilldown and a Santoni Athena production question panel backed by `/api/production/chatbi`, keeping the workflow read-only and evidence-scoped.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.89.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Skill Execution Trace</h3>
+        <ul>
+          <li>Adds `skill_execution_trace` to Production risk cards and Santoni Athena drilldown responses so the demo shows what Athena checked, which skill was used, which objects were inspected, and which evidence or data gap remains.</li>
+          <li>Extends local follow-up candidates with skill trace context while keeping follow-up writes limited to local metadata.</li>
+          <li>Adds `docs/product/athena_development_progress_v0.89.0.md` and refreshes the Athena structure map for the new skill layer.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.88.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Athena Skill Registry</h3>
+        <ul>
+          <li>Adds a read-only Production Skill Registry with GM daily brief, delivery risk, machine fit, material constraint, bottleneck detection, quality/scrap, service escalation, and follow-up action skills.</li>
+          <li>Exposes `/api/production/skills` for internal explanation of Athena's agent capability layer.</li>
+          <li>Links each Production risk card to the skills Athena used so the result is not presented as generic ChatBI text.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.87.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>GM Demo Mode UI</h3>
+        <ul>
+          <li>Repositions `/production.html` as a general-manager demo surface with the first-screen question: "今天我应该先盯哪三件事？"</li>
+          <li>Moves development-heavy evidence, PRD audit, and raw data-source details behind the main risk-card experience.</li>
+          <li>Adds a compact Athena Skill Layer panel while preserving the bilingual language switch and read-only production boundary.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.86.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Athena Development Progress Report</h3>
+        <ul>
+          <li>Adds `docs/product/athena_development_progress_v0.86.0.md` with current capabilities, current limits, internal demo scope, future development plan, and demo boundary.</li>
+          <li>Links the progress report from `docs/Athena.html` so the stage status is visible from the Athena product portal.</li>
+          <li>Updates project documentation to record the actual-export-first GM workflow, local follow-up contract, and remaining live-integration limitations.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.85.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Risk Card Drilldown + Follow-up Action Contract</h3>
+        <ul>
+          <li>Adds drilldown questions to Production GM risk cards so each card can continue into Santoni Athena root-cause analysis.</li>
+          <li>Extends local follow-up candidates with linked risk card, actual evidence chain, field sources, data source mode, internal demo readiness, and metadata-only write scope.</li>
+          <li>Keeps follow-up actions blocked from APS, ERP, IOT, service tickets, machine control, and `.co` / `.cx` upload.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.84.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Production GM First-Screen Priority Workflow</h3>
+        <ul>
+          <li>Promotes Tianpai APS/ERP export evidence chains into the General Manager first-screen top-three priority workflow.</li>
+          <li>Uses actual export evidence first and mock production evidence as a clearly labeled fallback.</li>
+          <li>Adds risk theme, evidence level, field sources, actual evidence chains, internal demo readiness, suggested owner, suggested action, and data gaps to each priority card.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.83.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Actual-Data Management Q&A Evidence Chains</h3>
+        <ul>
+          <li>Connects Santoni Athena production Q&A to the read-only Tianpai APS/ERP export adapter before falling back to mock management analysis.</li>
+          <li>Adds actual-data answers for delivery risk, unscheduled weaving part orders, machine plan load, machine/style spec mismatch, and planned-vs-reported quantity gaps.</li>
+          <li>Returns evidence chains for each actual-data answer, including order, weaving part order, planned task, machine, evidence refs, and field source.</li>
+          <li>Shows the actual-data evidence chain in `/production.html` so management answers stay traceable instead of becoming generic ChatBI text.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.82.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Production Mock + Actual Snapshot</h3>
+        <ul>
+          <li>Adds an `actual_data_snapshot` object to the Production workflow based on the Tianpai APS/ERP export adapter.</li>
+          <li>Shows the current data source as Mock / Tianpai APS Export on `/production.html`.</li>
+          <li>Adds actual-data KPIs for total orders, near-due orders, scheduled/unscheduled weaving part orders, plan completion, report completion, machine plan load, and machine/style cylinder-gauge mismatch candidates.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.81.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>Tianpai APS/ERP Export Adapter</h3>
+        <ul>
+          <li>Adds a read-only `TianpaiApsErpExportAdapter` for external no-header CSV exports.</li>
+          <li>Parses Produce_Order, Weaving_Part_Order, Planned_Task, Manual_Machine_Production, Style_Component, Style_Sku, and T_Machine_Info using the `表字段` DDL field order.</li>
+          <li>Exposes `/api/production/tianpai-aps-export` with standard object counts, join quality, missing fields, unmatched records, capability boundaries, and blocked write actions without copying raw customer CSV files into the repo.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.80.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>PRD Alignment Audit</h3>
+        <ul>
+          <li>Adds a structured `prd_alignment_audit` object to the Production workflow.</li>
+          <li>Shows a PRD coverage matrix on `/production.html` mapping sections 1-18 to implemented objects, evidence refs, and remaining gaps.</li>
+          <li>Separates local mock MVP coverage from live customer deployment readiness so Athena does not overclaim completion.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.79.0</h2>
+          <span>2026-06-11</span>
+        </div>
+        <h3>PRD MVP Success Check</h3>
+        <ul>
+          <li>Adds a structured `mvp_success_check` object to the Production workflow based on PRD section 17.</li>
+          <li>Shows a PRD success-check panel on `/production.html` for top priorities, why they matter, evidence, next confirmation owner, and missing data visibility.</li>
+          <li>Reports current three-minute readiness as Level 1 mock evidence and keeps real ERP/APS/IOT, labor baseline, quality records, and GM VOC as remaining data boundaries.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.78.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD MVP Demo Story</h3>
+        <ul>
+          <li>Adds a structured `mvp_demo_story` object to the Production workflow based on PRD section 16.</li>
+          <li>Shows a three-minute management story on `/production.html`, connecting delivery risk to quality/replenishment, labor effective hours, and service/machine stoppage signals.</li>
+          <li>Links the story to evidence, object references, local follow-up items, success criteria, data boundary, and the general manager final-confirmation rule.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.77.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD Permission Boundary</h3>
+        <ul>
+          <li>Adds a structured `permission_boundary` object to the Production workflow.</li>
+          <li>Shows the general manager final-confirmation boundary on `/production.html`, including allowed Athena support actions and blocked automation actions.</li>
+          <li>Explicitly blocks schedule modification, automatic service dispatch, .co/.cx upload, machine control, employee-performance scoring, forced conclusions with insufficient evidence, and replacement of the general manager decision.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.76.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD First-Screen Management Summary</h3>
+        <ul>
+          <li>Adds a bilingual 3-5 line management summary to `management_priority_brief.daily_brief`.</li>
+          <li>Summarizes delivery, quality/replenishment, labor effective hours, and data boundary before the three risk cards.</li>
+          <li>Renders the summary on `/production.html` so the general manager can read the first-screen brief before drilling into risk cards.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.75.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD Follow-Up Status Lifecycle</h3>
+        <ul>
+          <li>Aligns Production local follow-up items with the PRD lifecycle: pending confirmation, assigned, waiting for evidence, confirmed, closed, and unable to process.</li>
+          <li>Adds matching Production Console controls for confirmation, evidence waiting, closure, and unable-to-process review.</li>
+          <li>Keeps all follow-up review updates metadata-only and blocked from APS, IOT, real ticket systems, machine control, and Hermes memory promotion.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.74.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD Risk-Card Evidence Details</h3>
+        <ul>
+          <li>Adds PRD-required risk levels to Production first-screen risk cards: red, yellow, or gray.</li>
+          <li>Shows 2-3 key evidence items on each card and moves full evidence, evidence level, and data gaps into an expandable detail area.</li>
+          <li>Links local follow-up items back to their source risk-card ID so the decision loop remains traceable.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.73.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>PRD First-Screen Risk Alignment</h3>
+        <ul>
+          <li>Aligns the Production Management Priority Engine with Athena PRD v0.1: delivery-risk order, quality/replenishment risk, and labor effective-hour risk are now the three main first-screen cards.</li>
+          <li>Changes the priority policy to delivery &gt; quality &gt; cost, treating cost as a consequence metric until real purchasing, labor, rework, and freight records are connected.</li>
+          <li>Adds a labor effective-hour root-cause branch so Santoni Athena can drill down by team, manual intervention, service/setup/waiting/rework, and evidence.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.72.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Risk Card Drill-Down Actions</h3>
+        <ul>
+          <li>Adds continue-asking actions to the General Manager three-priority cards, sending evidence-scoped drill-down questions into Santoni Athena.</li>
+          <li>Adds Service Risk drill-down actions so machine/service candidates can be reviewed by affected order, machine signal, evidence, and dispatch boundary.</li>
+          <li>Keeps the interaction read-only through `/api/production/chatbi`; Athena can explain root cause and evidence but cannot write APS, IOT, service tickets, or production systems.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.9</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>First-Screen Service Risk Brief</h3>
+        <ul>
+          <li>Adds an independent first-screen Service Risk section under the general-manager three-priority brief.</li>
+          <li>Highlights service request candidates, stopped-machine candidates, alarm signals, affected orders, evidence references, and machine signals.</li>
+          <li>Keeps Service risks candidate-only and read-only: Athena can prepare context, but does not automatically dispatch service work.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.8</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>General Manager 3-Minute Brief</h3>
+        <ul>
+          <li>Adds a first-screen Production Console section asking “今天我应该先处理哪三件事？” before the KPI summary.</li>
+          <li>Renders the top three evidence-backed management priorities with priority rank, affected orders/machines, evidence references, owner role, risk if ignored, and recommended action.</li>
+          <li>Keeps the brief read-only and driven by the existing management priority engine, so suggested actions still require owner confirmation before execution.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.7</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Developer Page API Interaction Fix</h3>
+        <ul>
+          <li>Rebuilds the developer-page JavaScript with clean UTF-8 strings so identity buttons, chat submit, reset, export log, status loading, operating model loading, and changelog preview can bind correctly.</li>
+          <li>Adds direct developer-page API links for `/api/status`, `/api/operating-model`, and `/api/project-docs` to make backend connectivity visible from the page.</li>
+          <li>Preserves the explicit identity gate before sending `/api/chat` requests and keeps TOP2 / lock-machine credentials in browser memory only.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.6</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Athena PRD Web Route</h3>
+        <ul>
+          <li>Adds a read-only docs static route to the local demo server so `http://127.0.0.1:8787/Athena.html` can open `docs/Athena.html` through the running demo.</li>
+          <li>Allows linked docs assets such as `product/athena_prd_v0.1.md` to be served from the `docs` directory without moving them into the user-facing web app folder.</li>
+          <li>Keeps the route scoped to the project `docs` directory so it cannot read arbitrary local files.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.5</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Athena PRD Visibility</h3>
+        <ul>
+          <li>Moves the PRD v0.1 entry point to the top of `docs/Athena.html` so it is visible immediately after opening the page.</li>
+          <li>Keeps the full PRD detail section in the same page and links it to the Markdown PRD file.</li>
+          <li>Clarifies the first-screen PRD summary: digital general manager, Production + Service focus, three priorities, and permission boundary.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.4</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Athena PRD v0.1</h3>
+        <ul>
+          <li>Adds `docs/product/athena_prd_v0.1.md` as the first customer-facing PRD draft for Santoni Athena.</li>
+          <li>Adds a PRD v0.1 section to `docs/Athena.html` covering the digital general manager positioning, MVP scope, first-screen structure, risk cards, evidence levels, local follow-ups, and permission boundary.</li>
+          <li>Defines the first MVP success criterion: the general manager should know the three most important things to handle today within three minutes.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.3</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Athena Structure PNG Readability</h3>
+        <ul>
+          <li>Updates the Athena structure PNG renderer to use softer curved connectors instead of rigid straight lines.</li>
+          <li>Adds dashed connectors for read-only evidence, future integration boundaries, and training feedback loops to make relationship types easier to scan.</li>
+          <li>Regenerates the structure map as `docs/athena_structure_v0.71.3.png`.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.2</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Chinese Routing Dictionary Cleanup / Athena Structure PNG</h3>
+        <ul>
+          <li>Expands the MainAgent Chinese routing dictionary for design, service, and production-management terms used in Tianpai onsite workflows.</li>
+          <li>Adds regression coverage for normal Chinese production, design, service, and machine-fault routing terms plus a mojibake guard for the routing dictionary.</li>
+          <li>Adds a PNG architecture map for the current Athena demo structure.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.1</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Active LLM Status / Env Reload Fix</h3>
+        <ul>
+          <li>Makes the local demo load the current project `.env` as the active runtime configuration instead of keeping stale inherited provider/model values.</li>
+          <li>Adds active LLM provider, model, and enabled flags to `/api/status` so model-loading issues can be checked directly.</li>
+          <li>Updates the developer status pill to display the active provider/model reported by the backend.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.71.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Tianpai Material Risk / Data Readiness</h3>
+        <ul>
+          <li>Adds a read-only Tianpai Material Risk object that consumes aggregate yarn inventory evidence without copying raw inventory rows into the repository.</li>
+          <li>Adds `/api/production/material-risk`, `/api/production/data-readiness`, and `/api/production/question-bank` for material evidence, data-source readiness, and general-manager question-bank contracts.</li>
+          <li>Adds production object-model support for material inventory and tracks yarn code, batch, color, twist, supplier, task order, balance, and join-readiness fields.</li>
+          <li>Adds Production Console panels for Material Risk, Data Readiness, and General Manager Question Bank while keeping ERP/APS/IOT writes blocked.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.70.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Codex Promotion Final Release / Archive Review Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-release-review-gate` for metadata-only product-owner final release and archive review checks.</li>
+          <li>Adds `athena.codex_promotion_final_release_review_gate.v1` and `hermes.codex_promotion_final_release_review_gate.v1`.</li>
+          <li>Adds a Training Console panel that shows release review status, candidate count, blocked candidates, required human review inputs, publication references, published records, and validation summaries.</li>
+          <li>Keeps the release gate read-only: it does not create archive artifacts, publish project memory, update regression baselines, write live Hermes memory, commit, push, open PRs, store raw artifacts, store credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.69.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Codex Promotion Final Publication Closure Audit</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-publication-closure-audit` for metadata-only final publication closure checks.</li>
+          <li>Adds `athena.codex_promotion_final_publication_closure_audit.v1` and `hermes.codex_promotion_final_publication_closure_audit.v1`.</li>
+          <li>Adds a Training Console panel that shows closure status, expected result count, recorded result count, complete result count, missing result count, failed result count, and final release-review candidates.</li>
+          <li>Keeps closure audit read-only: it does not publish project memory, update regression baselines, write live Hermes memory, commit, push, open PRs, store raw files, store credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.68.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Codex Promotion Final Publication Result Intake</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-publication-results` and `/api/training/codex-promotion-final-publication-result` for metadata-only final publication result intake.</li>
+          <li>Adds `athena.codex_promotion_final_publication_result_intake.v1`, `athena.codex_promotion_final_publication_result_state.v1`, and `hermes.codex_promotion_final_publication_result_intake.v1`.</li>
+          <li>Adds a Training Console panel to record manual final publication result summaries after explicit external publication, including publication reference, published record identifiers, validation summary, rollback summary, and validation evidence.</li>
+          <li>Keeps result intake metadata-only: it does not publish project memory, update regression baselines, write live Hermes memory, commit, push, open PRs, store raw files, store credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.67.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Codex Promotion Final Publication Readiness Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-publication-readiness` for read-only final publication prerequisite checks.</li>
+          <li>Adds `athena.codex_promotion_final_publication_readiness_gate.v1` and `hermes.codex_promotion_final_publication_readiness_gate.v1`.</li>
+          <li>Adds a Training Console panel that shows final publication readiness status, missing publication inputs, target systems, owner roles, required evidence, and suggested manual instructions.</li>
+          <li>Keeps final publication blocked until prerequisite metadata is confirmed: no project-memory publication, regression baseline update, live Hermes write, git action, raw-file storage, credential storage, or APS/IOT integration is performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.66.0</h2>
+          <span>2026-06-10</span>
+        </div>
+        <h3>Codex Promotion Final Publication Handoff Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-publication-handoff` for metadata-only final publication handoff preparation.</li>
+          <li>Converts approved final completion publication plans into manual handoff contracts with target system, owner role, required publication inputs, publication evidence, and suggested user instruction.</li>
+          <li>Adds `athena.codex_promotion_final_publication_handoff_queue.v1` and `hermes.codex_promotion_final_publication_handoff_queue.v1` for Hermes/Codex loop visibility.</li>
+          <li>Keeps final publication blocked until a real human handoff is completed: no project-memory publication, regression baseline update, live Hermes write, git action, raw-file storage, credential storage, or APS/IOT integration is performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.65.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Final Completion Review Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-completion-review-gate`, `/api/training/codex-promotion-final-completion-reviews`, and `/api/training/codex-promotion-final-completion-review` for metadata-only final completion review decisions.</li>
+          <li>Adds `athena.codex_promotion_final_completion_review_gate.v1`, `athena.codex_promotion_final_completion_review_state.v1`, and `hermes.codex_promotion_final_completion_review_gate.v1`.</li>
+          <li>Adds a Codex Promotion Final Completion Review Gate panel to the Training Console with approved, needs-inputs, deferred, rejected, and note-only product-owner decisions.</li>
+          <li>Keeps final completion review metadata-only: approved items become approved-but-not-published future publication plans and do not publish project memory, update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.64.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Final Sync Closure Audit</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-sync-closure-audit` for read-only closure auditing over final sync execution result records.</li>
+          <li>Adds `athena.codex_promotion_final_sync_closure_audit.v1` and `hermes.codex_promotion_final_sync_closure_audit.v1`.</li>
+          <li>Adds a Codex Promotion Final Sync Closure Audit panel to the Training Console with expected, recorded, complete, missing, failed, and completion-review candidate counts.</li>
+          <li>Keeps closure metadata-only: audit readiness does not update baselines, write live Hermes memory, publish project memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.63.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Final Sync Execution Result Intake</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-sync-execution-results` and `/api/training/codex-promotion-final-sync-execution-result` for metadata-only final sync result intake.</li>
+          <li>Adds `athena.codex_promotion_final_sync_execution_result_intake.v1`, `athena.codex_promotion_final_sync_execution_result_state.v1`, and `hermes.codex_promotion_final_sync_execution_result_intake.v1`.</li>
+          <li>Adds a Codex Promotion Final Sync Execution Result Intake panel to the Training Console with result status, changed records, validation summaries, and manual record/failed/skipped/note actions.</li>
+          <li>Keeps final sync result intake metadata-only: it does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.62.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Final Sync Execution Readiness Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-sync-readiness` for read-only final sync execution readiness checks over final sync handoff contracts.</li>
+          <li>Adds `athena.codex_promotion_final_sync_execution_readiness_gate.v1` and `hermes.codex_promotion_final_sync_execution_readiness_gate.v1`.</li>
+          <li>Adds a Codex Promotion Final Sync Execution Readiness Gate panel to the Training Console with missing real-sync prerequisites, target systems, owner roles, evidence requirements, and blocked actions.</li>
+          <li>Keeps final sync execution blocked: readiness evaluation does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.61.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Final Sync Handoff Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-final-sync-handoff` for read-only final sync handoff contracts from approved closure-review future actions.</li>
+          <li>Adds `athena.codex_promotion_final_sync_handoff_queue.v1` and `hermes.codex_promotion_final_sync_handoff_queue.v1`.</li>
+          <li>Adds a Codex Promotion Final Sync Handoff Queue panel to the Training Console with target systems, owner roles, required real-sync inputs, suggested instructions, and execution evidence requirements.</li>
+          <li>Keeps final sync blocked: handoff preparation does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.60.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Closure Review Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-closure-review-gate`, `/api/training/codex-promotion-sync-closure-reviews`, and `/api/training/codex-promotion-sync-closure-review` for metadata-only final sync closure review decisions.</li>
+          <li>Adds `athena.codex_promotion_sync_closure_review_gate.v1`, `athena.codex_promotion_sync_closure_review_state.v1`, and `hermes.codex_promotion_sync_closure_review_gate.v1`.</li>
+          <li>Adds a Codex Promotion Sync Closure Review Gate panel to the Training Console with approve, needs-inputs, defer, reject, and note-only controls.</li>
+          <li>Converts approved final closure candidates into approved-but-not-executed future real sync action plans while keeping baseline updates, live Hermes writes, git actions, raw files, credentials, and APS/IOT integration blocked.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.59.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Closure Audit</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-closure-audit` for read-only closure checks over metadata-only manual sync execution result records.</li>
+          <li>Adds `athena.codex_promotion_sync_closure_audit.v1` and `hermes.codex_promotion_sync_closure_audit.v1`.</li>
+          <li>Adds a Codex Promotion Sync Closure Audit panel to the Training Console with final review candidates, missing result records, closure status, KPI log, and evidence log.</li>
+          <li>Keeps synchronization blocked: closure audit does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.58.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Execution Result Intake</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-execution-results` and `/api/training/codex-promotion-sync-execution-result` for metadata-only manual sync execution result records.</li>
+          <li>Adds `athena.codex_promotion_sync_execution_result_intake.v1`, `athena.codex_promotion_sync_execution_result_state.v1`, and `hermes.codex_promotion_sync_execution_result_intake.v1`.</li>
+          <li>Adds a Codex Promotion Sync Execution Result Intake panel to the Training Console with ready sync items, recorded result cards, validation summaries, and KPI logging.</li>
+          <li>Keeps synchronization blocked: result intake does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.57.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Execution Readiness Review</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-readiness-reviews` and `/api/training/codex-promotion-sync-readiness-review` for metadata-only sync readiness review decisions.</li>
+          <li>Adds `athena.codex_promotion_sync_readiness_review_state.v1` and review-aware behavior for `athena.codex_promotion_sync_execution_readiness_gate.v1`.</li>
+          <li>Adds sync readiness review controls to the Training Console for confirmed-ready, needs-inputs, deferred, rejected, and note-only decisions.</li>
+          <li>Keeps synchronization blocked: review decisions do not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.56.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Execution Readiness Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-readiness` for read-only sync execution readiness checks over manual sync handoff items.</li>
+          <li>Adds `athena.codex_promotion_sync_execution_readiness_gate.v1` and `hermes.codex_promotion_sync_execution_readiness_gate.v1`.</li>
+          <li>Adds a Codex Promotion Sync Execution Readiness Gate panel to the Training Console with missing prerequisite inputs, owner roles, target systems, and required execution evidence.</li>
+          <li>Keeps synchronization blocked: readiness checks do not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.55.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Handoff Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-handoff` for read-only manual execution handoff contracts from approved future sync actions.</li>
+          <li>Adds `athena.codex_promotion_sync_handoff_queue.v1` and `hermes.codex_promotion_sync_handoff_queue.v1`.</li>
+          <li>Adds a Codex Promotion Sync Handoff Queue panel to the Training Console with owner roles, preflight checks, suggested instructions, and required execution evidence.</li>
+          <li>Keeps synchronization blocked: handoff contracts do not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.54.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Sync Review Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-sync-review-gate`, `/api/training/codex-promotion-sync-reviews`, and `/api/training/codex-promotion-sync-review` for metadata-only sync review decisions.</li>
+          <li>Adds `athena.codex_promotion_sync_review_gate.v1`, `athena.codex_promotion_sync_review_state.v1`, and `hermes.codex_promotion_sync_review_gate.v1`.</li>
+          <li>Adds a Codex Promotion Sync Review Gate panel to the Training Console with approve, needs-inputs, defer, reject, and note-only decisions.</li>
+          <li>Keeps synchronization blocked: sync review does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.53.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Closure / Hermes Sync Audit</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-closure-audit` for read-only closure auditing after manual promotion execution result intake.</li>
+          <li>Adds `athena.codex_promotion_closure_audit.v1` and `hermes.codex_promotion_closure_audit.v1`.</li>
+          <li>Adds a Codex Promotion Closure / Hermes Sync Audit panel to the Training Console.</li>
+          <li>Keeps synchronization blocked: closure audit does not update baselines, write live Hermes memory, commit, push, open PRs, store raw files, credentials, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.52.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Execution Result Intake</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-execution-results` and `/api/training/codex-promotion-execution-result` for metadata-only manual promotion result records.</li>
+          <li>Adds `athena.codex_promotion_execution_result_intake.v1` and `hermes.codex_promotion_execution_result_intake.v1`.</li>
+          <li>Adds a Codex Promotion Execution Result Intake panel to the Training Console.</li>
+          <li>Keeps execution blocked: result records do not execute baseline promotion, live Hermes writes, commits, pushes, PRs, raw patch storage, credentials, or APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.51.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Execution Readiness Review</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-readiness-reviews` and `/api/training/codex-promotion-readiness-review` for metadata-only readiness review decisions.</li>
+          <li>Adds `athena.codex_promotion_readiness_review_state.v1` and review-aware readiness gate behavior.</li>
+          <li>Adds confirm, needs-inputs, defer, reject, and note-only controls to the Training Console readiness panel.</li>
+          <li>Keeps execution blocked: readiness review can unlock final manual execution confirmation only, not baseline promotion, live Hermes writes, commits, pushes, PRs, raw patch storage, credentials, or APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.50.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Execution Readiness Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-execution-readiness` for read-only execution-readiness checks after manual promotion handoff contracts.</li>
+          <li>Adds `athena.codex_promotion_execution_readiness_gate.v1` and `hermes.codex_promotion_execution_readiness_gate.v1` with missing prerequisite lists for baseline promotion and live Hermes memory writes.</li>
+          <li>Adds a Codex Promotion Execution Readiness Gate panel to the Training Console.</li>
+          <li>Keeps execution blocked until explicit product-owner confirmation, fresh validation evidence, rollback planning, and live-system contract details are available.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.49.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Handoff Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-handoff` for read-only manual handoff contracts from approved-but-not-executed promotion future actions.</li>
+          <li>Adds `athena.codex_promotion_handoff_queue.v1` and `hermes.codex_promotion_handoff_queue.v1` with target system, owner role, preflight checks, suggested confirmation wording, and execution evidence requirements.</li>
+          <li>Adds a Codex Promotion Handoff Queue panel to the Training Console.</li>
+          <li>Keeps execution blocked: no automatic baseline promotion, live Hermes write, merge, commit, push, PR, raw patch storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.48.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Approval Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-approval-gate`, `/api/training/codex-promotion-approvals`, and `/api/training/codex-promotion-approval` for metadata-only promotion approval decisions.</li>
+          <li>Adds `athena.codex_promotion_approval_gate.v1`, `athena.codex_promotion_approval_state.v1`, and `hermes.codex_promotion_approval_gate.v1` with approved-but-not-executed future action plans.</li>
+          <li>Adds a Codex Promotion Approval Gate panel to the Training Console with approve, hold, skip, needs-changes, reject, and note-only controls.</li>
+          <li>Keeps execution blocked: no automatic baseline promotion, live Hermes write, merge, commit, push, PR, raw patch storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.47.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Promotion Candidate Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-promotion-candidates` for read-only regression baseline and Hermes memory promotion candidates from approved worktree result reviews.</li>
+          <li>Adds `athena.codex_promotion_candidate_queue.v1` and `hermes.codex_promotion_candidate_queue.v1` with candidate counts, KPI log, evidence log, and explicit blocked actions.</li>
+          <li>Adds a Codex Promotion Candidate Queue panel to the Training Console.</li>
+          <li>Keeps promotion blocked: no automatic regression baseline promotion, live Hermes write, merge, commit, push, PR, raw patch storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.46.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Worktree Result Review Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-worktree-result-review-gate`, `/api/training/codex-worktree-result-reviews`, and `/api/training/codex-worktree-result-review` for metadata-only result review decisions.</li>
+          <li>Adds `athena.codex_worktree_result_review_gate.v1`, `athena.codex_worktree_result_review_state.v1`, and `hermes.codex_worktree_result_review_gate.v1` with review, regression candidate, Hermes memory candidate, KPI, and evidence logs.</li>
+          <li>Adds a Codex Worktree Result Review Gate panel to the Training Console with metadata-only review controls.</li>
+          <li>Keeps promotion blocked: no automatic regression baseline promotion, live Hermes write, merge, commit, push, PR, raw patch storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.45.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Worktree Result Intake</h3>
+        <ul>
+          <li>Adds `/api/training/codex-worktree-results` and `/api/training/codex-worktree-result` for metadata-only Codex worktree result intake.</li>
+          <li>Adds `athena.codex_worktree_result_intake.v1`, `athena.codex_worktree_result_state.v1`, and `hermes.codex_worktree_result_intake.v1` with changed-file path count, validation status, KPI log, and evidence log.</li>
+          <li>Adds a Codex Worktree Result Intake panel to the Training Console.</li>
+          <li>Keeps results metadata-only: no raw diffs, raw logs, raw files, credentials, automatic merges, commits, pushes, PRs, live Hermes writes, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.44.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Worktree Launch Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-worktree-launch` to evaluate launch readiness for approved Codex worktree preparation tasks.</li>
+          <li>Adds `athena.codex_worktree_launch_gate.v1` and `hermes.codex_worktree_launch_gate.v1` with launch request count, preflight checks, suggested user instruction, KPI log, and evidence log.</li>
+          <li>Adds a Codex Worktree Launch Gate panel to the Training Console.</li>
+          <li>Keeps launch requests as user-instruction drafts only: no git worktree creation, branch switching, patch application, commits, pushes, PRs, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.43.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Worktree Preparation Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-worktree-prep` to prepare read-only worktree task drafts from approved execution gate reviews.</li>
+          <li>Adds `athena.codex_worktree_preparation_queue.v1` and `hermes.codex_worktree_preparation_queue.v1` with preparation task count, approved execution candidate count, expected result contract, KPI log, and evidence log.</li>
+          <li>Adds a Codex Worktree Preparation Queue panel to the Training Console.</li>
+          <li>Keeps worktree preparation as a task draft only: no worktree creation, branch switching, patch application, commits, pushes, PRs, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.42.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Execution Gate Review</h3>
+        <ul>
+          <li>Adds `/api/training/codex-execution-review` and `/api/training/codex-execution-reviews` for metadata-only execution gate decisions.</li>
+          <li>Adds `athena.codex_execution_review_state.v1` so execution candidates can be approved for future worktree preparation, marked needs-changes, deferred, rejected, or annotated.</li>
+          <li>Adds review controls to the Codex Execution Gate panel in the Training Console.</li>
+          <li>Keeps review decisions as metadata only: no patch execution, branch creation, commits, pushes, PRs, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.41.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Execution Gate</h3>
+        <ul>
+          <li>Adds `/api/training/codex-execution-gate` to evaluate the read-only execution gate after Codex patch candidates are prepared.</li>
+          <li>Adds `athena.codex_execution_gate.v1` and `hermes.codex_execution_gate.v1` with gate status, execution candidate count, human-confirmation requirement, KPI log, and evidence log.</li>
+          <li>Adds a Codex Execution Gate panel to the Training Console so patch candidates are visibly blocked until human execution review.</li>
+          <li>Keeps execution blocked by default: no patch execution, branch creation, commits, pushes, PRs, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.40.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Patch Queue Contract</h3>
+        <ul>
+          <li>Adds `/api/training/codex-patch-queue` to prepare read-only Codex patch candidates from ready Codex work packets.</li>
+          <li>Adds `athena.codex_patch_queue_contract.v1` and `hermes.codex_patch_queue_contract.v1` with patch status, candidate count, training-signal count, KPI log, and evidence log.</li>
+          <li>Upgrades the Training Console Codex Patch Queue panel to show patch candidates, training signals, validation requirements, and blocked actions from the dedicated contract endpoint.</li>
+          <li>Keeps patch candidates blocked from automatic execution: no branch creation, commits, pushes, PRs, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.39.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Codex Work Packet Queue</h3>
+        <ul>
+          <li>Adds `/api/training/codex-work-packets` to prepare read-only Codex work packets from approved Training Iteration Proposals.</li>
+          <li>Adds `athena.codex_work_packet_queue.v1` and `hermes.codex_work_packet_queue.v1` with queue status, packet count, source proposal review status, KPI log, and evidence log.</li>
+          <li>Adds a Codex Work Packet Queue panel to the Training Console so approved proposal seeds can become visible future work packets.</li>
+          <li>Keeps work packets blocked from automatic execution: no code changes, branch creation, live Hermes writes, raw-file storage, credentials, or APS/IOT integration are performed.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.38.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Training Iteration Proposal Review</h3>
+        <ul>
+          <li>Adds `/api/training/iteration-proposal-review` and `/api/training/iteration-proposal-reviews` for metadata-only proposal review decisions.</li>
+          <li>Adds `athena.training_iteration_proposal_review_state.v1` so proposal approval, needs-changes, deferred, rejected, and note-only decisions are visible in the Training Console.</li>
+          <li>Adds approval controls to the Training Iteration Proposal panel, including approval for future Codex/Hermes queue preparation without executing code.</li>
+          <li>Keeps proposal review as a decision record only; it does not execute tasks, write code, write live Hermes memory, store raw files, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.37.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Training Iteration Proposal</h3>
+        <ul>
+          <li>Adds `/api/training/iteration-proposal` to convert closure-gate results into a read-only local training iteration proposal.</li>
+          <li>Adds `athena.training_iteration_proposal.v1` with task seed queue, open-item watchlist, confirmation boundary, Hermes proposal payload, KPI log, and evidence log.</li>
+          <li>Adds a Training Iteration Proposal panel on Training Console so the next local training loop has a structured proposal before any code work.</li>
+          <li>Keeps the proposal read-only: it does not execute tasks, write code, write live Hermes memory, store raw files, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.36.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Next Loop Closure Gate</h3>
+        <ul>
+          <li>Adds `/api/training/next-loop-closure` to evaluate whether reviewed handoff items allow the next local training loop to proceed.</li>
+          <li>Adds `athena.next_loop_closure_gate.v1` with closure status, local iteration permission, open/rejected handoff items, and a local iteration plan.</li>
+          <li>Adds a Next Loop Closure Gate panel on Training Console so open handoff items remain visible even when local small-fix iteration is allowed.</li>
+          <li>Keeps the closure gate read-only: it does not execute the plan, write code, write live Hermes memory, store raw files, or start APS/IOT integration.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.35.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Next Loop Handoff Review</h3>
+        <ul>
+          <li>Adds `/api/training/handoff-review` and `/api/training/handoff-reviews` for metadata-only review decisions on next-loop handoff items.</li>
+          <li>Adds `athena.next_loop_handoff_review_state.v1` so automatic, human-review, and data-request handoff items can carry local review status.</li>
+          <li>Adds review controls to the Training Console Next Loop Handoff panel for approve, resolve, defer, needs-data, and note-only decisions.</li>
+          <li>Keeps handoff review as a decision log only; it does not execute blocked work, write live Hermes memory, store raw files, or change code automatically.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.34.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Next Loop Handoff</h3>
+        <ul>
+          <li>Adds `/api/training/next-loop` to convert Regression Gate output into a local next-loop handoff contract.</li>
+          <li>Adds `athena.next_loop_handoff.v1` with automatic work, human-review, and data-request queues plus a Hermes handoff payload.</li>
+          <li>Adds a Next Loop Handoff panel on Training Console so users can see which items may continue automatically and which require review or data.</li>
+          <li>Keeps automatic items limited to local training preparation; code changes, live Hermes writes, real data integration, and blocked playbook promotion remain blocked without confirmation.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.33.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Regression Gate</h3>
+        <ul>
+          <li>Adds `/api/training/regression-gate` to convert automatic regression results into a Codex/Hermes next-loop decision.</li>
+          <li>Adds `athena.regression_gate.v1` with pass-rate threshold, automatic-loop permission, human-review requirements, blocked actions, Codex queue, and Hermes feedback payload.</li>
+          <li>Adds a Regression Gate panel on Training Console so users can see whether the next local loop may continue and which failed or blocked cases need review.</li>
+          <li>Keeps blocked playbook candidates visible but non-executable, while passing baseline regression can continue under the existing small-fix automation boundary.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.32.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Automatic Regression Runner</h3>
+        <ul>
+          <li>Adds `/api/training/regression-run` to run deterministic local regression checks over approved Tianpai training baseline tasks and approved playbook regression candidates.</li>
+          <li>Adds `automatic_regression_run` output with regression overview, executable/passed/failed/blocked case counts, pass rate, KPI log, evidence log, and blocked actions.</li>
+          <li>Adds an Automatic Regression Run panel on Training Console with a Run Regression button and case-level result cards.</li>
+          <li>Rewrites Training Console JavaScript with clean bilingual strings so the page can render reliably after the previous mojibake-prone script text.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.31.0</h2>
+          <span>2026-06-09</span>
+        </div>
+        <h3>Playbook Regression Queue</h3>
+        <ul>
+          <li>Adds `playbook_regression_queue` to the Training overview so approved Hermes playbook candidates can become local regression-case candidates.</li>
+          <li>Adds `/api/training/playbook-regression` as a mock-contract, read-only queue endpoint with no live Hermes writeback and no APS/IOT writes.</li>
+          <li>Adds a Training Console Playbook Regression Queue panel showing candidate count, ready regression cases, blockers, source evidence, and regression IDs.</li>
+          <li>Keeps unapproved or evidence-incomplete playbooks blocked until follow-up closure, accepted evidence, and human playbook approval are present.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.30.0</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Hermes Organization Memory Playbook Engine</h3>
+        <ul>
+          <li>Adds `organization_memory_playbook` to the Hermes overview, converting Production decision-loop follow-ups into playbook candidates, memory-event candidates, and regression-case candidates.</li>
+          <li>Adds `/api/hermes/playbook` and `/api/hermes/playbook/review` for metadata-only playbook review without writing live Hermes memory or storing raw files, credentials, or customer-sensitive data.</li>
+          <li>Adds a Hermes Console playbook panel with promotion gates, readiness status, evidence references, owner role, and reviewed / needs-changes / approve controls.</li>
+          <li>Blocks playbook approval until follow-up closure and accepted evidence are available, keeping tenant memory from being promoted without human review.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.29.0</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Production Decision Loop Follow-up Engine</h3>
+        <ul>
+          <li>Adds `decision_loop` to Production overview and Production Athena responses, linking management priorities into decision, action, follow_up, and memory-event-candidate objects.</li>
+          <li>Adds `/api/production/follow-up` and `/api/production/follow-up/review` for metadata-only follow-up status updates without writing APS, IOT, service tickets, or Hermes memory.</li>
+          <li>Adds a Production Console follow-up panel with lifecycle state, owner, evidence status, closure gate, recurrence watch, and simulated assign / wait-for-evidence / close controls.</li>
+          <li>Adds local review-state persistence in `src/mock_data/production_follow_up_reviews.json` with sensitive-text rejection and no raw file or credential storage.</li>
+          <li>Records Athena's three product value capabilities in `docs/Athena.html`: workflow-native onsite workforce, management decision-loop agent, and Hermes-governed self-evolution.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.28.0</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Production Management Priority Engine</h3>
+        <ul>
+          <li>Adds a structured `production_object_model` for order, style, machine, process_stage, production_signal, evidence, decision, action, follow_up, and memory_event contracts.</li>
+          <li>Adds `management_priority_brief` to rank the general manager's top evidence-backed priorities using the current Tianpai policy of quality &gt; cost &gt; delivery.</li>
+          <li>Adds `/api/production/priority-brief` and includes the same priority brief in Production overview, Production Athena responses, the user page, developer page, and Production Console.</li>
+          <li>Adds a Production Console priority panel with affected objects, evidence references, owner roles, decision gates, data gaps, and action candidates for the future follow-up engine.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.8</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Production Management Answer Template</h3>
+        <ul>
+          <li>Adds a fixed Production Athena management answer object: conclusion, reason/evidence, risk, recommendation, and data gap.</li>
+          <li>Adds explicit high-frequency management branches for delivery risk, low yield/scrap, machine bottleneck, and current data limitations.</li>
+          <li>Updates the user page, developer page, and Production Console to render the management answer structure instead of only generic root-cause cards.</li>
+          <li>Adds Production Console quick questions for delivery risk, machine bottleneck, and data gaps.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.7</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>User Page Script Scope Fix</h3>
+        <ul>
+          <li>Fixes the customer/user page startup failure caused by `user-app.js` redeclaring the shared `currentLanguage` identifier from `i18n.js`.</li>
+          <li>Scopes the user-page script and renames its conversation-language state so identity buttons, status updates, and chat submission initialize correctly.</li>
+          <li>Adds a user-page readiness marker for regression checks so the page cannot silently stay at the Connecting state again.</li>
+          <li>Routes Chinese 货期 / 平均货期 questions into the Production Athena order-delay branch and reports current backlog days-to-due with an explicit data-boundary note.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.6</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>User and Developer Identity Gate Feedback</h3>
+        <ul>
+          <li>Adds visible customer-page feedback when an identity button is selected, including status text and a confirmation message in the conversation.</li>
+          <li>Replaces the developer-page Auto identity state with explicit Production Management, Service Engineer, and Design Development buttons.</li>
+          <li>Blocks developer chat requests until an identity is selected, keeping backend natural-language routing as a regression fallback rather than the primary UI path.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.5</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Customer Identity Selection Gate</h3>
+        <ul>
+          <li>Adds customer-facing identity buttons for Production Management, Service Engineer, and Design Development before the chat input.</li>
+          <li>Blocks effective chat and quick-action prompts until a user identity is selected, replacing fragile natural-language identity guessing as the primary customer entry path.</li>
+          <li>Keeps selected identity in the request role and resets it on conversation restart, preparing the UI for future role-based permission management.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.4</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Athena Runtime Event Envelope</h3>
+        <ul>
+          <li>Adds an `athena_runtime_event` envelope to every `/api/chat` response so Hermes can later consume workflow, persona, intent, evidence, data-boundary, memory-candidate, and blocked-action metadata without guessing from legacy payloads.</li>
+          <li>Keeps raw user text, generated sensitive values, credentials, and live Hermes writes out of the memory-event candidate while preserving evidence references for review.</li>
+          <li>Updates the customer home page role state so `production_athena` responses continue follow-up turns as `production_manager` instead of staying in the old auto/designer/service-only role model.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.3</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Main Chat Production Manager Routing</h3>
+        <ul>
+          <li>Adds production-manager intent routing in `/api/chat` so questions about orders, delivery, scheduling, scrap, downtime, OEE, materials, and root cause enter `production_athena` instead of the old design/service clarification path.</li>
+          <li>Connects the customer-facing home page response renderer to Santoni Athena production analysis cards with management summary, reason/evidence, recommended actions, and data-boundary notes.</li>
+          <li>Confirms Hermes did not override Main Agent routing; Hermes remains a mock-contract memory/training/suggestion layer while Main Agent now explicitly bridges production-manager questions to the Production Operations workflow.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.2</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Training Round Summary and Baseline Promotion</h3>
+        <ul>
+          <li>Adds `/api/training/round-summary` and `/api/training/promote-baseline` for summarizing approved training rounds and promoting them into the automatic regression baseline.</li>
+          <li>Adds Training Console controls for baseline readiness, promoted task counts, capability/data-gap regression split, and data decisions.</li>
+          <li>Registers the APS Planned Task delivery-time CSV as metadata-only training evidence, while marking real customer cost and stage-level process records as unavailable without storing raw files or credentials.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.1</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Training Review and Data Intake</h3>
+        <ul>
+          <li>Adds task-level review actions on `/training.html`: approve, needs changes, reject, and note-only.</li>
+          <li>Adds data-source registration for needs_data tasks with registered, skipped-for-now, and not-available states without uploading or storing raw files.</li>
+          <li>Adds local `/api/training/reviews`, `/api/training/review`, and `/api/training/data-source` endpoints plus `src/mock_data/training_task_reviews.json` for review/data-intake state.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.27.0</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Athena Automatic Training Console</h3>
+        <ul>
+          <li>Adds `/training.html` as an automatic training console for Tianpai general-manager training progress.</li>
+          <li>Adds `/api/training/template`, `/api/training/overview`, and `/api/training/run` to run deterministic local training evaluation and return Hermes-style JSON results.</li>
+          <li>Tracks task status, capability progress, data gaps, Codex patch queue, next training tasks, evidence logs, KPI logs, and the boundary between automatic small fixes and human-reviewed major changes.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.5</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Tianpai Training Governance</h3>
+        <ul>
+          <li>Adds a training-governance layer for the Tianpai general-manager persona, answer format, KPI priority, recommendation scope, terminology policy, and automation boundary.</li>
+          <li>Sets the current training answer format to management summary + reason/evidence + recommended action.</li>
+          <li>Sets KPI priority to quality > cost > delivery, keeps weaving-process recommendations allowed, and requires Athena to state missing data instead of forcing root-cause conclusions.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.4</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Tianpai Actual Onsite Workflow</h3>
+        <ul>
+          <li>Adds `SRC-TPI-ONSITE-WORKFLOW-001` as the confirmed Tianpai workflow note for ERP work split, APS weaving scheduling, and physical production stages.</li>
+          <li>Clarifies that ERP records order totals, split deliveries, and work split; APS only schedules Tianpai weaving; IOT currently does not participate in Tianpai's actual production workflow.</li>
+          <li>Expands the Tianpai process map from yarn picking through weaving greige, pre-treatment, dyeing, inspection/replenishment, cutting, sewing, packing, needle/metal detection, storage, and container loading.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.3</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Tianpai APS Workflow Fragment</h3>
+        <ul>
+          <li>Adds the current APS-side Tianpai workflow fragment to the structured training pack as `SRC-TPI-APS-WORKFLOW-001`.</li>
+          <li>Records the onsite workflow spine as order intake -> ERP -> APS -> IOT -> production -> quality inspection -> garment delivery.</li>
+          <li>Adds `DQ-TPI-005` to clarify that this fragment supports workflow understanding but cannot calculate APS delay, schedule adherence, capacity variance, or order-level root cause without detailed APS schedule rows.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.2</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Tianpai Training Data Pack</h3>
+        <ul>
+          <li>Adds `docs/training/tianpai_training_pack_v0_1.json` and `docs/training/tianpai_training_summary_v0_1.md` as the first structured Tianpai training baseline.</li>
+          <li>Structures Agnes VOC plus Melos-provided Tianpai IOT output, scrap, and fault exports into field maps, data-quality findings, aggregate KPI seeds, candidate training tasks, and Hermes tenant memory-event candidates.</li>
+          <li>Marks the current Tianpai data boundary: IOT records lack order_id and machine coverage is partial, so current training supports machine/style/shift analysis before full order-flow root cause.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.1</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Hermes Memory Event Governance</h3>
+        <ul>
+          <li>Adds governed Hermes memory-event fields: `scope`, `tenant_id`, `factory_id`, `source`, `retention_policy`, `sensitivity_level`, and `promotion_status`.</li>
+          <li>Updates current Athena memory events to separate product/domain memory from future tenant/session memory.</li>
+          <li>Shows memory governance metadata in `/hermes.html` so future customer-account memory can remain isolated and reviewable.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.26.0</h2>
+          <span>2026-06-08</span>
+        </div>
+        <h3>Hermes Adapter Contract</h3>
+        <ul>
+          <li>Adds `/hermes.html` as a structured Hermes Integration Console for Athena runtime, memory, tool orchestration, and self-evolution planning.</li>
+          <li>Adds mock-backed Hermes APIs: `/api/hermes/template`, `/api/hermes/overview`, and `/api/hermes/suggest`.</li>
+          <li>Defines memory events, evolution candidates, development suggestions, tool registry candidates, evidence logs, KPI logs, and blocked actions without storing credentials or connecting to live Hermes.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
           <h2>v0.25.3</h2>
           <span>2026-06-05</span>
         </div>
@@ -384,7 +1954,7 @@
         <h3>Telerik client-state password extraction</h3>
         <ul>
           <li>Reads generated activation passwords from Telerik masked textbox `ClientState` fields.</li>
-          <li>Scans ASP.NET AJAX update fragments near the precise `激活密码:` label for generated password values.</li>
+          <li>Scans ASP.NET AJAX update fragments near the precise `激活密码` label for generated password values.</li>
           <li>Keeps excluding the submitted machine code when selecting password-like values.</li>
         </ul>
       </article>
@@ -396,7 +1966,7 @@
         </div>
         <h3>Activation password result extraction</h3>
         <ul>
-          <li>Reads the generated result from the input field after the precise `激活密码:` label.</li>
+          <li>Reads the generated result from the input field after the precise `激活密码` label.</li>
           <li>Handles Telerik masked textbox names such as `radwindownew$C$RadMaskedTextBox3` that do not contain password-related words.</li>
           <li>Rejects the submitted machine code when scanning password-like values, so the agent does not echo the wrong field.</li>
         </ul>
@@ -854,6 +2424,10 @@
       </article>
     </section>
   </main>
-  <script src="/i18n.js?v=0.25.3"></script>
+  <script src="/i18n.js?v=0.113.0"></script>
 </body>
 </html>
+
+
+
+

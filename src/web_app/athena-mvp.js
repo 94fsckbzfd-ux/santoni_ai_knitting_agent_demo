@@ -1,4 +1,4 @@
-const athenaForm = document.querySelector("#athenaMvpForm");
+﻿const athenaForm = document.querySelector("#athenaMvpForm");
 const athenaStatus = document.querySelector("#athenaStatus");
 const athenaGate = document.querySelector("#athenaGate");
 const athenaKpis = document.querySelector("#athenaKpis");
@@ -35,7 +35,7 @@ async function initAthenaPage() {
     ]);
     const status = await statusResponse.json();
     const template = await templateResponse.json();
-    athenaStatus.textContent = `${status.version} · ${template.template_id}`;
+    athenaStatus.textContent = `${status.version} 璺?${template.template_id}`;
   } catch {
     athenaStatus.textContent = "Server unavailable";
   }
@@ -98,7 +98,7 @@ function renderKpis(items) {
     card.innerHTML = `
       <span>${escapeHtml(item.kpi)}</span>
       <strong>${escapeHtml(item.demo_target)}</strong>
-      <p>${escapeHtml(item.baseline)} · ${escapeHtml(item.evidence_ref)}</p>
+      <p>${escapeHtml(item.baseline)} 璺?${escapeHtml(item.evidence_ref)}</p>
     `;
     athenaKpis.append(card);
   });
@@ -112,7 +112,7 @@ function renderStages(items) {
     card.innerHTML = `
       <span>${index + 1}</span>
       <strong>${escapeHtml(stage.name)}</strong>
-      <p>${escapeHtml(stage.owner_role)} · ${escapeHtml(stage.status)}</p>
+      <p>${escapeHtml(stage.owner_role)} 璺?${escapeHtml(stage.status)}</p>
       <small>${escapeHtml(stage.output_object)}</small>
     `;
     athenaStages.append(card);
@@ -141,7 +141,7 @@ function renderListObjects(target, items) {
     article.className = "mini-object";
     article.innerHTML = `
       <strong>${escapeHtml(item.tool)}</strong>
-      <p>${escapeHtml(item.status)} · write: ${escapeHtml(item.write_permission)}</p>
+      <p>${escapeHtml(item.status)} 璺?write: ${escapeHtml(item.write_permission)}</p>
       <small>${escapeHtml(item.input)} -> ${escapeHtml(item.output)}</small>
     `;
     target.append(article);
@@ -154,9 +154,9 @@ function renderEvidence(items) {
     const article = document.createElement("article");
     article.className = "evidence-item";
     article.innerHTML = `
-      <strong>${escapeHtml(item.evidence_id)} · ${escapeHtml(item.source)}</strong>
+      <strong>${escapeHtml(item.evidence_id)} 璺?${escapeHtml(item.source)}</strong>
       <p>${escapeHtml(item.claim)}</p>
-      <small>${escapeHtml(item.object_type)} · ${escapeHtml(item.status)}</small>
+      <small>${escapeHtml(item.object_type)} 璺?${escapeHtml(item.status)}</small>
     `;
     evidenceLog.append(article);
   });
@@ -205,7 +205,7 @@ function exportEvidence() {
   if (!latestWorkflowResult) return;
   const payload = {
     exported_at: new Date().toISOString(),
-    version: "v0.25.3",
+    version: "v0.113.0",
     template_id: latestWorkflowResult.workflow_template.template_id,
     workflow_instance: latestWorkflowResult.workflow_instance,
     evidence_log: latestWorkflowResult.evidence_log,
@@ -243,3 +243,8 @@ initAthenaPage();
 runAthenaWorkflow(formPayload()).catch(() => {
   athenaGate.textContent = "API unavailable";
 });
+
+
+
+
+

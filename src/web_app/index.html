@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Santoni AI Service Assistant</title>
+  <title>Santoni Athena</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="user-body">
@@ -11,28 +11,107 @@
     <header class="user-header">
       <img class="santoni-logo" src="/santoni-logo.png" alt="Santoni">
       <nav class="user-nav" aria-label="Page links">
-        <a href="/athena-mvp.html">Design Intake</a>
-        <a href="/production.html">Production</a>
         <a href="/guide.html">Guide</a>
-        <a href="/developer.html">Developer page</a>
+        <a href="/production.html">Production Console</a>
       </nav>
     </header>
 
     <section class="user-chat-panel">
       <div class="user-panel-header">
         <div>
-          <p class="eyebrow">AI Knitting Agent</p>
-          <h1>Hello, I am Santoni AI Assistant</h1>
-          <p class="user-subtitle">I can help clarify seamless knitting design requirements and assist with equipment service troubleshooting.</p>
+          <p class="eyebrow">Santoni Athena</p>
+          <h1>生产现场智能工作台</h1>
+          <p class="user-subtitle">选择身份后，Athena 会进入对应工作流。总经理模式会直接生成今日生产优先事项、风险证据和可追问的下钻分析。</p>
         </div>
         <div id="userStatus" class="status-pill">Connecting</div>
       </div>
 
       <div class="quick-actions" aria-label="Quick actions">
-        <button type="button" data-prompt="I am a designer and want to develop a seamless sports top. It needs breathability and quick dry. Please help clarify the design request first.">Design Request</button>
-        <button type="button" data-prompt="I am a factory equipment engineer. The machine has a fault and I need online troubleshooting first.">Equipment Issue</button>
-        <button type="button" data-prompt="The machine has a lock-machine activation issue and I need help handling it.">Lock-machine Activation</button>
+        <button type="button" data-prompt-role="production_manager" data-prompt="总经理今天先看哪三件事？">总经理今日三件事</button>
+        <button type="button" data-prompt-role="designer" data-prompt="I want to develop a seamless sports top. It needs breathability and quick dry. Please help clarify the design request first.">Design Request</button>
+        <button type="button" data-prompt-role="customer_equipment_engineer" data-prompt="The machine has a fault and I need online troubleshooting first.">Equipment Issue</button>
+        <button type="button" data-prompt-role="customer_equipment_engineer" data-prompt="The machine has a lock-machine activation issue and I need help handling it.">Lock-machine Activation</button>
       </div>
+
+      <section class="identity-panel user-identity-panel" aria-labelledby="identityTitle">
+        <div>
+          <span id="identityTitle">请先选择身份</span>
+          <p id="identityHelp">Athena 会根据身份进入对应工作流，并为未来权限控制保留依据。</p>
+        </div>
+        <div class="user-identity-actions" role="group" aria-label="User identity">
+          <button type="button" data-identity-role="production_manager" aria-pressed="false">总经理</button>
+          <button type="button" data-identity-role="customer_equipment_engineer" aria-pressed="false">服务工程师</button>
+          <button type="button" data-identity-role="designer" aria-pressed="false">设计开发</button>
+        </div>
+      </section>
+
+      <section id="gmWorkspace" class="gm-user-workspace" hidden aria-label="General manager production workspace">
+        <div class="gm-user-head">
+          <div>
+            <p class="eyebrow">Santoni Athena · 总经理模式</p>
+            <h2>今天我应该先盯哪三件事？</h2>
+            <p>Athena 会先给出生产风险卡片，再支持按订单、机台、物料、证据链继续下钻。</p>
+          </div>
+          <button id="gmRefreshButton" type="button" class="user-secondary">刷新看板</button>
+        </div>
+        <section id="gmKpiDashboard" class="gm-user-dashboard" aria-label="General manager daily KPI dashboard"></section>
+        <section id="gmDailyBriefPanel" class="gm-user-daily-brief" hidden>
+          <div class="gm-user-section-head">
+            <div>
+              <p class="eyebrow">Daily Brief</p>
+              <h3>今日总经理早会摘要</h3>
+            </div>
+            <div class="gm-user-brief-actions">
+              <button id="gmDailyBriefGenerateButton" type="button" class="user-secondary">生成今日早会摘要</button>
+              <button id="gmDailyBriefCopyButton" type="button" class="user-secondary">复制摘要</button>
+            </div>
+          </div>
+          <div id="gmDailyBriefContent" class="gm-user-daily-brief-content"></div>
+        </section>
+        <div id="gmBriefSummary" class="gm-user-summary"></div>
+        <section id="gmStoryEntry" class="gm-user-story-entry" hidden>
+          <div class="gm-user-section-head">
+            <div>
+              <p class="eyebrow">Stable Story</p>
+              <h3>演示故事快捷入口</h3>
+            </div>
+            <span>真实证据优先，mock/hybrid 会明确标注</span>
+          </div>
+          <div id="gmStoryCards" class="gm-user-story-grid"></div>
+        </section>
+        <div id="gmRiskCards" class="gm-user-card-grid"></div>
+        <section id="gmEvidenceReviewPanel" class="gm-user-evidence-review" hidden>
+          <div class="gm-user-section-head">
+            <div>
+              <p class="eyebrow">Evidence Review Queue</p>
+              <h3>数据复核候选</h3>
+            </div>
+            <span>这些不是已确认风险，但会影响 Athena 判断可信度</span>
+          </div>
+          <div id="gmEvidenceReviewCards" class="gm-user-evidence-review-grid"></div>
+        </section>
+        <section id="gmServiceRiskPanel" class="gm-user-service-risk" hidden>
+          <div class="gm-user-section-head">
+            <div>
+              <p class="eyebrow">Service Risk</p>
+              <h3>可能影响交付的设备 / Service 风险</h3>
+            </div>
+            <span>只生成待确认候选，不自动派工</span>
+          </div>
+          <div id="gmServiceRiskCards" class="gm-user-service-risk-grid"></div>
+        </section>
+        <section id="gmFollowUpPanel" class="gm-user-followup" hidden>
+          <div class="gm-user-followup-head">
+            <div>
+              <p class="eyebrow">Local follow-up loop</p>
+              <h3>本地待办</h3>
+            </div>
+            <span>只写本地 metadata，不写 APS / ERP / IOT</span>
+          </div>
+          <div id="gmFollowUpSummary" class="gm-user-followup-summary"></div>
+          <div id="gmFollowUpList" class="gm-user-followup-list"></div>
+        </section>
+      </section>
 
       <div id="userMessages" class="user-messages" aria-live="polite"></div>
 
@@ -73,7 +152,12 @@
     </form>
   </dialog>
 
-  <script src="/i18n.js?v=0.25.3"></script>
-  <script src="/user-app.js?v=0.25.3"></script>
+  <script src="/i18n.js?v=0.113.0"></script>
+  <script src="/user-app.js?v=0.113.0"></script>
 </body>
 </html>
+
+
+
+
+

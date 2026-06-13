@@ -1,0 +1,59 @@
+{
+  "schema": "athena.hermes_playbook_reviews.v1",
+  "version": "v0.90.0",
+  "metadata_only": true,
+  "reviews": [
+    {
+      "review_id": "PBREV-v0.64.0-001",
+      "candidate_id": "PB-QUALITY-001",
+      "review_status": "reviewed",
+      "promotion_status": "reviewed",
+      "review_note": "Hermes Console metadata-only playbook review.",
+      "reviewed_by": "hermes_console",
+      "reviewed_at": "2026-06-09T10:31:51",
+      "contains_raw_file": false,
+      "contains_credentials": false,
+      "write_actions_blocked": true
+    },
+    {
+      "review_id": "PBREV-v0.64.0-002",
+      "candidate_id": "PB-QUALITY-001",
+      "review_status": "reviewed",
+      "promotion_status": "reviewed",
+      "review_note": "Hermes Console metadata-only playbook review.",
+      "reviewed_by": "hermes_console",
+      "reviewed_at": "2026-06-09T10:31:52",
+      "contains_raw_file": false,
+      "contains_credentials": false,
+      "write_actions_blocked": true
+    },
+    {
+      "review_id": "PBREV-v0.64.0-003",
+      "candidate_id": "PB-DELIVERY-001",
+      "review_status": "reviewed",
+      "promotion_status": "reviewed",
+      "review_note": "Hermes Console metadata-only playbook review.",
+      "reviewed_by": "hermes_console",
+      "reviewed_at": "2026-06-09T10:31:55",
+      "contains_raw_file": false,
+      "contains_credentials": false,
+      "write_actions_blocked": true
+    },
+    {
+      "review_id": "PBREV-v0.64.0-004",
+      "candidate_id": "PB-CAPACITY-001",
+      "review_status": "reviewed",
+      "promotion_status": "reviewed",
+      "review_note": "Hermes Console metadata-only playbook review.",
+      "reviewed_by": "hermes_console",
+      "reviewed_at": "2026-06-09T10:31:58",
+      "contains_raw_file": false,
+      "contains_credentials": false,
+      "write_actions_blocked": true
+    }
+  ],
+  "latest_reviewed_at": "2026-06-09T10:31:58"
+}
+
+
+

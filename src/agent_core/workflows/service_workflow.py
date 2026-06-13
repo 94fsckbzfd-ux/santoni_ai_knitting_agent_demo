@@ -1,4 +1,4 @@
-"""Service workflow skeleton."""
+﻿"""Service workflow skeleton."""
 
 from agent_core.agents.service_dispatch_agent import ServiceDispatchAgent
 from agent_core.agents.understanding_agent import UnderstandingAgent
@@ -188,8 +188,10 @@ class ServiceWorkflow:
 
         sanitized = dict(parsed)
         explicit_model = re.search(r"\b(SM8(?:[-\s]?[A-Z0-9]+)*|TOP2(?:MP|[-A-Z0-9]*))\b", issue, re.IGNORECASE)
-        explicit_serial = re.search(r"(?<![A-Z0-9])(?:[A-Z]\d{5,}|\d{6,})(?![A-Z0-9])", issue, re.IGNORECASE)
-        explicit_machine_code = re.search(r"(?:机器码|machine code)[:：]?\s*([A-Za-z0-9-]{4,})", issue, re.IGNORECASE)
+        explicit_serial = re.search(r"(?:序列号|serial\s+number|serial|sn|s/n)[:：\s]*([A-Z0-9]{5,})", issue, re.IGNORECASE) or re.search(
+            r"(?<![A-Z0-9])(?:[A-Z]\d{5,}|\d{6,})(?![A-Z0-9])", issue, re.IGNORECASE
+        )
+        explicit_machine_code = re.search(r"(?:机器码|machine code)[:：\s]*([A-Za-z0-9-]{4,})", issue, re.IGNORECASE)
 
         if not explicit_model and not self._has_value(memory.get("machine_model")):
             sanitized["machine_model"] = "unknown"
@@ -203,50 +205,28 @@ class ServiceWorkflow:
         import re
 
         enriched = dict(parsed)
+        lowered = issue.lower()
         model_match = re.search(r"\b(SM8(?:[-\s]?[A-Z0-9]+)*|TOP2(?:MP|[-A-Z0-9]*))\b", issue, re.IGNORECASE)
         if model_match:
-            enriched["machine_model"] = model_match.group(1).upper()
-        serial_match = re.search(r"(?<![A-Z0-9])(?:[A-Z]\d{5,}|\d{6,})(?![A-Z0-9])", issue, re.IGNORECASE)
+            enriched["machine_model"] = model_match.group(1).replace(" ", "-").upper()
+        serial_match = re.search(r"(?:序列号|serial\s+number|serial|sn|s/n)[:：\s]*([A-Z0-9]{5,})", issue, re.IGNORECASE) or re.search(
+            r"(?<![A-Z0-9])(?:[A-Z]\d{5,}|\d{6,})(?![A-Z0-9])", issue, re.IGNORECASE
+        )
         if serial_match:
-            enriched["serial_number"] = serial_match.group(0).upper()
-        machine_code_match = re.search(r"(?:机器码|machine code)[:：]?\s*([A-Za-z0-9-]{4,})", issue, re.IGNORECASE)
+            enriched["serial_number"] = (serial_match.group(1) if serial_match.lastindex else serial_match.group(0)).upper()
+        machine_code_match = re.search(r"(?:机器码|machine code)[:：\s]*([A-Za-z0-9-]{4,})", issue, re.IGNORECASE)
         if machine_code_match:
             enriched["machine_code"] = machine_code_match.group(1).strip()
-        is_activation_request = any(
-            word in issue.lower()
-            for word in [
-                "激活密码",
-                "生成激活密码",
-                "激活机器码",
-                "租赁锁定",
-                "锁机激活",
-                "锁机",
-                "机器锁定",
-                "锁屏",
-                "锁定",
-                "解锁",
-                "解锁机器",
-                "机器码",
-                "activation password",
-                "activate password",
-                "lease",
-                "rental password",
-                "lock screen",
-                "machine is locked",
-                "machine locked",
-                "locked machine",
-                "machine lock",
-                "unlock machine",
-                "unlock the machine",
-            ]
-        )
+
+        is_activation_request = self._has_explicit_activation_intent(issue)
         if is_activation_request:
             enriched["issue_type"] = "activation_password_lock"
             enriched["alarm_info"] = "activation password required after motherboard replacement or machine lock"
             enriched["production_status"] = "stopped"
             enriched["urgency"] = "P1"
             enriched["onsite_required"] = False
-        if any(word in issue for word in ["错花", "选针", "漏选"]):
+
+        if any(word in issue for word in ["错花", "选针", "漏针"]):
             enriched["issue_type"] = "fabric_defect"
             enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["错花", "选针错误"]))
             enriched["production_status"] = "quality_risk"
@@ -254,7 +234,9 @@ class ServiceWorkflow:
             enriched["onsite_required"] = False
         if "错花是否固定" in issue or ("错花" in issue and "是否固定" in issue):
             enriched["online_guidance_request"] = "wrong_pattern_fixed_feed_check"
-        elif any(word in issue for word in ["固定在同一路", "固定同一路", "同一路", "同一位置"]) and not any(word in issue for word in ["是否", "吗", "不固定", "随机"]):
+        elif any(word in issue for word in ["固定在同一路", "固定同一路", "同一路", "同一位置"]) and not any(
+            word in issue for word in ["是否", "吗", "不固定", "随机"]
+        ):
             enriched["diagnostic_observations"] = list(
                 dict.fromkeys((enriched.get("diagnostic_observations") or []) + ["wrong_pattern_fixed_same_feed"])
             )
@@ -269,45 +251,54 @@ class ServiceWorkflow:
             enriched["online_steps_attempted"] = list(
                 dict.fromkeys((enriched.get("online_steps_attempted") or []) + ["confirmed wrong pattern appears randomly"])
             )
+
         if any(word in issue for word in ["漏油", "油箱", "分油器", "分油嘴"]):
             enriched["issue_type"] = "mechanical"
-            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["漏油"]))
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["漏油"] ))
             enriched["production_status"] = "quality_risk"
             enriched["urgency"] = "P2"
             enriched["onsite_required"] = False
         if any(word in issue for word in ["死机", "白屏", "显示屏", "触摸没有反应", "不能改日期", "系统错乱", "程序错乱"]):
             enriched["issue_type"] = "electrical"
-            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["系统/显示屏故障"]))
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["系统/显示屏故障"] ))
             enriched["production_status"] = "stopped"
             enriched["urgency"] = "P1"
             enriched["onsite_required"] = True
-        if any(word in issue for word in ["坏针", "打针", "撞针", "护针板", "开针钩", "三角断裂"]):
+        if any(word in issue for word in ["坏针", "打针", "撞针", "护针板", "三角断裂"]):
             enriched["issue_type"] = "mechanical"
-            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["打针/坏针"]))
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["打针/坏针"] ))
             enriched["production_status"] = "stopped"
             enriched["urgency"] = "P1"
             enriched["onsite_required"] = True
         if any(word in issue for word in ["马达", "驱动器", "ECODD", "伺服"]):
             enriched["issue_type"] = "electrical"
-            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["马达/驱动器故障"]))
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["马达/驱动器故障"] ))
             enriched["production_status"] = "stopped"
             enriched["urgency"] = "P1"
             enriched["onsite_required"] = True
         if any(word in issue for word in ["电子眼", "输纱器", "传感器", "学习"]):
             enriched["issue_type"] = "calibration"
-            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["电子眼/输纱器校准"]))
-        if "停机" in issue or "恢复生产" in issue or "stopped" in issue.lower():
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["电子眼/输纱器校准"] ))
+
+        if "张力" in issue or "tension" in lowered:
+            enriched["issue_type"] = "machine alarm"
+            enriched["alarm_info"] = "yarn tension alarm"
+            enriched["symptoms"] = list(dict.fromkeys((enriched.get("symptoms") or []) + ["张力报警"] ))
+            enriched["parts_clues"] = list(dict.fromkeys((enriched.get("parts_clues") or []) + ["yarn tension sensor"] ))
+        if "停机" in issue or "恢复生产" in issue or "stopped" in lowered or "locked" in lowered:
             enriched["production_status"] = "stopped"
             enriched["urgency"] = "P1"
             enriched["onsite_required"] = False if is_activation_request else True
-        if any(word in issue.lower() for word in ["photo", "video", "screenshot"]) or any(word in issue for word in ["照片", "图片", "视频", "截图"]):
+        if any(word in lowered for word in ["photo", "video", "screenshot"]) or any(word in issue for word in ["照片", "图片", "视频", "截图"]):
             enriched["evidence_status"] = "provided in conversation"
+
         contact_match = re.search(r"((?:\+?\d[\d -]{8,}\d)|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,})", issue)
         if contact_match:
             enriched["customer_contact"] = contact_match.group(1).strip()
-        location_match = re.search(r"(?:工厂|现场|地址|location|site)[:：]?\s*([^,，。;\n]+)", issue, re.IGNORECASE)
+        location_match = re.search(r"(?:工厂|现场|地址|location|site)[:：\s]*([^,，。?？\n]+)", issue, re.IGNORECASE)
         if location_match:
             enriched["factory_location"] = location_match.group(1).strip()
+
         attempted_steps = []
         attempted_keywords = [
             ("restart", "restart"),
@@ -323,7 +314,7 @@ class ServiceWorkflow:
             ("not tried", "none yet"),
         ]
         for keyword, label in attempted_keywords:
-            if keyword in issue.lower():
+            if keyword in lowered or keyword in issue:
                 attempted_steps.append(label)
         if attempted_steps:
             enriched["online_steps_attempted"] = list(dict.fromkeys(attempted_steps))
@@ -362,7 +353,7 @@ class ServiceWorkflow:
 
         stripped = re.sub(r"\b(SM8(?:[-\s]?[A-Z0-9]+)*|TOP2(?:MP|[-A-Z0-9]*))\b", " ", issue, flags=re.IGNORECASE)
         stripped = re.sub(r"(?<![A-Z0-9])(?:[A-Z]\d{5,}|\d{6,})(?![A-Z0-9])", " ", stripped, flags=re.IGNORECASE)
-        stripped = re.sub(r"(机器型号|机型|型号|序列号|serial|sn|s/n|machine|model|[:：,，。；;、\\s-])", " ", stripped, flags=re.IGNORECASE)
+        stripped = re.sub(r"(机器型号|机型|型号|序列号|serial|sn|s/n|machine|model|[:：,，。；;、\s-])", " ", stripped, flags=re.IGNORECASE)
         return not stripped.strip()
 
     def _has_explicit_activation_intent(self, issue: str) -> bool:
@@ -370,16 +361,6 @@ class ServiceWorkflow:
         return any(
             word in lowered
             for word in [
-                "激活密码",
-                "生成激活密码",
-                "激活机器码",
-                "租赁锁定",
-                "锁机激活",
-                "锁机",
-                "机器锁定",
-                "锁屏",
-                "锁屏",
-                "机器码",
                 "activation password",
                 "activate password",
                 "rental password",
@@ -391,8 +372,7 @@ class ServiceWorkflow:
                 "unlock machine",
                 "unlock the machine",
             ]
-        ) or any(word in issue for word in ["锁定", "解锁", "锁机", "机器锁定", "解锁机器"])
-
+        ) or any(word in issue for word in ["激活密码", "生成激活密码", "锁机激活", "锁机", "锁定", "锁屏", "解锁", "机器码"])
     def _enrich_from_image_context(self, parsed: dict, image_context: dict | None) -> dict:
         enriched = dict(parsed)
         if not image_context:
@@ -478,21 +458,9 @@ class ServiceWorkflow:
                 "activation_password",
                 "activation password",
                 "activate password",
-                "激活密码",
-                "生成激活密码",
-                "激活机器码",
-                "锁机激活",
-                "锁机",
-                "机器锁定",
-                "锁屏",
                 "lease_password",
                 "lease password",
                 "rental password",
-                "租赁锁定",
-                "锁定",
-                "解锁",
-                "解锁机器",
-                "机器码",
                 "lock screen",
                 "machine is locked",
                 "machine locked",
@@ -500,10 +468,17 @@ class ServiceWorkflow:
                 "machine lock",
                 "unlock machine",
                 "unlock the machine",
+                "激活密码",
+                "生成激活密码",
+                "锁机激活",
+                "锁机",
+                "锁定",
+                "锁屏",
+                "解锁",
+                "机器码",
             ]
         )
         return explicit_activation_issue or (has_top2 and has_password_intent)
-
     def _is_tool_terminal(self, tool_result: dict) -> bool:
         return tool_result.get("status") in {
             "success",
@@ -516,3 +491,5 @@ class ServiceWorkflow:
             "real_platform_activation_submit_mapping_required",
             "real_platform_activation_password_not_found",
         }
+
+

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -432,24 +432,24 @@
       <div class="topbar">
         <div>
           <h1>Athena</h1>
-          <p class="subtitle zh">Santoni AI Knitting Agent 产品架构总览。整合架构、服务运营、商业化、术语库和后续命名规则。</p>
+          <p class="subtitle zh">Santoni AI Knitting Agent 浜у搧鏋舵瀯鎬昏銆傛暣鍚堟灦鏋勩€佹湇鍔¤繍钀ャ€佸晢涓氬寲銆佹湳璇簱鍜屽悗缁懡鍚嶈鍒欍€?/p>
           <p class="subtitle en">Santoni AI Knitting Agent product architecture portal. It consolidates architecture, service operations, commercialization, glossary, and naming rules.</p>
         </div>
         <div class="lang-toggle" aria-label="Language switch">
-          <button type="button" data-lang="zh">中文</button>
+          <button type="button" data-lang="zh">涓枃</button>
           <button type="button" data-lang="en">English</button>
         </div>
       </div>
       <div class="meta">
-        <span class="pill zh">产品名：Athena</span>
+        <span class="pill zh">浜у搧鍚嶏細Athena</span>
         <span class="pill en">Product name: Athena</span>
-        <span class="pill zh">Arachne Knit Pilot：Arachne</span>
+        <span class="pill zh">Arachne Knit Pilot锛欰rachne</span>
         <span class="pill en">Arachne Knit Pilot: Arachne</span>
-        <span class="pill zh">版本：v0.0.4</span>
+        <span class="pill zh">鐗堟湰锛歷0.0.4</span>
         <span class="pill en">Version: v0.0.4</span>
-        <span class="pill zh">更新日期：2026-06-01</span>
+        <span class="pill zh">鏇存柊鏃ユ湡锛?026-06-01</span>
         <span class="pill en">Updated: 2026-06-01</span>
-        <span class="pill zh">文档规则：架构更新同时更新 Athena 与部门文档</span>
+        <span class="pill zh">鏂囨。瑙勫垯锛氭灦鏋勬洿鏂板悓鏃舵洿鏂?Athena 涓庨儴闂ㄦ枃妗?/span>
         <span class="pill en">Documentation rule: update Athena and department files together</span>
       </div>
     </div>
@@ -457,299 +457,523 @@
 
   <nav>
     <div class="nav-inner">
-      <a href="#documents"><span class="zh">文档入口</span><span class="en">Documents</span></a>
-      <a href="Athena_Project_Progress.html"><span class="zh">项目进度</span><span class="en">Progress</span></a>
+      <a href="#prd-v01"><span class="zh">PRD v0.1</span><span class="en">PRD v0.1</span></a>
+      <a href="#documents"><span class="zh">鏂囨。鍏ュ彛</span><span class="en">Documents</span></a>
+      <a href="product/athena_daily_brief_narrative_v0.113.0.md"><span class="zh">v0.113.0 早会摘要</span><span class="en">v0.113.0 Daily Brief</span></a>
+      <a href="product/athena_local_decision_follow_up_board_v0.112.0.md"><span class="zh">v0.112.0 本地待办</span><span class="en">v0.112.0 Follow-up Board</span></a>
+      <a href="product/athena_gm_decision_ui_compression_v0.111.0.md"><span class="zh">v0.111.0 决策压缩</span><span class="en">v0.111.0 UI Compression</span></a>      <a href="product/athena_gm_first_screen_hierarchy_v0.110.0.md"><span class="zh">v0.110.0 鎬荤粡鐞嗛椤靛眰绾?/span><span class="en">v0.110.0 GM First Screen</span></a>
+      <a href="product/athena_evidence_review_queue_v0.109.0.md"><span class="zh">v0.109.0 鏁版嵁澶嶆牳闃熷垪</span><span class="en">v0.109.0 Evidence Review</span></a>
+      <a href="product/athena_delivery_risk_driver_guard_v0.108.3.md"><span class="zh">v0.108.3 浜や粯椋庨櫓瑙勫垯</span><span class="en">v0.108.3 Delivery Risk Guard</span></a>
+      <a href="product/athena_machine_style_root_cause_evidence_v0.108.2.md"><span class="zh">v0.108.2 鏈哄彴/娆惧紡鏍瑰洜璇佹嵁</span><span class="en">v0.108.2 Machine Style Root Cause Evidence</span></a>
+      <a href="Athena_Project_Progress.html"><span class="zh">椤圭洰杩涘害</span><span class="en">Progress</span></a>
       <a href="#pmo-agent"><span class="zh">PMO Agent</span><span class="en">PMO Agent</span></a>
-      <a href="#overview"><span class="zh">总览</span><span class="en">Overview</span></a>
-      <a href="#naming"><span class="zh">命名体系</span><span class="en">Naming</span></a>
-      <a href="#architecture"><span class="zh">架构</span><span class="en">Architecture</span></a>
-      <a href="#modules"><span class="zh">子 Agent</span><span class="en">Agents</span></a>
-      <a href="#entries"><span class="zh">入口</span><span class="en">Entries</span></a>
-      <a href="#systems"><span class="zh">系统接入</span><span class="en">Integrations</span></a>
-      <a href="#fabric-kb"><span class="zh">面料知识库</span><span class="en">Fabric KB</span></a>
-      <a href="#iot-system"><span class="zh">IOT 机联网</span><span class="en">IoT</span></a>
+      <a href="#overview"><span class="zh">鎬昏</span><span class="en">Overview</span></a>
+      <a href="#naming"><span class="zh">鍛藉悕浣撶郴</span><span class="en">Naming</span></a>
+      <a href="#architecture"><span class="zh">鏋舵瀯</span><span class="en">Architecture</span></a>
+      <a href="#modules"><span class="zh">瀛?Agent</span><span class="en">Agents</span></a>
+      <a href="#entries"><span class="zh">鍏ュ彛</span><span class="en">Entries</span></a>
+      <a href="#systems"><span class="zh">绯荤粺鎺ュ叆</span><span class="en">Integrations</span></a>
+      <a href="#fabric-kb"><span class="zh">闈㈡枡鐭ヨ瘑搴?/span><span class="en">Fabric KB</span></a>
+      <a href="#iot-system"><span class="zh">IOT 鏈鸿仈缃?/span><span class="en">IoT</span></a>
       <a href="#smart-machine"><span class="zh">Smart Machine</span><span class="en">Smart Machine</span></a>
       <a href="#aps"><span class="zh">APS</span><span class="en">APS</span></a>
-      <a href="#radar"><span class="zh">行业雷达</span><span class="en">Radar</span></a>
-      <a href="#commercial"><span class="zh">商业化</span><span class="en">Commercial</span></a>
-      <a href="#service"><span class="zh">服务运营</span><span class="en">Service</span></a>
-      <a href="#glossary"><span class="zh">术语</span><span class="en">Glossary</span></a>
-      <a href="#governance"><span class="zh">文档治理</span><span class="en">Governance</span></a>
+      <a href="#radar"><span class="zh">琛屼笟闆疯揪</span><span class="en">Radar</span></a>
+      <a href="#commercial"><span class="zh">鍟嗕笟鍖?/span><span class="en">Commercial</span></a>
+      <a href="#service"><span class="zh">鏈嶅姟杩愯惀</span><span class="en">Service</span></a>
+      <a href="#glossary"><span class="zh">鏈</span><span class="en">Glossary</span></a>
+      <a href="#governance"><span class="zh">鏂囨。娌荤悊</span><span class="en">Governance</span></a>
     </div>
   </nav>
 
   <main>
-    <section id="documents">
-      <h2><span class="zh">0. 文档入口</span><span class="en">0. Document Gateway</span></h2>
-      <p class="lead zh">
-        Athena.html 是入口页面，不替代各专题文档。遇到某个模块时，直接跳转到对应专题 HTML 查看完整细节。
+    <section id="prd-v01">
+      <h2><span class="zh">Santoni Athena PRD v0.1</span><span class="en">Santoni Athena PRD v0.1</span></h2>
+      <p class="lead zh"><strong>Athena 鏄潰鍚戦拡缁囧伐鍘傛€荤粡鐞嗙殑鏁板瓧鎬荤粡鐞嗐€?/strong> MVP 鑱氱劍 Production + Service锛岀涓€灞忓洖绛旓細浠婂ぉ鎴戝簲璇ュ厛澶勭悊鍝笁浠朵簨锛?/p>
+      <p class="lead en"><strong>Athena is a digital general manager for knitting factories.</strong> The MVP focuses on Production + Service and answers one first-screen question: what are the three things I should handle first today?</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <strong><span class="zh">鏍稿績鐢ㄦ埛</span><span class="en">Primary User</span></strong>
+          <p class="zh">宸ュ巶鎬荤粡鐞嗐€侱emo 浠ュぉ娲剧被鐜板満涓烘牱鏉匡紝浣嗚〃杈句负 Santoni 瀹㈡埛閫氱敤鏂规銆?/p>
+          <p class="en">Factory general manager. The demo is modeled from a Tianpai-like site but presented as a reusable Santoni customer solution.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">棣栭〉涓変欢浜?/span><span class="en">First-Screen Priorities</span></strong>
+          <p class="zh">浜や粯椋庨櫓銆佽川閲?琛ュ崟椋庨櫓銆佷汉宸ユ湁鏁堝伐鏃堕闄┿€?/p>
+          <p class="en">Delivery risk, quality/replenishment risk, and labor effective-hour risk.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">鏉冮檺杈圭晫</span><span class="en">Permission Boundary</span></strong>
+          <p class="zh">鎻愮ず椋庨櫓銆佽В閲婅瘉鎹€佸缓璁礋璐ｄ汉纭锛涗笉鑷姩鏀规帓浜с€佷笉鑷姩娲惧伐銆佷笉鏇夸唬 ERP / APS / IOT銆?/p>
+          <p class="en">Shows risks, explains evidence, and suggests owner confirmation; does not modify schedules, dispatch service, or replace ERP / APS / IOT.</p>
+        </div>
+      </div>
+
+      <p class="note ok zh">
+        鏌ョ湅瀹屾暣 PRD锛?a href="#prd-v01-detail">椤甸潰鍐呰缁嗗畾涔?/a> 鎴?<a href="product/athena_prd_v0.1.md">Markdown 鏂囦欢</a>銆?      </p>
+      <p class="note ok en">
+        Full PRD: <a href="#prd-v01-detail">details in this page</a> or <a href="product/athena_prd_v0.1.md">Markdown file</a>.
       </p>
+    </section>
+
+    <section id="documents">
+      <h2><span class="zh">0. 鏂囨。鍏ュ彛</span><span class="en">0. Document Gateway</span></h2>
+      <p class="lead zh">
+        Athena.html 鏄叆鍙ｉ〉闈紝涓嶆浛浠ｅ悇涓撻鏂囨。銆傞亣鍒版煇涓ā鍧楁椂锛岀洿鎺ヨ烦杞埌瀵瑰簲涓撻 HTML 鏌ョ湅瀹屾暣缁嗚妭銆?      </p>
       <p class="lead en">
         Athena.html is a portal page, not a replacement for the topic documents. Use the contextual links to open the full details for each module.
       </p>
       <div class="grid-3">
         <div class="card">
-          <strong><a href="knitting_terms_glossary.html"><span class="zh">名词解释 / 术语库</span><span class="en">Glossary / Terms</span></a></strong>
-          <p class="zh">建议最先查看。统一针织、纱线、组织、机器、质量检测等中英文术语。</p>
+        <div class="card">
+          <strong><a href="product/athena_daily_brief_narrative_v0.113.0.md"><span class="zh">Athena v0.113.0 今日早会摘要</span><span class="en">Athena v0.113.0 Daily Brief Narrative</span></a></strong>
+          <p class="zh">说明总经理模式如何自动生成三分钟早会摘要，覆盖今日三件事、数据复核、负责人确认和证据边界。</p>
+          <p class="en">Explains how General Manager mode generates a three-minute daily brief covering top priorities, evidence review, owners, and evidence boundary.</p>
+        </div>
+        <div class="card">
+          <strong><a href="product/athena_local_decision_follow_up_board_v0.112.0.md"><span class="zh">Athena v0.112.0 本地决策待办板</span><span class="en">Athena v0.112.0 Local Decision Follow-up Board</span></a></strong>
+          <p class="zh">说明 hard risk、数据复核和 Service 风险如何统一进入本地 metadata-only follow-up。</p>
+          <p class="en">Explains how hard risks, evidence review, and Service risks enter one metadata-only follow-up loop.</p>
+        </div>
+        <div class="card">
+          <strong><a href="product/athena_gm_decision_ui_compression_v0.111.0.md"><span class="zh">Athena v0.111.0 总经理决策压缩</span><span class="en">Athena v0.111.0 GM Decision UI Compression</span></a></strong>
+          <p class="zh">说明下钻回答如何默认压缩为结论、证据支持、建议确认人和下一步动作。</p>
+          <p class="en">Explains how drilldown answers compress to conclusion, evidence support, owner, and next action by default.</p>
+        </div>          <strong><a href="product/athena_gm_first_screen_hierarchy_v0.110.0.md"><span class="zh">Athena v0.110.0 鎬荤粡鐞嗛椤靛眰绾?/span><span class="en">Athena v0.110.0 GM First Screen Hierarchy</span></a></strong>
+          <p class="zh">璇存槑鎬荤粡鐞嗘ā寮忓浣曟寜 KPI銆佺‖椋庨櫓銆佹暟鎹鏍搞€丼ervice 椋庨櫓鍜屽師濮嬭亰澶╂祦缁勭粐棣栧睆銆?/p>
+          <p class="en">Explains how General Manager mode organizes KPI, hard risks, evidence review, Service risk, and the original chat stream.</p>
+        </div>
+        <div class="card">
+          <strong><a href="product/athena_evidence_review_queue_v0.109.0.md"><span class="zh">Athena v0.109.0 鏁版嵁澶嶆牳闃熷垪</span><span class="en">Athena v0.109.0 Evidence Review Queue</span></a></strong>
+          <p class="zh">璇存槑 Athena 濡備綍鎶娾€滅湡瀹為闄┾€濆拰鈥滆瘉鎹渶瑕佸鏍糕€濇媶寮€锛岄伩鍏嶆妸鍙ｅ緞鐭涚浘褰撲綔纭闄┿€?/p>
+          <p class="en">Explains how Athena separates hard risks from evidence that needs reconciliation.</p>
+        </div>
+        <div class="card">
+          <strong><a href="product/athena_delivery_risk_driver_guard_v0.108.3.md"><span class="zh">Athena v0.108.3 浜や粯椋庨櫓瑙勫垯</span><span class="en">Athena v0.108.3 Delivery Risk Guard</span></a></strong>
+          <p class="zh">璇存槑 Athena 濡備綍鍖哄垎纭€т氦浠橀闄╀笌浜や粯鐘舵€?鏁伴噺鍙ｅ緞澶嶆牳鍊欓€夈€?/p>
+          <p class="en">Explains how Athena separates hard delivery risk from delivery status or quantity reconciliation candidates.</p>
+        </div>
+        <div class="card">
+          <strong><a href="product/athena_machine_style_root_cause_evidence_v0.108.2.md"><span class="zh">Athena v0.108.2 鏈哄彴/娆惧紡鏍瑰洜璇佹嵁</span><span class="en">Athena v0.108.2 Machine Style Root Cause Evidence</span></a></strong>
+          <p class="zh">璇存槑鏈哄彴/娆惧紡瑙勬牸涓嶅尮閰嶅浣曞睍绀鸿姹傚€笺€佹満鍙板疄闄呭€笺€佸瓧娈垫潵婧愬拰璇佹嵁杈圭晫銆?/p>
+          <p class="en">Explains how machine/style mismatch shows required value, actual machine value, field source, and evidence boundary.</p>
+        </div>
+        <div class="card">
+          <strong><a href="knitting_terms_glossary.html"><span class="zh">鍚嶈瘝瑙ｉ噴 / 鏈搴?/span><span class="en">Glossary / Terms</span></a></strong>
+          <p class="zh">寤鸿鏈€鍏堟煡鐪嬨€傜粺涓€閽堢粐銆佺罕绾裤€佺粍缁囥€佹満鍣ㄣ€佽川閲忔娴嬬瓑涓嫳鏂囨湳璇€?/p>
           <p class="en">Recommended first read. Aligns bilingual terms for knitting, yarn, structures, machines, and quality.</p>
         </div>
         <div class="card">
-          <strong><a href="AI_Knitting_Agent_Architecture.html"><span class="zh">Agent 总架构</span><span class="en">Agent Architecture</span></a></strong>
-          <p class="zh">完整架构、部署、Arachne-first、SWS Advanced、ROI Engine、Industry Radar 和系统接入。</p>
+          <strong><a href="AI_Knitting_Agent_Architecture.html"><span class="zh">Agent 鎬绘灦鏋?/span><span class="en">Agent Architecture</span></a></strong>
+          <p class="zh">瀹屾暣鏋舵瀯銆侀儴缃层€丄rachne-first銆丼WS Advanced銆丷OI Engine銆両ndustry Radar 鍜岀郴缁熸帴鍏ャ€?/p>
           <p class="en">Full architecture, deployment, Arachne-first, SWS Advanced, ROI Engine, Industry Radar, and integrations.</p>
         </div>
         <div class="card">
-          <strong><a href="Athena_Project_Progress.html"><span class="zh">项目进度管理</span><span class="en">Project Progress</span></a></strong>
-          <p class="zh">PMO Agent 的管理入口：管理 Athena 整体项目和各子 Agent 的状态、进度、Owner、风险、依赖和下一步动作。</p>
+          <strong><a href="Athena_Project_Progress.html"><span class="zh">椤圭洰杩涘害绠＄悊</span><span class="en">Project Progress</span></a></strong>
+          <p class="zh">PMO Agent 鐨勭鐞嗗叆鍙ｏ細绠＄悊 Athena 鏁翠綋椤圭洰鍜屽悇瀛?Agent 鐨勭姸鎬併€佽繘搴︺€丱wner銆侀闄┿€佷緷璧栧拰涓嬩竴姝ュ姩浣溿€?/p>
           <p class="en">Management entry for PMO Agent: manage Athena's overall program and each sub-agent's status, progress, owner, risk, dependencies, and next actions.</p>
         </div>
         <div class="card">
-          <strong><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html"><span class="zh">Service Agent / 服务运营</span><span class="en">Service Agent / Operations</span></a></strong>
-          <p class="zh">服务 intake、案例库、锁机激活受控工具、派工和 Service Manager Console。</p>
+          <strong><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html"><span class="zh">Service Agent / 鏈嶅姟杩愯惀</span><span class="en">Service Agent / Operations</span></a></strong>
+          <p class="zh">鏈嶅姟 intake銆佹渚嬪簱銆侀攣鏈烘縺娲诲彈鎺у伐鍏枫€佹淳宸ュ拰 Service Manager Console銆?/p>
           <p class="en">Service intake, case library, controlled lock activation, dispatch, and Service Manager Console.</p>
         </div>
         <div class="card">
-          <strong><a href="ai_knitting_agent_commercialization_agenda.html"><span class="zh">商业化与 ROI</span><span class="en">Commercialization and ROI</span></a></strong>
-          <p class="zh">MVP、套餐、积分机制、试点客户、ROI Lite / ROI Pro 和销售价值故事。</p>
+          <strong><a href="ai_knitting_agent_commercialization_agenda.html"><span class="zh">鍟嗕笟鍖栦笌 ROI</span><span class="en">Commercialization and ROI</span></a></strong>
+          <p class="zh">MVP銆佸椁愩€佺Н鍒嗘満鍒躲€佽瘯鐐瑰鎴枫€丷OI Lite / ROI Pro 鍜岄攢鍞环鍊兼晠浜嬨€?/p>
           <p class="en">MVP, packages, credit mechanism, pilot customers, ROI Lite / ROI Pro, and sales value story.</p>
         </div>
         <div class="card">
-          <strong><a href="APS_Development_Plan.html"><span class="zh">APS 待开发计划</span><span class="en">APS Development Plan</span></a></strong>
-          <p class="zh">ERP-APS 同步防丢、Planner Copilot、利润率导向排单、低联网部署模式和 Athena 接入接口。</p>
+          <strong><a href="APS_Development_Plan.html"><span class="zh">APS 寰呭紑鍙戣鍒?/span><span class="en">APS Development Plan</span></a></strong>
+          <p class="zh">ERP-APS 鍚屾闃蹭涪銆丳lanner Copilot銆佸埄娑︾巼瀵煎悜鎺掑崟銆佷綆鑱旂綉閮ㄧ讲妯″紡鍜?Athena 鎺ュ叆鎺ュ彛銆?/p>
           <p class="en">Reliable ERP-APS sync, Planner Copilot, margin-oriented scheduling, low-connectivity mode, and Athena integration interfaces.</p>
         </div>
         <div class="card">
-          <strong><a href="ai_knitting_agent_architecture_meeting_2026-05-22.html"><span class="zh">架构会议稿</span><span class="en">Architecture Meeting Draft</span></a></strong>
-          <p class="zh">会议版沟通稿，适合给团队解释从业务目标到系统接入的完整上下文。</p>
+          <strong><a href="ai_knitting_agent_architecture_meeting_2026-05-22.html"><span class="zh">鏋舵瀯浼氳绋?/span><span class="en">Architecture Meeting Draft</span></a></strong>
+          <p class="zh">浼氳鐗堟矡閫氱锛岄€傚悎缁欏洟闃熻В閲婁粠涓氬姟鐩爣鍒扮郴缁熸帴鍏ョ殑瀹屾暣涓婁笅鏂囥€?/p>
           <p class="en">Meeting draft for explaining the full context from business goals to system integrations.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">阅读方式</span><span class="en">How to Read</span></strong>
-          <p class="zh">从本页看产品地图；需要细节时点击架构图、表格或文档入口中的链接。</p>
+          <strong><span class="zh">闃呰鏂瑰紡</span><span class="en">How to Read</span></strong>
+          <p class="zh">浠庢湰椤电湅浜у搧鍦板浘锛涢渶瑕佺粏鑺傛椂鐐瑰嚮鏋舵瀯鍥俱€佽〃鏍兼垨鏂囨。鍏ュ彛涓殑閾炬帴銆?/p>
           <p class="en">Use this page as the product map; click links in diagrams, tables, or the document gateway for details.</p>
         </div>
       </div>
     </section>
 
-    <section id="overview">
-      <h2><span class="zh">1. 产品定位</span><span class="en">1. Product Positioning</span></h2>
-      <p class="lead zh">
-        Athena 不是单一聊天机器人，而是 Santoni 面向无缝针织价值链的智能工作层：连接品牌设计、Arachne 参数化定制、SWS 高级打样、OEM 工厂接单决策、售后服务和行业情报。
-      </p>
-      <p class="lead en">
-        Athena is not a standalone chatbot. It is Santoni's intelligent work layer for the seamless knitting value chain, connecting brand design, Arachne parameterized customization, SWS advanced sampling, OEM order decisions, service operations, and industry intelligence.
-      </p>
+    <section id="prd-v01-detail">
+      <h2><span class="zh">1.1 Santoni Athena PRD v0.1 璇︾粏瀹氫箟</span><span class="en">1.1 Santoni Athena PRD v0.1 Details</span></h2>
+      <p class="lead zh">Athena 鏄潰鍚戦拡缁囧伐鍘傛€荤粡鐞嗙殑鏁板瓧鎬荤粡鐞嗐€傜涓€鐗堢洰鏍囦笉鏄仛娉涜亰澶╂満鍣ㄤ汉锛屼篃涓嶆槸绠€鍗?ChatBI锛岃€屾槸鍥寸粫璁㈠崟鍙风粍缁囩敓浜т笌鏈嶅姟鐜板満鐨?workflow銆佽瘉鎹€佸紓甯搞€侀闄┿€佸缓璁‘璁ゅ姩浣滃拰鏈湴璁板繂銆?/p>
+      <p class="lead en">Athena is a digital general manager for knitting factories. The first version is not a generic chatbot and not a simple ChatBI tool. It organizes production and service workflow, evidence, exceptions, risks, recommended confirmation actions, and local memory around the order number.</p>
+      <p class="zh">Markdown 鐗?PRD锛?a href="product/athena_prd_v0.1.md">docs/product/athena_prd_v0.1.md</a></p>
+      <p class="en">Markdown PRD: <a href="product/athena_prd_v0.1.md">docs/product/athena_prd_v0.1.md</a></p>
 
-      <div class="grid-4">
+      <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">设计到生产</span><span class="en">Design to Production</span></strong>
-          <p class="zh">把自然语言、参考图和参数选择转成款式、纱线、结构、3D 静态展示和生产文件方向。</p>
-          <p class="en">Convert natural language, references, and parameter choices into style, yarn, structure, static 3D previews, and production-file direction.</p>
+          <strong><span class="zh">鏍稿績鐢ㄦ埛</span><span class="en">Primary User</span></strong>
+          <p class="zh">绗竴鐗堟牳蹇冪敤鎴锋槸宸ュ巶鎬荤粡鐞嗐€侱emo 浠ュぉ娲剧被鐜板満涓烘牱鏉匡紝浣嗕骇鍝佽〃杈惧簲娉涘寲涓?Santoni 瀹㈡埛鐢熶骇鐜板満銆?/p>
+          <p class="en">The first primary user is the factory general manager. The demo is modeled from a Tianpai-like site, but the product should be presented as a reusable Santoni customer solution.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">订单 ROI</span><span class="en">Order ROI</span></strong>
-          <p class="zh">帮助 OEM 老板判断订单要不要接、能不能接、接了之后收益和风险如何。</p>
-          <p class="en">Help OEM decision makers assess whether to accept an order, whether capacity is sufficient, and what return and risk it creates.</p>
+          <strong><span class="zh">鏍稿績闂</span><span class="en">Core Problem</span></strong>
+          <p class="zh">鐜板満鏁版嵁澶暎锛岀鐞嗗眰鍙兘渚濊禆浜哄伐姹囨姤锛岄毦浠ュ強鏃跺垽鏂粖澶╃湡姝ｅ奖鍝嶄氦浠樸€佽川閲忓拰鎴愭湰鐨勯棶棰樸€?/p>
+          <p class="en">Factory-site information is scattered, forcing management to rely on manual reporting and making it hard to identify what affects delivery, quality, and cost today.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">服务运营</span><span class="en">Service Operations</span></strong>
-          <p class="zh">通过服务案例、在线排查、受控工具和派工准备，提高售后响应效率。</p>
-          <p class="en">Improve service response through case knowledge, online assistance, controlled tools, and dispatch preparation.</p>
-        </div>
-        <div class="card">
-          <strong><span class="zh">行业情报</span><span class="en">Industry Intelligence</span></strong>
-          <p class="zh">定期监测展会、竞品、客户、政策、技术和海外机会，并转化成行动建议。</p>
-          <p class="en">Monitor exhibitions, competitors, customers, policy, technology, and overseas opportunities, then convert them into actions.</p>
+          <strong><span class="zh">棣栭〉闂</span><span class="en">First-Screen Question</span></strong>
+          <p class="zh"><strong>浠婂ぉ鎴戝簲璇ュ厛澶勭悊鍝笁浠朵簨锛?/strong></p>
+          <p class="en"><strong>What are the three things I should handle first today?</strong></p>
         </div>
       </div>
 
-      <h3><span class="zh">四类核心业务场景</span><span class="en">Four Core Business Scenarios</span></h3>
+      <h3><span class="zh">MVP 鑼冨洿</span><span class="en">MVP Scope</span></h3>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">场景</span><span class="en">Scenario</span></th>
-            <th><span class="zh">核心用户</span><span class="en">Users</span></th>
-            <th><span class="zh">输出</span><span class="en">Output</span></th>
+            <th><span class="zh">鑼冨洿</span><span class="en">Area</span></th>
+            <th><span class="zh">瀹氫箟</span><span class="en">Definition</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">设计 / 打样</span><span class="en">Design / Sampling</span></td>
-            <td><span class="zh">品牌设计师、ODM、OEM 打样师、应用工程师</span><span class="en">Brand designers, ODM teams, OEM sampling engineers, application engineers</span></td>
-            <td><span class="zh">Arachne 参数、SWS 高级方向、可行性、差异说明、修改建议。</span><span class="en">Arachne parameters, SWS advanced direction, feasibility, difference notes, modification suggestions.</span></td>
+            <td><span class="zh">鑱氱劍</span><span class="en">Focus</span></td>
+            <td><span class="zh">Production + 浼氬奖鍝嶇敓浜т氦浠樼殑 Service 椋庨櫓銆?/span><span class="en">Production plus Service risks that may affect delivery.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">服务 / 售后</span><span class="en">Service / After-sales</span></td>
-            <td><span class="zh">客户设备工程师、Santoni 服务工程师、服务经理</span><span class="en">Customer equipment engineers, Santoni service engineers, service managers</span></td>
-            <td><span class="zh">服务 intake、案例匹配、在线排查、受控工具、派工建议。</span><span class="en">Service intake, case matching, online checks, controlled tools, dispatch suggestions.</span></td>
+            <td><span class="zh">鏆備笉浣滀负涓荤嚎</span><span class="en">Not the MVP Mainline</span></td>
+            <td><span class="zh">Design銆丼tyle3D銆丼WS銆丄rachne 浣滀负鑳屾櫙鑳藉姏锛屼笉杩涘叆褰撳墠 MVP 涓荤嚎銆?/span><span class="en">Design, Style3D, SWS, and Arachne remain background capabilities and are not the MVP mainline.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">订单 ROI / 接单决策</span><span class="en">Order ROI / Acceptance Decision</span></td>
-            <td><span class="zh">OEM 工厂老板、业务、计划、报价负责人</span><span class="en">OEM owners, commercial, planning, and quotation leaders</span></td>
-            <td><span class="zh">ROI、毛利、机器小时收益、产能瓶颈、交期风险、建议报价。</span><span class="en">ROI, gross margin, machine-hour return, capacity bottlenecks, delivery risk, suggested price.</span></td>
+            <td><span class="zh">鏁版嵁璺緞</span><span class="en">Data Path</span></td>
+            <td><span class="zh">绗竴鐗堜互 mock 鏁版嵁涓轰富璺緞锛涙湭鏉ユ墿灞曞埌 Excel 瀵煎叆銆佸彧璇?ERP/APS/IOT 鏁版嵁搴撳拰浜哄伐纭銆?/span><span class="en">The first version uses mock data as the main path; future versions can support Excel import, read-only ERP/APS/IOT databases, and human confirmation.</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3><span class="zh">棣栭〉缁撴瀯</span><span class="en">First-Screen Structure</span></h3>
+      <div class="grid-2">
+        <div class="card">
+          <strong><span class="zh">绠＄悊鎽樿</span><span class="en">Management Summary</span></strong>
+          <p class="zh">椤堕儴 3-5 琛屾憳瑕侊紝鐩存帴璇存槑浠婂ぉ鏈€鍊煎緱鎬荤粡鐞嗗叧娉ㄧ殑閲嶇偣銆?/p>
+          <p class="en">A 3-5 line summary that directly states the highest-priority management focus for today.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">涓夊紶鍔ㄦ€侀闄╁崱</span><span class="en">Three Dynamic Risk Cards</span></strong>
+          <p class="zh">涓婚鍥哄畾涓轰氦浠橀闄┿€佽川閲?琛ュ崟椋庨櫓銆佷汉宸ユ湁鏁堝伐鏃堕闄╋紱鏍囬鏍规嵁鏁版嵁鍔ㄦ€佺敓鎴愩€?/p>
+          <p class="en">Themes are delivery risk, quality/replenishment risk, and labor effective-hour risk; titles are generated dynamically from data.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">Service 椋庨櫓鏉垮潡</span><span class="en">Service Risk Section</span></strong>
+          <p class="zh">灞曠ず褰卞搷浜や粯鐨勮澶囨晠闅溿€佸弽澶嶆姤璀︽満鍙板拰鍋滄満鏈哄彴锛屾斁鍦ㄤ笁寮犱富鍗＄墖涓嬮潰銆?/p>
+          <p class="en">Shows equipment failures affecting delivery, repeated alarm machines, and stopped machines below the three main cards.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">鏈湴寰呭姙</span><span class="en">Local Follow-Up Items</span></strong>
+          <p class="zh">姣忔潯寰呭姙鍏宠仈椋庨櫓鍗＄墖锛岀姸鎬佸寘鎷緟纭銆佸凡鍒嗛厤銆佺瓑寰呰瘉鎹€佸凡纭銆佸凡鍏抽棴銆佹棤娉曞鐞嗐€?/p>
+          <p class="en">Each follow-up item links to a risk card. Statuses include pending confirmation, assigned, waiting for evidence, confirmed, closed, and unable to process.</p>
+        </div>
+      </div>
+
+      <h3><span class="zh">椋庨櫓鍗″繀澶囧瓧娈?/span><span class="en">Risk Card Required Fields</span></h3>
+      <table>
+        <tbody>
+          <tr>
+            <td><span class="zh">蹇呴』鏄剧ず</span><span class="en">Required</span></td>
+            <td><span class="zh">椋庨櫓鏍囬銆佸奖鍝嶅璞°€佷负浠€涔堥噸瑕併€佸師鍥犲拰璇佹嵁銆佸缓璁礋璐ｄ汉銆佸缓璁‘璁ゅ姩浣溿€佹暟鎹己鍙ｃ€?/span><span class="en">Risk title, affected object, why it matters, reason and evidence, suggested owner, suggested confirmation action, and data gaps.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">行业情报 / 商机雷达</span><span class="en">Industry Radar / Opportunity Radar</span></td>
-            <td><span class="zh">销售、产品、市场、区域负责人、管理层</span><span class="en">Sales, product, marketing, regional leaders, management</span></td>
-            <td><span class="zh">发生了什么、为什么重要、建议做什么。</span><span class="en">What happened, why it matters, what to do next.</span></td>
+            <td><span class="zh">璇佹嵁灞曠ず</span><span class="en">Evidence Display</span></td>
+            <td><span class="zh">榛樿灞曠ず 2-3 鏉″叧閿瘉鎹紱鍏ㄩ儴璇佹嵁鏀惧湪灞曞紑璇︽儏銆?/span><span class="en">Show 2-3 key evidence items by default; full evidence is available in expanded details.</span></td>
+          </tr>
+          <tr>
+            <td><span class="zh">缁х画杩介棶</span><span class="en">Drill-Down</span></td>
+            <td><span class="zh">姣忓紶椋庨櫓鍗℃彁渚涚户缁拷闂叆鍙ｏ紝浼樺厛浣跨敤鍙充晶鍒嗘瀽闈㈡澘锛岀┖闂翠笉瓒虫椂鍙湪鍗＄墖鍐呭睍寮€銆?/span><span class="en">Each risk card exposes a continue-asking action, preferably through a right-side analysis panel; inline expansion is acceptable if space is limited.</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3><span class="zh">浼樺厛绾с€侀闄╃瓑绾т笌璇佹嵁绛夌骇</span><span class="en">Priority, Risk, and Evidence Levels</span></h3>
+      <div class="grid-3">
+        <div class="card">
+          <strong><span class="zh">浼樺厛绾?/span><span class="en">Priority</span></strong>
+          <p class="zh">浜や粯椋庨櫓 &gt; 璐ㄩ噺椋庨櫓 &gt; 鎴愭湰椋庨櫓銆?/p>
+          <p class="en">Delivery risk &gt; quality risk &gt; cost risk.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">椋庨櫓绛夌骇</span><span class="en">Risk Levels</span></strong>
+          <p class="zh">绾㈣壊锛氫粖澶╁繀椤荤‘璁わ紱榛勮壊锛?4-48 灏忔椂鍐呯‘璁わ紱鐏拌壊锛氭暟鎹笉瓒筹紝浠呮彁绀恒€?/p>
+          <p class="en">Red: confirm today; yellow: confirm within 24-48 hours; gray: insufficient data, visibility only.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">璇佹嵁绛夌骇</span><span class="en">Evidence Levels</span></strong>
+          <p class="zh">L1 mock/demo锛汱2 Excel 瀵煎叆锛汱3 鍙鏁版嵁搴擄紱L4 浜哄伐纭銆傝瘉鎹瓑绾ф斁鍦ㄨ鎯呴噷鏄剧ず銆?/p>
+          <p class="en">L1 mock/demo; L2 Excel import; L3 read-only database; L4 human confirmation. Evidence level is shown in details.</p>
+        </div>
+      </div>
+
+      <h3><span class="zh">鏉冮檺杈圭晫</span><span class="en">Permission Boundary</span></h3>
+      <div class="grid-2">
+        <div class="note ok">
+          <strong><span class="zh">Athena 鍙互鍋?/span><span class="en">Athena Can</span></strong>
+          <ul>
+            <li><span class="zh">鎻愮ず椋庨櫓锛岃В閲婂師鍥犲拰璇佹嵁銆?/span><span class="en">Show risks and explain reasons and evidence.</span></li>
+            <li><span class="zh">寤鸿璋佸幓纭锛屽缓璁‘璁ゅ姩浣溿€?/span><span class="en">Suggest who should confirm and what to confirm.</span></li>
+            <li><span class="zh">鐢熸垚鏈湴寰呭姙銆?/span><span class="en">Generate local follow-up items.</span></li>
+          </ul>
+        </div>
+        <div class="note risk">
+          <strong><span class="zh">Athena 涓嶅仛</span><span class="en">Athena Must Not</span></strong>
+          <ul>
+            <li><span class="zh">涓嶆浛浠?ERP / APS / IOT锛屼笉鑷姩鏀规帓浜э紝涓嶈嚜鍔ㄦ淳宸ャ€?/span><span class="en">Does not replace ERP / APS / IOT, modify schedules, or dispatch service automatically.</span></li>
+            <li><span class="zh">涓嶇洿鎺ヨ瘎浠峰憳宸ョ哗鏁堬紝涓嶅湪璇佹嵁涓嶈冻鏃剁粰纭畾缁撹銆?/span><span class="en">Does not directly evaluate employee performance or give certain conclusions when evidence is insufficient.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong><span class="zh">MVP 鎴愬姛鏍囧噯</span><span class="en">MVP Success Criteria</span></strong>
+        <p class="zh">鎬荤粡鐞?3 鍒嗛挓鍐呯煡閬撲粖澶╄鐩摢涓変欢浜嬨€佷负浠€涔堥噸瑕併€佽瘉鎹槸浠€涔堛€佽皝璇ョ‘璁ゃ€佽繕缂轰粈涔堟暟鎹€?/p>
+        <p class="en">Within three minutes, the general manager understands the top three things to watch today, why they matter, what evidence supports them, who should confirm, and what data is missing.</p>
+      </div>
+    </section>
+
+    <section id="overview">
+      <h2><span class="zh">1. 浜у搧瀹氫綅</span><span class="en">1. Product Positioning</span></h2>
+      <p class="lead zh">
+        Athena 涓嶆槸鍗曚竴鑱婂ぉ鏈哄櫒浜猴紝鑰屾槸 Santoni 闈㈠悜鏃犵紳閽堢粐浠峰€奸摼鐨勬櫤鑳藉伐浣滃眰锛氳繛鎺ュ搧鐗岃璁°€丄rachne 鍙傛暟鍖栧畾鍒躲€丼WS 楂樼骇鎵撴牱銆丱EM 宸ュ巶鎺ュ崟鍐崇瓥銆佸敭鍚庢湇鍔″拰琛屼笟鎯呮姤銆?      </p>
+      <p class="lead en">
+        Athena is not a standalone chatbot. It is Santoni's intelligent work layer for the seamless knitting value chain, connecting brand design, Arachne parameterized customization, SWS advanced sampling, OEM order decisions, service operations, and industry intelligence.
+      </p>
+
+      <h3><span class="zh">Athena 涓夊ぇ鏍稿績鑳藉姏</span><span class="en">Athena Three Core Capabilities</span></h3>
+      <div class="grid-3">
+        <div class="card">
+          <strong><span class="zh">瀹㈡埛宸ヤ綔娴佸唴鐨勭幇鍦烘櫤鑳藉姵鍔ㄥ姏</span><span class="en">Workflow-native onsite workforce</span></strong>
+          <p class="zh">Athena 鏈€閲嶈鐨勪环鍊间笉鏄洖绛旀暟鎹棶棰橈紝鑰屾槸鎶婅鍗曞彿銆丒RP銆丄PS銆両OT銆佺粐閫犮€佽川閲忋€佹湇鍔″拰浜や粯涓插湪涓€涓彲杩借釜鐨勫伐浣滄祦涓€?/p>
+          <p class="en">Athena's value starts from joining customer work into one traceable flow: order number, ERP, APS, IOT, weaving, quality, service, and delivery.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">绠＄悊鍐崇瓥闂幆 Agent</span><span class="en">Management decision-loop agent</span></strong>
+          <p class="zh">Athena 涓嶅彧鍛婅瘔绠＄悊灞傛暟瀛楁€庝箞浜嗭紝杩樿缁欏嚭鎽樿銆佸師鍥?璇佹嵁銆佸缓璁姩浣溿€佽礋璐ｄ汉銆佽窡杩涚姸鎬併€佸叧闂棬鍜屽鐩樻寚鏍囥€?/p>
+          <p class="en">Athena should turn a management question into summary, reason/evidence, recommended action, owner, follow-up state, closure gate, and review KPI.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">Hermes 娌荤悊鐨勮嚜鎴戣繘鍖?/span><span class="en">Hermes-governed self-evolution</span></strong>
+          <p class="zh">Athena 姣忔鍒嗘瀽銆佷汉宸ョ‘璁ゃ€侀敊璇洖绛斿拰鐜板満鍙嶉锛岄兘搴旇浆鎴愬彲瀹℃牳鐨?memory event銆乸laybook 鍜?regression case锛岃€屼笉鏄棤闄愬埗鍦颁繚瀛樺鎴烽殣绉佹垨鍑劅瑙夎嚜鐢辫蹇嗐€?/p>
+          <p class="en">Athena should learn through reviewed memory events, playbooks, and regression cases governed by Hermes, without storing raw private data or promoting tenant knowledge without review.</p>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <strong><span class="zh">璁捐鍒扮敓浜?/span><span class="en">Design to Production</span></strong>
+          <p class="zh">鎶婅嚜鐒惰瑷€銆佸弬鑰冨浘鍜屽弬鏁伴€夋嫨杞垚娆惧紡銆佺罕绾裤€佺粨鏋勩€?D 闈欐€佸睍绀哄拰鐢熶骇鏂囦欢鏂瑰悜銆?/p>
+          <p class="en">Convert natural language, references, and parameter choices into style, yarn, structure, static 3D previews, and production-file direction.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">璁㈠崟 ROI</span><span class="en">Order ROI</span></strong>
+          <p class="zh">甯姪 OEM 鑰佹澘鍒ゆ柇璁㈠崟瑕佷笉瑕佹帴銆佽兘涓嶈兘鎺ャ€佹帴浜嗕箣鍚庢敹鐩婂拰椋庨櫓濡備綍銆?/p>
+          <p class="en">Help OEM decision makers assess whether to accept an order, whether capacity is sufficient, and what return and risk it creates.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">鏈嶅姟杩愯惀</span><span class="en">Service Operations</span></strong>
+          <p class="zh">閫氳繃鏈嶅姟妗堜緥銆佸湪绾挎帓鏌ャ€佸彈鎺у伐鍏峰拰娲惧伐鍑嗗锛屾彁楂樺敭鍚庡搷搴旀晥鐜囥€?/p>
+          <p class="en">Improve service response through case knowledge, online assistance, controlled tools, and dispatch preparation.</p>
+        </div>
+        <div class="card">
+          <strong><span class="zh">琛屼笟鎯呮姤</span><span class="en">Industry Intelligence</span></strong>
+          <p class="zh">瀹氭湡鐩戞祴灞曚細銆佺珵鍝併€佸鎴枫€佹斂绛栥€佹妧鏈拰娴峰鏈轰細锛屽苟杞寲鎴愯鍔ㄥ缓璁€?/p>
+          <p class="en">Monitor exhibitions, competitors, customers, policy, technology, and overseas opportunities, then convert them into actions.</p>
+        </div>
+      </div>
+
+      <h3><span class="zh">鍥涚被鏍稿績涓氬姟鍦烘櫙</span><span class="en">Four Core Business Scenarios</span></h3>
+      <table>
+        <thead>
+          <tr>
+            <th><span class="zh">鍦烘櫙</span><span class="en">Scenario</span></th>
+            <th><span class="zh">鏍稿績鐢ㄦ埛</span><span class="en">Users</span></th>
+            <th><span class="zh">杈撳嚭</span><span class="en">Output</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="zh">璁捐 / 鎵撴牱</span><span class="en">Design / Sampling</span></td>
+            <td><span class="zh">鍝佺墝璁捐甯堛€丱DM銆丱EM 鎵撴牱甯堛€佸簲鐢ㄥ伐绋嬪笀</span><span class="en">Brand designers, ODM teams, OEM sampling engineers, application engineers</span></td>
+            <td><span class="zh">Arachne 鍙傛暟銆丼WS 楂樼骇鏂瑰悜銆佸彲琛屾€с€佸樊寮傝鏄庛€佷慨鏀瑰缓璁€?/span><span class="en">Arachne parameters, SWS advanced direction, feasibility, difference notes, modification suggestions.</span></td>
+          </tr>
+          <tr>
+            <td><span class="zh">鏈嶅姟 / 鍞悗</span><span class="en">Service / After-sales</span></td>
+            <td><span class="zh">瀹㈡埛璁惧宸ョ▼甯堛€丼antoni 鏈嶅姟宸ョ▼甯堛€佹湇鍔＄粡鐞?/span><span class="en">Customer equipment engineers, Santoni service engineers, service managers</span></td>
+            <td><span class="zh">鏈嶅姟 intake銆佹渚嬪尮閰嶃€佸湪绾挎帓鏌ャ€佸彈鎺у伐鍏枫€佹淳宸ュ缓璁€?/span><span class="en">Service intake, case matching, online checks, controlled tools, dispatch suggestions.</span></td>
+          </tr>
+          <tr>
+            <td><span class="zh">璁㈠崟 ROI / 鎺ュ崟鍐崇瓥</span><span class="en">Order ROI / Acceptance Decision</span></td>
+            <td><span class="zh">OEM 宸ュ巶鑰佹澘銆佷笟鍔°€佽鍒掋€佹姤浠疯礋璐ｄ汉</span><span class="en">OEM owners, commercial, planning, and quotation leaders</span></td>
+            <td><span class="zh">ROI銆佹瘺鍒┿€佹満鍣ㄥ皬鏃舵敹鐩娿€佷骇鑳界摱棰堛€佷氦鏈熼闄┿€佸缓璁姤浠枫€?/span><span class="en">ROI, gross margin, machine-hour return, capacity bottlenecks, delivery risk, suggested price.</span></td>
+          </tr>
+          <tr>
+            <td><span class="zh">琛屼笟鎯呮姤 / 鍟嗘満闆疯揪</span><span class="en">Industry Radar / Opportunity Radar</span></td>
+            <td><span class="zh">閿€鍞€佷骇鍝併€佸競鍦恒€佸尯鍩熻礋璐ｄ汉銆佺鐞嗗眰</span><span class="en">Sales, product, marketing, regional leaders, management</span></td>
+            <td><span class="zh">鍙戠敓浜嗕粈涔堛€佷负浠€涔堥噸瑕併€佸缓璁仛浠€涔堛€?/span><span class="en">What happened, why it matters, what to do next.</span></td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <section id="naming">
-      <h2><span class="zh">2. 命名体系</span><span class="en">2. Naming System</span></h2>
+      <h2><span class="zh">2. 鍛藉悕浣撶郴</span><span class="en">2. Naming System</span></h2>
       <div class="grid-3">
         <div class="card">
           <strong>Athena</strong>
-          <p class="zh">整个 AI Knitting Agent 产品总名。Athena 负责统一入口、Agent Core、工具、知识、商业化和治理。</p>
+          <p class="zh">鏁翠釜 AI Knitting Agent 浜у搧鎬诲悕銆侫thena 璐熻矗缁熶竴鍏ュ彛銆丄gent Core銆佸伐鍏枫€佺煡璇嗐€佸晢涓氬寲鍜屾不鐞嗐€?/p>
           <p class="en">The product name for the whole AI Knitting Agent system. Athena owns entries, Agent Core, tools, knowledge, commercialization, and governance.</p>
         </div>
         <div class="card">
           <strong>Arachne</strong>
-          <p class="zh">Arachne Knit Pilot 项目名。Arachne 承载当前 demo 的设计闭环：款式、纱线、面料结构、颜色/图案、3D 静态展示和生产文件。</p>
+          <p class="zh">Arachne Knit Pilot 椤圭洰鍚嶃€侫rachne 鎵胯浇褰撳墠 demo 鐨勮璁￠棴鐜細娆惧紡銆佺罕绾裤€侀潰鏂欑粨鏋勩€侀鑹?鍥炬銆?D 闈欐€佸睍绀哄拰鐢熶骇鏂囦欢銆?/p>
           <p class="en">Arachne Knit Pilot project name. Arachne carries the current design demo loop: style, yarn, fabric structure, color/pattern, static 3D preview, and production file.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">后续子项目</span><span class="en">Future Subprojects</span></strong>
-          <p class="zh">后续可按“功能 - 希腊神名”命名。现在不急于重命名所有模块，避免过早增加沟通成本。</p>
+          <strong><span class="zh">鍚庣画瀛愰」鐩?/span><span class="en">Future Subprojects</span></strong>
+          <p class="zh">鍚庣画鍙寜鈥滃姛鑳?- 甯岃厞绁炲悕鈥濆懡鍚嶃€傜幇鍦ㄤ笉鎬ヤ簬閲嶅懡鍚嶆墍鏈夋ā鍧楋紝閬垮厤杩囨棭澧炲姞娌熼€氭垚鏈€?/p>
           <p class="en">Future modules can follow a "function - Greek name" convention. We do not need to rename every module now.</p>
         </div>
       </div>
       <div class="note ok">
-        <span class="zh">建议对外和跨部门沟通时使用 Athena；提到客户自助定制和 Arachne Knit Pilot 时使用 Arachne。</span>
+        <span class="zh">寤鸿瀵瑰鍜岃法閮ㄩ棬娌熼€氭椂浣跨敤 Athena锛涙彁鍒板鎴疯嚜鍔╁畾鍒跺拰 Arachne Knit Pilot 鏃朵娇鐢?Arachne銆?/span>
         <span class="en">Recommendation: use Athena for cross-team and external product-level communication; use Arachne when discussing customer self-customization and the Arachne Knit Pilot path.</span>
       </div>
     </section>
 
     <section id="architecture">
-      <h2><span class="zh">3. 总架构</span><span class="en">3. Overall Architecture</span></h2>
-      <p class="lead zh">架构原则：入口可以不同，Agent Core 必须统一；工具和数据通过 Adapter 暴露，不让 Agent 直接读写生产数据库。</p>
+      <h2><span class="zh">3. 鎬绘灦鏋?/span><span class="en">3. Overall Architecture</span></h2>
+      <p class="lead zh">鏋舵瀯鍘熷垯锛氬叆鍙ｅ彲浠ヤ笉鍚岋紝Agent Core 蹇呴』缁熶竴锛涘伐鍏峰拰鏁版嵁閫氳繃 Adapter 鏆撮湶锛屼笉璁?Agent 鐩存帴璇诲啓鐢熶骇鏁版嵁搴撱€?/p>
       <p class="lead en">Architecture principle: entries can differ, but Agent Core must be shared; tools and data should be exposed through adapters, not direct production database access.</p>
 
       <div class="architecture">
         <div class="layer">
-          <div class="layer-title"><span class="zh">入口层</span><span class="en">Entry Layer</span></div>
+          <div class="layer-title"><span class="zh">鍏ュ彛灞?/span><span class="en">Entry Layer</span></div>
           <div class="boxes">
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Arachne</a></b><span class="zh">客户自助定制和参数化设计。</span><span class="en">Self-customization and parameterized design.</span></div>
-            <div class="box"><b>Web</b><span class="zh">试用、demo、轻量设计、服务和 ROI。</span><span class="en">Trial, demo, lightweight design, service, and ROI.</span></div>
-            <div class="box"><b>Feishu Bot</b><span class="zh">内部协作、通知、审批、任务。</span><span class="en">Internal collaboration, notification, approval, tasks.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">SWS Advanced</a></b><span class="zh">未来高级专业打样入口。</span><span class="en">Future advanced sampling entry.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Radar Board</a></b><span class="zh">行业情报看板和推送。</span><span class="en">Industry intelligence dashboard and push.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Arachne</a></b><span class="zh">瀹㈡埛鑷姪瀹氬埗鍜屽弬鏁板寲璁捐銆?/span><span class="en">Self-customization and parameterized design.</span></div>
+            <div class="box"><b>Web</b><span class="zh">璇曠敤銆乨emo銆佽交閲忚璁°€佹湇鍔″拰 ROI銆?/span><span class="en">Trial, demo, lightweight design, service, and ROI.</span></div>
+            <div class="box"><b>Feishu Bot</b><span class="zh">鍐呴儴鍗忎綔銆侀€氱煡銆佸鎵广€佷换鍔°€?/span><span class="en">Internal collaboration, notification, approval, tasks.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">SWS Advanced</a></b><span class="zh">鏈潵楂樼骇涓撲笟鎵撴牱鍏ュ彛銆?/span><span class="en">Future advanced sampling entry.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Radar Board</a></b><span class="zh">琛屼笟鎯呮姤鐪嬫澘鍜屾帹閫併€?/span><span class="en">Industry intelligence dashboard and push.</span></div>
           </div>
         </div>
-        <div class="arrow">↓</div>
+        <div class="arrow">鈫?/div>
         <div class="layer">
           <div class="layer-title"><span class="zh">Agent Gateway / Runtime</span><span class="en">Agent Gateway / Runtime</span></div>
           <div class="boxes">
-            <div class="box"><b><span class="zh">身份权限</span><span class="en">Identity</span></b><span class="zh">账号、角色、客户、项目、工具权限。</span><span class="en">Accounts, roles, customers, projects, tool permissions.</span></div>
-            <div class="box"><b>Session</b><span class="zh">匿名、登录、项目上下文、长期记忆边界。</span><span class="en">Anonymous, logged-in, project context, memory boundaries.</span></div>
-            <div class="box"><b>Hermes</b><span class="zh">可选运行时：记忆、MCP、工具调度、自动化。</span><span class="en">Optional runtime: memory, MCP, tool orchestration, automation.</span></div>
-            <div class="box"><b><span class="zh">审计</span><span class="en">Audit</span></b><span class="zh">工具调用、敏感操作、确认记录。</span><span class="en">Tool calls, sensitive actions, confirmations.</span></div>
-            <div class="box"><b>Guardrails</b><span class="zh">安全规则、事实校验、人工确认。</span><span class="en">Safety rules, fact checks, human confirmation.</span></div>
+            <div class="box"><b><span class="zh">韬唤鏉冮檺</span><span class="en">Identity</span></b><span class="zh">璐﹀彿銆佽鑹层€佸鎴枫€侀」鐩€佸伐鍏锋潈闄愩€?/span><span class="en">Accounts, roles, customers, projects, tool permissions.</span></div>
+            <div class="box"><b>Session</b><span class="zh">鍖垮悕銆佺櫥褰曘€侀」鐩笂涓嬫枃銆侀暱鏈熻蹇嗚竟鐣屻€?/span><span class="en">Anonymous, logged-in, project context, memory boundaries.</span></div>
+            <div class="box"><b>Hermes</b><span class="zh">鍙€夎繍琛屾椂锛氳蹇嗐€丮CP銆佸伐鍏疯皟搴︺€佽嚜鍔ㄥ寲銆?/span><span class="en">Optional runtime: memory, MCP, tool orchestration, automation.</span></div>
+            <div class="box"><b><span class="zh">瀹¤</span><span class="en">Audit</span></b><span class="zh">宸ュ叿璋冪敤銆佹晱鎰熸搷浣溿€佺‘璁よ褰曘€?/span><span class="en">Tool calls, sensitive actions, confirmations.</span></div>
+            <div class="box"><b>Guardrails</b><span class="zh">瀹夊叏瑙勫垯銆佷簨瀹炴牎楠屻€佷汉宸ョ‘璁ゃ€?/span><span class="en">Safety rules, fact checks, human confirmation.</span></div>
           </div>
         </div>
-        <div class="arrow">↓</div>
+        <div class="arrow">鈫?/div>
         <div class="layer">
           <div class="layer-title">Athena Agent Core</div>
           <div class="boxes">
-            <div class="box"><b>Main Agent</b><span class="zh">角色、意图、语言、workflow state。</span><span class="en">Role, intent, language, workflow state.</span></div>
-            <div class="box"><b><a href="#pmo-agent">PMO Agent</a></b><span class="zh">证据驱动进度、风险预警、周报、决策跟踪。</span><span class="en">Evidence-based progress, risk alerts, weekly reports, decision tracking.</span></div>
-            <div class="box"><b>Design Agent</b><span class="zh">Arachne 参数和 SWS Advanced 方向。</span><span class="en">Arachne parameters and SWS Advanced direction.</span></div>
-            <div class="box"><b><a href="#fabric-kb">Fabric Intelligence Agent</a></b><span class="zh">纱线、结构、样布、性能测试推荐和反推。</span><span class="en">Yarn, structure, swatch, and performance recommendation or reverse analysis.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Ops Agent</a></b><span class="zh">服务 intake、案例、工具、派工。</span><span class="en">Service intake, cases, tools, dispatch.</span></div>
-            <div class="box"><b><a href="#iot-system">Machine Connectivity Agent</a></b><span class="zh">IOT 机联网、报警、OEE、停机和执行数据。</span><span class="en">IoT connectivity, alarms, OEE, downtime, and execution data.</span></div>
-            <div class="box"><b><a href="ai_knitting_agent_commercialization_agenda.html">OEM ROI Agent</a></b><span class="zh">接单 ROI 和产能风险。</span><span class="en">Order ROI and capacity risk.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Industry Radar Agent</a></b><span class="zh">情报、竞品、政策、商机。</span><span class="en">Intelligence, competitors, policy, opportunities.</span></div>
+            <div class="box"><b>Main Agent</b><span class="zh">瑙掕壊銆佹剰鍥俱€佽瑷€銆亀orkflow state銆?/span><span class="en">Role, intent, language, workflow state.</span></div>
+            <div class="box"><b><a href="#pmo-agent">PMO Agent</a></b><span class="zh">璇佹嵁椹卞姩杩涘害銆侀闄╅璀︺€佸懆鎶ャ€佸喅绛栬窡韪€?/span><span class="en">Evidence-based progress, risk alerts, weekly reports, decision tracking.</span></div>
+            <div class="box"><b>Design Agent</b><span class="zh">Arachne 鍙傛暟鍜?SWS Advanced 鏂瑰悜銆?/span><span class="en">Arachne parameters and SWS Advanced direction.</span></div>
+            <div class="box"><b><a href="#fabric-kb">Fabric Intelligence Agent</a></b><span class="zh">绾辩嚎銆佺粨鏋勩€佹牱甯冦€佹€ц兘娴嬭瘯鎺ㄨ崘鍜屽弽鎺ㄣ€?/span><span class="en">Yarn, structure, swatch, and performance recommendation or reverse analysis.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Ops Agent</a></b><span class="zh">鏈嶅姟 intake銆佹渚嬨€佸伐鍏枫€佹淳宸ャ€?/span><span class="en">Service intake, cases, tools, dispatch.</span></div>
+            <div class="box"><b><a href="#iot-system">Machine Connectivity Agent</a></b><span class="zh">IOT 鏈鸿仈缃戙€佹姤璀︺€丱EE銆佸仠鏈哄拰鎵ц鏁版嵁銆?/span><span class="en">IoT connectivity, alarms, OEE, downtime, and execution data.</span></div>
+            <div class="box"><b><a href="ai_knitting_agent_commercialization_agenda.html">OEM ROI Agent</a></b><span class="zh">鎺ュ崟 ROI 鍜屼骇鑳介闄┿€?/span><span class="en">Order ROI and capacity risk.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Industry Radar Agent</a></b><span class="zh">鎯呮姤銆佺珵鍝併€佹斂绛栥€佸晢鏈恒€?/span><span class="en">Intelligence, competitors, policy, opportunities.</span></div>
           </div>
         </div>
-        <div class="arrow">↓</div>
+        <div class="arrow">鈫?/div>
         <div class="layer">
           <div class="layer-title"><span class="zh">Tool / Adapter Layer</span><span class="en">Tool / Adapter Layer</span></div>
           <div class="boxes">
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Arachne Adapter</a></b><span class="zh">参数 schema、3D 静态展示、生产文件。</span><span class="en">Parameter schema, static 3D preview, production file.</span></div>
-            <div class="box"><b><a href="#fabric-kb">Fabric KB Adapter</a></b><span class="zh">纱线、结构、样布、测试数据和参数映射。</span><span class="en">Yarn, structure, swatch, test data, and parameter mapping.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Tools</a></b><span class="zh">案例库、激活密码、工单、备件。</span><span class="en">Case library, activation password, tickets, parts.</span></div>
-            <div class="box"><b><a href="#iot-system">Santoni IOT Adapter</a></b><span class="zh">实时监控、订单/程序下发、OEE、故障、产量。</span><span class="en">Real-time monitoring, order/program dispatch, OEE, faults, output.</span></div>
-            <div class="box"><b><a href="ai_knitting_agent_commercialization_agenda.html">ROI Engine</a></b><span class="zh">成本、产能、良率、收益公式。</span><span class="en">Cost, capacity, yield, return formulas.</span></div>
-            <div class="box"><b><a href="APS_Development_Plan.html">APS Adapter</a></b><span class="zh">ERP 订单同步、排单、插单、工单下发。</span><span class="en">ERP order sync, scheduling, rush-order insertion, work-order release.</span></div>
-            <div class="box"><b><a href="#pmo-agent">Project Evidence Adapter</a></b><span class="zh">任务、文档、PR、测试、会议纪要。</span><span class="en">Tasks, docs, PRs, tests, meeting notes.</span></div>
-            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Industry Sources</a></b><span class="zh">来源注册表、抓取、评分、推送。</span><span class="en">Source registry, collection, scoring, delivery.</span></div>
-            <div class="box"><b>Data Systems</b><span class="zh">CRM(SQL)、CPQ(MongoDB)、Service(MySQL)、ERP/MES、Santoni IOT。</span><span class="en">CRM(SQL), CPQ(MongoDB), Service(MySQL), ERP/MES, Santoni IoT.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Arachne Adapter</a></b><span class="zh">鍙傛暟 schema銆?D 闈欐€佸睍绀恒€佺敓浜ф枃浠躲€?/span><span class="en">Parameter schema, static 3D preview, production file.</span></div>
+            <div class="box"><b><a href="#fabric-kb">Fabric KB Adapter</a></b><span class="zh">绾辩嚎銆佺粨鏋勩€佹牱甯冦€佹祴璇曟暟鎹拰鍙傛暟鏄犲皠銆?/span><span class="en">Yarn, structure, swatch, test data, and parameter mapping.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Tools</a></b><span class="zh">妗堜緥搴撱€佹縺娲诲瘑鐮併€佸伐鍗曘€佸浠躲€?/span><span class="en">Case library, activation password, tickets, parts.</span></div>
+            <div class="box"><b><a href="#iot-system">Santoni IOT Adapter</a></b><span class="zh">瀹炴椂鐩戞帶銆佽鍗?绋嬪簭涓嬪彂銆丱EE銆佹晠闅溿€佷骇閲忋€?/span><span class="en">Real-time monitoring, order/program dispatch, OEE, faults, output.</span></div>
+            <div class="box"><b><a href="ai_knitting_agent_commercialization_agenda.html">ROI Engine</a></b><span class="zh">鎴愭湰銆佷骇鑳姐€佽壇鐜囥€佹敹鐩婂叕寮忋€?/span><span class="en">Cost, capacity, yield, return formulas.</span></div>
+            <div class="box"><b><a href="APS_Development_Plan.html">APS Adapter</a></b><span class="zh">ERP 璁㈠崟鍚屾銆佹帓鍗曘€佹彃鍗曘€佸伐鍗曚笅鍙戙€?/span><span class="en">ERP order sync, scheduling, rush-order insertion, work-order release.</span></div>
+            <div class="box"><b><a href="#pmo-agent">Project Evidence Adapter</a></b><span class="zh">浠诲姟銆佹枃妗ｃ€丳R銆佹祴璇曘€佷細璁邯瑕併€?/span><span class="en">Tasks, docs, PRs, tests, meeting notes.</span></div>
+            <div class="box"><b><a href="AI_Knitting_Agent_Architecture.html">Industry Sources</a></b><span class="zh">鏉ユ簮娉ㄥ唽琛ㄣ€佹姄鍙栥€佽瘎鍒嗐€佹帹閫併€?/span><span class="en">Source registry, collection, scoring, delivery.</span></div>
+            <div class="box"><b>Data Systems</b><span class="zh">CRM(SQL)銆丆PQ(MongoDB)銆丼ervice(MySQL)銆丒RP/MES銆丼antoni IOT銆?/span><span class="en">CRM(SQL), CPQ(MongoDB), Service(MySQL), ERP/MES, Santoni IoT.</span></div>
           </div>
         </div>
       </div>
     </section>
 
     <section id="modules">
-      <h2><span class="zh">4. 子 Agent 与能力模块</span><span class="en">4. Sub-Agents and Capabilities</span></h2>
+      <h2><span class="zh">4. 瀛?Agent 涓庤兘鍔涙ā鍧?/span><span class="en">4. Sub-Agents and Capabilities</span></h2>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">模块</span><span class="en">Module</span></th>
-            <th><span class="zh">职责</span><span class="en">Responsibility</span></th>
-            <th><span class="zh">优先级</span><span class="en">Priority</span></th>
+            <th><span class="zh">妯″潡</span><span class="en">Module</span></th>
+            <th><span class="zh">鑱岃矗</span><span class="en">Responsibility</span></th>
+            <th><span class="zh">浼樺厛绾?/span><span class="en">Priority</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>Main Agent</td>
-            <td><span class="zh">统一理解用户、角色、入口、语言、意图和 workflow state，并路由到子 Agent。</span><span class="en">Understands user, role, entry, language, intent, workflow state, and routes to sub-agents.</span></td>
+            <td><span class="zh">缁熶竴鐞嗚В鐢ㄦ埛銆佽鑹层€佸叆鍙ｃ€佽瑷€銆佹剰鍥惧拰 workflow state锛屽苟璺敱鍒板瓙 Agent銆?/span><span class="en">Understands user, role, entry, language, intent, workflow state, and routes to sub-agents.</span></td>
             <td data-module-priority="main-agent"><span class="tag blue">P0</span></td>
           </tr>
           <tr>
             <td><a href="#pmo-agent">PMO Agent / Project Intelligence Agent</a></td>
-            <td><span class="zh">内部项目管理 Agent。读取任务、验收 checklist、文档 Change Log、代码/PR、测试结果和会议决策，用规则引擎自动计算项目进度、延期状态、风险和决策需求，并生成周报和预警。</span><span class="en">Internal project-management agent. Reads tasks, acceptance checklists, document change logs, code/PRs, test results, and meeting decisions, then uses rules to calculate progress, delay status, risks, and decision needs, plus weekly reports and alerts.</span></td>
+            <td><span class="zh">鍐呴儴椤圭洰绠＄悊 Agent銆傝鍙栦换鍔°€侀獙鏀?checklist銆佹枃妗?Change Log銆佷唬鐮?PR銆佹祴璇曠粨鏋滃拰浼氳鍐崇瓥锛岀敤瑙勫垯寮曟搸鑷姩璁＄畻椤圭洰杩涘害銆佸欢鏈熺姸鎬併€侀闄╁拰鍐崇瓥闇€姹傦紝骞剁敓鎴愬懆鎶ュ拰棰勮銆?/span><span class="en">Internal project-management agent. Reads tasks, acceptance checklists, document change logs, code/PRs, test results, and meeting decisions, then uses rules to calculate progress, delay status, risks, and decision needs, plus weekly reports and alerts.</span></td>
             <td data-module-priority="strategy-execution-pmo"><span class="tag blue">P0</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Arachne / Design Agent</a></td>
-            <td><span class="zh">通过自然语言定义款式、纱线、面料结构、图案、颜色、3D 展示和生产文件参数。</span><span class="en">Defines style, yarn, fabric structure, pattern, color, 3D preview, and production-file parameters through natural language.</span></td>
+            <td><span class="zh">閫氳繃鑷劧璇█瀹氫箟娆惧紡銆佺罕绾裤€侀潰鏂欑粨鏋勩€佸浘妗堛€侀鑹层€?D 灞曠ず鍜岀敓浜ф枃浠跺弬鏁般€?/span><span class="en">Defines style, yarn, fabric structure, pattern, color, 3D preview, and production-file parameters through natural language.</span></td>
             <td data-module-priority="arachne"><span class="tag blue">P0</span></td>
           </tr>
           <tr>
             <td><a href="#fabric-kb">Fabric Intelligence Agent</a></td>
-            <td><span class="zh">根据设计功能推荐纱线和组织结构，引用样布和测试数据预测性能、质感和风险；也支持基于面料图片做结构和纱线候选反推。</span><span class="en">Recommends yarns and structures from design intent, references swatches and tests to predict performance, handfeel, and risk, and supports candidate reverse analysis from fabric images.</span></td>
+            <td><span class="zh">鏍规嵁璁捐鍔熻兘鎺ㄨ崘绾辩嚎鍜岀粍缁囩粨鏋勶紝寮曠敤鏍峰竷鍜屾祴璇曟暟鎹娴嬫€ц兘銆佽川鎰熷拰椋庨櫓锛涗篃鏀寔鍩轰簬闈㈡枡鍥剧墖鍋氱粨鏋勫拰绾辩嚎鍊欓€夊弽鎺ㄣ€?/span><span class="en">Recommends yarns and structures from design intent, references swatches and tests to predict performance, handfeel, and risk, and supports candidate reverse analysis from fabric images.</span></td>
             <td data-module-priority="fabric-kb"><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">SWS Advanced Agent</a></td>
-            <td><span class="zh">未来支持更强的仿真、打样程序、文件转换和专业工艺修改。</span><span class="en">Future support for stronger simulation, sampling programs, file conversion, and professional process editing.</span></td>
+            <td><span class="zh">鏈潵鏀寔鏇村己鐨勪豢鐪熴€佹墦鏍风▼搴忋€佹枃浠惰浆鎹㈠拰涓撲笟宸ヨ壓淇敼銆?/span><span class="en">Future support for stronger simulation, sampling programs, file conversion, and professional process editing.</span></td>
             <td data-module-priority="sws-advanced"><span class="tag teal">P2</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Operations Agent</a></td>
-            <td><span class="zh">服务 intake、案例匹配、在线排查、锁机激活等受控工具、派工准备和 handoff payload。</span><span class="en">Service intake, case matching, online assistance, controlled tools such as lock activation, dispatch preparation, and handoff payloads.</span></td>
+            <td><span class="zh">鏈嶅姟 intake銆佹渚嬪尮閰嶃€佸湪绾挎帓鏌ャ€侀攣鏈烘縺娲荤瓑鍙楁帶宸ュ叿銆佹淳宸ュ噯澶囧拰 handoff payload銆?/span><span class="en">Service intake, case matching, online assistance, controlled tools such as lock activation, dispatch preparation, and handoff payloads.</span></td>
             <td data-module-priority="service-agent"><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td><a href="#iot-system">IoT / Machine Connectivity Agent</a></td>
-            <td><span class="zh">接入 Santoni IOT System，作为中国团队本地化 Nautilus 的机联网层，读取机台状态、报警、OEE、停机、产量、订单执行和工厂资源数据。</span><span class="en">Connects Santoni IOT System as the China-localized Nautilus machine connectivity layer, reading machine status, alarms, OEE, downtime, output, order execution, and factory resource data.</span></td>
+            <td><span class="zh">鎺ュ叆 Santoni IOT System锛屼綔涓轰腑鍥藉洟闃熸湰鍦板寲 Nautilus 鐨勬満鑱旂綉灞傦紝璇诲彇鏈哄彴鐘舵€併€佹姤璀︺€丱EE銆佸仠鏈恒€佷骇閲忋€佽鍗曟墽琛屽拰宸ュ巶璧勬簮鏁版嵁銆?/span><span class="en">Connects Santoni IOT System as the China-localized Nautilus machine connectivity layer, reading machine status, alarms, OEE, downtime, output, order execution, and factory resource data.</span></td>
             <td data-module-priority="iot-system"><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td><a href="#smart-machine">Smartex Vision Inspection / Smart Machine</a></td>
-            <td><span class="zh">把 Smartex 智能验布作为 Smart Machine 的短期商业化亮点：在 take-down 位置用 8 个摄像头和可见光、红外、紫外三种波段进行在线验布与 quality inspection。</span><span class="en">Positions Smartex vision inspection as the near-term Smart Machine highlight: eight cameras at the take-down with visible, infrared, and ultraviolet bands for inline inspection and quality classification.</span></td>
+            <td><span class="zh">鎶?Smartex 鏅鸿兘楠屽竷浣滀负 Smart Machine 鐨勭煭鏈熷晢涓氬寲浜偣锛氬湪 take-down 浣嶇疆鐢?8 涓憚鍍忓ご鍜屽彲瑙佸厜銆佺孩澶栥€佺传澶栦笁绉嶆尝娈佃繘琛屽湪绾块獙甯冧笌 quality inspection銆?/span><span class="en">Positions Smartex vision inspection as the near-term Smart Machine highlight: eight cameras at the take-down with visible, infrared, and ultraviolet bands for inline inspection and quality classification.</span></td>
             <td data-module-priority="smartex-vision"><span class="tag blue">P0</span></td>
           </tr>
           <tr>
             <td><a href="#smart-machine">Predictive Maintenance</a></td>
-            <td><span class="zh">独立于 Smartex 的预测性维护技术项目，先建立大圆机振动指纹库和连续原始波形采集链路，再推进异常检测、诊断规则和训练数据闭环。</span><span class="en">A separate predictive-maintenance technical project, starting with a large-diameter-machine vibration fingerprint library and continuous raw waveform acquisition before anomaly detection, diagnostic rules, and training-data loops.</span></td>
+            <td><span class="zh">鐙珛浜?Smartex 鐨勯娴嬫€х淮鎶ゆ妧鏈」鐩紝鍏堝缓绔嬪ぇ鍦嗘満鎸姩鎸囩汗搴撳拰杩炵画鍘熷娉㈠舰閲囬泦閾捐矾锛屽啀鎺ㄨ繘寮傚父妫€娴嬨€佽瘖鏂鍒欏拰璁粌鏁版嵁闂幆銆?/span><span class="en">A separate predictive-maintenance technical project, starting with a large-diameter-machine vibration fingerprint library and continuous raw waveform acquisition before anomaly detection, diagnostic rules, and training-data loops.</span></td>
             <td data-module-priority="predictive-maintenance"><span class="tag teal">P2</span></td>
           </tr>
           <tr>
             <td><a href="ai_knitting_agent_commercialization_agenda.html">OEM ROI Agent</a></td>
-            <td><span class="zh">用可审计算法服务评估订单 ROI、毛利、机器小时收益、产能瓶颈和接单条件。</span><span class="en">Uses an auditable algorithm service to evaluate order ROI, margin, machine-hour return, bottlenecks, and acceptance conditions.</span></td>
+            <td><span class="zh">鐢ㄥ彲瀹¤绠楁硶鏈嶅姟璇勪及璁㈠崟 ROI銆佹瘺鍒┿€佹満鍣ㄥ皬鏃舵敹鐩娿€佷骇鑳界摱棰堝拰鎺ュ崟鏉′欢銆?/span><span class="en">Uses an auditable algorithm service to evaluate order ROI, margin, machine-hour return, bottlenecks, and acceptance conditions.</span></td>
             <td data-module-priority="roi-agent"><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Industry Radar Agent</a></td>
-            <td><span class="zh">定期监测行业、竞品、客户、政策、技术和海外市场机会，并转成行动建议。</span><span class="en">Periodically monitors industry, competitors, customers, policy, technology, and overseas opportunities, then converts them into actions.</span></td>
+            <td><span class="zh">瀹氭湡鐩戞祴琛屼笟銆佺珵鍝併€佸鎴枫€佹斂绛栥€佹妧鏈拰娴峰甯傚満鏈轰細锛屽苟杞垚琛屽姩寤鸿銆?/span><span class="en">Periodically monitors industry, competitors, customers, policy, technology, and overseas opportunities, then converts them into actions.</span></td>
             <td data-module-priority="industry-radar"><span class="tag green">P1</span></td>
           </tr>
           <tr>
             <td><a href="knitting_terms_glossary.html">Glossary / Knowledge Agent</a></td>
-            <td><span class="zh">维护中英文针织术语、机器术语、面料结构和业务定义，提升多团队沟通一致性。</span><span class="en">Maintains bilingual knitting terms, machine terms, fabric structures, and business definitions to align cross-team communication.</span></td>
+            <td><span class="zh">缁存姢涓嫳鏂囬拡缁囨湳璇€佹満鍣ㄦ湳璇€侀潰鏂欑粨鏋勫拰涓氬姟瀹氫箟锛屾彁鍗囧鍥㈤槦娌熼€氫竴鑷存€с€?/span><span class="en">Maintains bilingual knitting terms, machine terms, fabric structures, and business definitions to align cross-team communication.</span></td>
             <td data-module-priority="knowledge-base"><span class="tag amber">P1</span></td>
           </tr>
         </tbody>
@@ -757,40 +981,40 @@
     </section>
 
     <section id="entries">
-      <h2><span class="zh">5. 入口与目标用户</span><span class="en">5. Entries and Target Users</span></h2>
+      <h2><span class="zh">5. 鍏ュ彛涓庣洰鏍囩敤鎴?/span><span class="en">5. Entries and Target Users</span></h2>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">入口</span><span class="en">Entry</span></th>
-            <th><span class="zh">目标用户</span><span class="en">Target Users</span></th>
-            <th><span class="zh">定位</span><span class="en">Positioning</span></th>
+            <th><span class="zh">鍏ュ彛</span><span class="en">Entry</span></th>
+            <th><span class="zh">鐩爣鐢ㄦ埛</span><span class="en">Target Users</span></th>
+            <th><span class="zh">瀹氫綅</span><span class="en">Positioning</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Arachne</a></td>
-            <td><span class="zh">品牌客户、小批量定制客户、电商/定制业务客户、OEM 业务团队</span><span class="en">Brand customers, small-batch customization customers, e-commerce/customization teams, OEM commercial teams</span></td>
-            <td><span class="zh">当前 demo 的优先设计入口，承载可交互、可展示、可生成生产文件的闭环。</span><span class="en">The preferred design entry for the current demo, carrying an interactive, visible, production-file-capable loop.</span></td>
+            <td><span class="zh">鍝佺墝瀹㈡埛銆佸皬鎵归噺瀹氬埗瀹㈡埛銆佺數鍟?瀹氬埗涓氬姟瀹㈡埛銆丱EM 涓氬姟鍥㈤槦</span><span class="en">Brand customers, small-batch customization customers, e-commerce/customization teams, OEM commercial teams</span></td>
+            <td><span class="zh">褰撳墠 demo 鐨勪紭鍏堣璁″叆鍙ｏ紝鎵胯浇鍙氦浜掋€佸彲灞曠ず銆佸彲鐢熸垚鐢熶骇鏂囦欢鐨勯棴鐜€?/span><span class="en">The preferred design entry for the current demo, carrying an interactive, visible, production-file-capable loop.</span></td>
           </tr>
           <tr>
             <td>Web</td>
-            <td><span class="zh">潜在客户、销售 demo 对象、服务用户、ROI 试算用户</span><span class="en">Prospects, sales demo users, service users, ROI trial users</span></td>
-            <td><span class="zh">低门槛入口，支持匿名和登录模式。登录后可保留项目、订单和服务上下文。</span><span class="en">Low-friction entry with anonymous and logged-in modes. Logged-in mode can retain project, order, and service context.</span></td>
+            <td><span class="zh">娼滃湪瀹㈡埛銆侀攢鍞?demo 瀵硅薄銆佹湇鍔＄敤鎴枫€丷OI 璇曠畻鐢ㄦ埛</span><span class="en">Prospects, sales demo users, service users, ROI trial users</span></td>
+            <td><span class="zh">浣庨棬妲涘叆鍙ｏ紝鏀寔鍖垮悕鍜岀櫥褰曟ā寮忋€傜櫥褰曞悗鍙繚鐣欓」鐩€佽鍗曞拰鏈嶅姟涓婁笅鏂囥€?/span><span class="en">Low-friction entry with anonymous and logged-in modes. Logged-in mode can retain project, order, and service context.</span></td>
           </tr>
           <tr>
             <td>Feishu Bot</td>
-            <td><span class="zh">Santoni 内部服务、销售、项目、管理团队</span><span class="en">Santoni service, sales, project, and management teams</span></td>
-            <td><span class="zh">协作入口，适合通知、审批、派工、日报、情报摘要和任务跟踪。</span><span class="en">Collaboration entry for notifications, approvals, dispatch, daily reports, intelligence summaries, and task tracking.</span></td>
+            <td><span class="zh">Santoni 鍐呴儴鏈嶅姟銆侀攢鍞€侀」鐩€佺鐞嗗洟闃?/span><span class="en">Santoni service, sales, project, and management teams</span></td>
+            <td><span class="zh">鍗忎綔鍏ュ彛锛岄€傚悎閫氱煡銆佸鎵广€佹淳宸ャ€佹棩鎶ャ€佹儏鎶ユ憳瑕佸拰浠诲姟璺熻釜銆?/span><span class="en">Collaboration entry for notifications, approvals, dispatch, daily reports, intelligence summaries, and task tracking.</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">SWS Advanced</a></td>
-            <td><span class="zh">专业设计师、打样师、应用工程师</span><span class="en">Professional designers, sampling engineers, application engineers</span></td>
-            <td><span class="zh">未来高级包入口，提供更强的仿真、更细参数和更专业打样能力。</span><span class="en">Future advanced package entry with stronger simulation, finer parameters, and professional sampling capabilities.</span></td>
+            <td><span class="zh">涓撲笟璁捐甯堛€佹墦鏍峰笀銆佸簲鐢ㄥ伐绋嬪笀</span><span class="en">Professional designers, sampling engineers, application engineers</span></td>
+            <td><span class="zh">鏈潵楂樼骇鍖呭叆鍙ｏ紝鎻愪緵鏇村己鐨勪豢鐪熴€佹洿缁嗗弬鏁板拰鏇翠笓涓氭墦鏍疯兘鍔涖€?/span><span class="en">Future advanced package entry with stronger simulation, finer parameters, and professional sampling capabilities.</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Industry Radar Board</a></td>
-            <td><span class="zh">销售、产品、市场、区域负责人、管理层</span><span class="en">Sales, product, marketing, regional leaders, management</span></td>
-            <td><span class="zh">内部决策入口，用于查看行业情报、竞品预警、政策风险和商机任务。</span><span class="en">Internal decision entry for industry intelligence, competitor alerts, policy risk, and opportunity tasks.</span></td>
+            <td><span class="zh">閿€鍞€佷骇鍝併€佸競鍦恒€佸尯鍩熻礋璐ｄ汉銆佺鐞嗗眰</span><span class="en">Sales, product, marketing, regional leaders, management</span></td>
+            <td><span class="zh">鍐呴儴鍐崇瓥鍏ュ彛锛岀敤浜庢煡鐪嬭涓氭儏鎶ャ€佺珵鍝侀璀︺€佹斂绛栭闄╁拰鍟嗘満浠诲姟銆?/span><span class="en">Internal decision entry for industry intelligence, competitor alerts, policy risk, and opportunity tasks.</span></td>
           </tr>
         </tbody>
       </table>
@@ -799,151 +1023,149 @@
     <section id="pmo-agent">
       <h2><span class="zh">5.1 PMO Agent / Project Intelligence Agent</span><span class="en">5.1 PMO Agent / Project Intelligence Agent</span></h2>
       <p class="lead zh">
-        PMO Agent 是 Athena 的内部管理型子 Agent，不面向客户销售。它的目标是让 Athena 自己的研发、商业化、数据准备和试点进度变得可计算、可追溯、可预警，而不是依赖人工主观填写百分比。
-      </p>
+        PMO Agent 鏄?Athena 鐨勫唴閮ㄧ鐞嗗瀷瀛?Agent锛屼笉闈㈠悜瀹㈡埛閿€鍞€傚畠鐨勭洰鏍囨槸璁?Athena 鑷繁鐨勭爺鍙戙€佸晢涓氬寲銆佹暟鎹噯澶囧拰璇曠偣杩涘害鍙樺緱鍙绠椼€佸彲杩芥函銆佸彲棰勮锛岃€屼笉鏄緷璧栦汉宸ヤ富瑙傚～鍐欑櫨鍒嗘瘮銆?      </p>
       <p class="lead en">
         PMO Agent is Athena's internal management sub-agent, not a customer-facing commercial product. Its goal is to make Athena's engineering, commercialization, data preparation, and pilot progress calculable, traceable, and alertable instead of relying on subjective manual percentages.
       </p>
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">证据来源</span><span class="en">Evidence Sources</span></strong>
-          <p class="zh">任务系统、验收 checklist、Git/PR/CI、文档 Change Log、会议纪要、管理层决策、试点客户反馈。</p>
+          <strong><span class="zh">璇佹嵁鏉ユ簮</span><span class="en">Evidence Sources</span></strong>
+          <p class="zh">浠诲姟绯荤粺銆侀獙鏀?checklist銆丟it/PR/CI銆佹枃妗?Change Log銆佷細璁邯瑕併€佺鐞嗗眰鍐崇瓥銆佽瘯鐐瑰鎴峰弽棣堛€?/p>
           <p class="en">Task systems, acceptance checklists, Git/PR/CI, document change logs, meeting notes, management decisions, and pilot customer feedback.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">计算引擎</span><span class="en">Calculation Engine</span></strong>
-          <p class="zh">用确定性规则和权重计算模块进度、延期状态、风险等级和缺失证据；LLM 只负责总结和解释。</p>
+          <strong><span class="zh">璁＄畻寮曟搸</span><span class="en">Calculation Engine</span></strong>
+          <p class="zh">鐢ㄧ‘瀹氭€ц鍒欏拰鏉冮噸璁＄畻妯″潡杩涘害銆佸欢鏈熺姸鎬併€侀闄╃瓑绾у拰缂哄け璇佹嵁锛汱LM 鍙礋璐ｆ€荤粨鍜岃В閲娿€?/p>
           <p class="en">Uses deterministic rules and weights to calculate module progress, delay status, risk level, and missing evidence; LLM only summarizes and explains.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">输出动作</span><span class="en">Outputs</span></strong>
-          <p class="zh">项目周报、风险预警、需要 Danny / Belotti 或跨部门确认的决策清单、owner 提醒和下一步建议。</p>
+          <strong><span class="zh">杈撳嚭鍔ㄤ綔</span><span class="en">Outputs</span></strong>
+          <p class="zh">椤圭洰鍛ㄦ姤銆侀闄╅璀︺€侀渶瑕?Danny / Belotti 鎴栬法閮ㄩ棬纭鐨勫喅绛栨竻鍗曘€乷wner 鎻愰啋鍜屼笅涓€姝ュ缓璁€?/p>
           <p class="en">Project weekly reports, risk alerts, decision lists for Danny / Belotti or cross-team review, owner reminders, and next-action suggestions.</p>
         </div>
       </div>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">层级</span><span class="en">Layer</span></th>
-            <th><span class="zh">内容</span><span class="en">Content</span></th>
-            <th><span class="zh">原则</span><span class="en">Principle</span></th>
+            <th><span class="zh">灞傜骇</span><span class="en">Layer</span></th>
+            <th><span class="zh">鍐呭</span><span class="en">Content</span></th>
+            <th><span class="zh">鍘熷垯</span><span class="en">Principle</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="zh">Project Evidence Adapter</span><span class="en">Project Evidence Adapter</span></td>
-            <td><span class="zh">连接飞书任务、Git/PR、测试结果、部署记录、文档 Change Log、会议纪要和手工 checklist。</span><span class="en">Connect Feishu tasks, Git/PRs, test results, deployment records, document change logs, meeting notes, and manual checklists.</span></td>
-            <td><span class="zh">所有进度必须有证据来源；没有证据的进度只能标记为待确认。</span><span class="en">Every progress signal needs evidence; progress without evidence is marked as to-confirm.</span></td>
+            <td><span class="zh">杩炴帴椋炰功浠诲姟銆丟it/PR銆佹祴璇曠粨鏋溿€侀儴缃茶褰曘€佹枃妗?Change Log銆佷細璁邯瑕佸拰鎵嬪伐 checklist銆?/span><span class="en">Connect Feishu tasks, Git/PRs, test results, deployment records, document change logs, meeting notes, and manual checklists.</span></td>
+            <td><span class="zh">鎵€鏈夎繘搴﹀繀椤绘湁璇佹嵁鏉ユ簮锛涙病鏈夎瘉鎹殑杩涘害鍙兘鏍囪涓哄緟纭銆?/span><span class="en">Every progress signal needs evidence; progress without evidence is marked as to-confirm.</span></td>
           </tr>
           <tr>
             <td><span class="zh">Project Graph</span><span class="en">Project Graph</span></td>
-            <td><span class="zh">模块、owner、任务、交付物、验收项、依赖、决策、风险和文档版本之间的关系图。</span><span class="en">Relationship graph among modules, owners, tasks, deliverables, acceptance items, dependencies, decisions, risks, and document versions.</span></td>
-            <td><span class="zh">模块之间的依赖必须可见，例如 IoT 影响 Service、APS、ROI 和 Advanced Maintenance。</span><span class="en">Cross-module dependencies must be visible, such as IoT affecting Service, APS, ROI, and Advanced Maintenance.</span></td>
+            <td><span class="zh">妯″潡銆乷wner銆佷换鍔°€佷氦浠樼墿銆侀獙鏀堕」銆佷緷璧栥€佸喅绛栥€侀闄╁拰鏂囨。鐗堟湰涔嬮棿鐨勫叧绯诲浘銆?/span><span class="en">Relationship graph among modules, owners, tasks, deliverables, acceptance items, dependencies, decisions, risks, and document versions.</span></td>
+            <td><span class="zh">妯″潡涔嬮棿鐨勪緷璧栧繀椤诲彲瑙侊紝渚嬪 IoT 褰卞搷 Service銆丄PS銆丷OI 鍜?Advanced Maintenance銆?/span><span class="en">Cross-module dependencies must be visible, such as IoT affecting Service, APS, ROI, and Advanced Maintenance.</span></td>
           </tr>
           <tr>
             <td><span class="zh">Progress Calculation Engine</span><span class="en">Progress Calculation Engine</span></td>
-            <td><span class="zh">第一版公式：项目进度 = MVP 状态 50% + 项目状态 20% + 商业化状态 30%。MVP：TBD/No=0，Partial=50，Yes=100；状态：Future=0，Planning/Blocked=20，In Progress=50，Review=80，Done=100；商业化：TBD=0，Not sellable=20，Internal Enablement=40，Demo=60，Pilot=80，Sellable=100。</span><span class="en">First formula: project progress = MVP status 50% + project status 20% + commercialization status 30%. MVP: TBD/No=0, Partial=50, Yes=100; status: Future=0, Planning/Blocked=20, In Progress=50, Review=80, Done=100; commercialization: TBD=0, Not sellable=20, Internal Enablement=40, Demo=60, Pilot=80, Sellable=100.</span></td>
-            <td><span class="zh">Agent 不自由判断百分比；公式和权重必须可审计。</span><span class="en">Agent does not freely judge percentages; formulas and weights must be auditable.</span></td>
+            <td><span class="zh">绗竴鐗堝叕寮忥細椤圭洰杩涘害 = MVP 鐘舵€?50% + 椤圭洰鐘舵€?20% + 鍟嗕笟鍖栫姸鎬?30%銆侻VP锛歍BD/No=0锛孭artial=50锛孻es=100锛涚姸鎬侊細Future=0锛孭lanning/Blocked=20锛孖n Progress=50锛孯eview=80锛孌one=100锛涘晢涓氬寲锛歍BD=0锛孨ot sellable=20锛孖nternal Enablement=40锛孌emo=60锛孭ilot=80锛孲ellable=100銆?/span><span class="en">First formula: project progress = MVP status 50% + project status 20% + commercialization status 30%. MVP: TBD/No=0, Partial=50, Yes=100; status: Future=0, Planning/Blocked=20, In Progress=50, Review=80, Done=100; commercialization: TBD=0, Not sellable=20, Internal Enablement=40, Demo=60, Pilot=80, Sellable=100.</span></td>
+            <td><span class="zh">Agent 涓嶈嚜鐢卞垽鏂櫨鍒嗘瘮锛涘叕寮忓拰鏉冮噸蹇呴』鍙璁°€?/span><span class="en">Agent does not freely judge percentages; formulas and weights must be auditable.</span></td>
           </tr>
           <tr>
             <td><span class="zh">PMO Summary Agent</span><span class="en">PMO Summary Agent</span></td>
-            <td><span class="zh">把计算结果转成周报、风险解释、决策提醒、会议议程和下一步建议。</span><span class="en">Turn calculated results into weekly reports, risk explanations, decision reminders, meeting agendas, and next actions.</span></td>
-            <td><span class="zh">LLM 负责解释和提炼，不替代证据和规则。</span><span class="en">LLM explains and summarizes; it does not replace evidence or rules.</span></td>
+            <td><span class="zh">鎶婅绠楃粨鏋滆浆鎴愬懆鎶ャ€侀闄╄В閲娿€佸喅绛栨彁閱掋€佷細璁绋嬪拰涓嬩竴姝ュ缓璁€?/span><span class="en">Turn calculated results into weekly reports, risk explanations, decision reminders, meeting agendas, and next actions.</span></td>
+            <td><span class="zh">LLM 璐熻矗瑙ｉ噴鍜屾彁鐐硷紝涓嶆浛浠ｈ瘉鎹拰瑙勫垯銆?/span><span class="en">LLM explains and summarizes; it does not replace evidence or rules.</span></td>
           </tr>
         </tbody>
       </table>
       <div class="note ok">
-        <span class="zh">落地路径：第一阶段用项目进度页的 MVP/状态/商业化权重自动算进度，并用 checklist 保留证据；第二阶段导入飞书任务、Git/PR、文档 Change Log；第三阶段做定时 PMO Agent，自动生成周报、预警和决策清单。</span>
+        <span class="zh">钀藉湴璺緞锛氱涓€闃舵鐢ㄩ」鐩繘搴﹂〉鐨?MVP/鐘舵€?鍟嗕笟鍖栨潈閲嶈嚜鍔ㄧ畻杩涘害锛屽苟鐢?checklist 淇濈暀璇佹嵁锛涚浜岄樁娈靛鍏ラ涔︿换鍔°€丟it/PR銆佹枃妗?Change Log锛涚涓夐樁娈靛仛瀹氭椂 PMO Agent锛岃嚜鍔ㄧ敓鎴愬懆鎶ャ€侀璀﹀拰鍐崇瓥娓呭崟銆?/span>
         <span class="en">Implementation path: phase one calculates progress from MVP/status/commercialization weights in the project progress page while keeping checklists as evidence; phase two imports Feishu tasks, Git/PRs, and document change logs; phase three runs scheduled PMO Agent for weekly reports, alerts, and decision lists.</span>
       </div>
     </section>
 
     <section id="systems">
-      <h2><span class="zh">6. 系统接入与数据边界</span><span class="en">6. Integrations and Data Boundaries</span></h2>
+      <h2><span class="zh">6. 绯荤粺鎺ュ叆涓庢暟鎹竟鐣?/span><span class="en">6. Integrations and Data Boundaries</span></h2>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">系统</span><span class="en">System</span></th>
-            <th><span class="zh">数据/接口</span><span class="en">Data / Interface</span></th>
-            <th><span class="zh">Agent 用途</span><span class="en">Agent Use</span></th>
+            <th><span class="zh">绯荤粺</span><span class="en">System</span></th>
+            <th><span class="zh">鏁版嵁/鎺ュ彛</span><span class="en">Data / Interface</span></th>
+            <th><span class="zh">Agent 鐢ㄩ€?/span><span class="en">Agent Use</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Arachne</a></td>
-            <td><span class="zh">参数 schema、3D 静态展示、生产文件接口</span><span class="en">Parameter schema, static 3D preview, production-file API</span></td>
-            <td><span class="zh">自然语言定义和修改客户定制参数。</span><span class="en">Define and modify customer customization parameters through natural language.</span></td>
+            <td><span class="zh">鍙傛暟 schema銆?D 闈欐€佸睍绀恒€佺敓浜ф枃浠舵帴鍙?/span><span class="en">Parameter schema, static 3D preview, production-file API</span></td>
+            <td><span class="zh">鑷劧璇█瀹氫箟鍜屼慨鏀瑰鎴峰畾鍒跺弬鏁般€?/span><span class="en">Define and modify customer customization parameters through natural language.</span></td>
           </tr>
           <tr>
             <td><a href="#fabric-kb">Fabric Intelligence Knowledge Base</a></td>
-            <td><span class="zh">纱线库、面料结构库、样布库、性能测试库、图片/报告对象存储、向量索引和参数映射表</span><span class="en">Yarn library, structure library, swatch library, performance test library, image/report object storage, vector index, and parameter mapping tables</span></td>
-            <td><span class="zh">支撑设计师按功能选纱线和结构、面料图片初判、样布相似检索、性能预测和 Arachne/SWS 参数生成。</span><span class="en">Support function-based yarn/structure selection, image-based fabric assessment, similar swatch retrieval, performance prediction, and Arachne/SWS parameter generation.</span></td>
+            <td><span class="zh">绾辩嚎搴撱€侀潰鏂欑粨鏋勫簱銆佹牱甯冨簱銆佹€ц兘娴嬭瘯搴撱€佸浘鐗?鎶ュ憡瀵硅薄瀛樺偍銆佸悜閲忕储寮曞拰鍙傛暟鏄犲皠琛?/span><span class="en">Yarn library, structure library, swatch library, performance test library, image/report object storage, vector index, and parameter mapping tables</span></td>
+            <td><span class="zh">鏀拺璁捐甯堟寜鍔熻兘閫夌罕绾垮拰缁撴瀯銆侀潰鏂欏浘鐗囧垵鍒ゃ€佹牱甯冪浉浼兼绱€佹€ц兘棰勬祴鍜?Arachne/SWS 鍙傛暟鐢熸垚銆?/span><span class="en">Support function-based yarn/structure selection, image-based fabric assessment, similar swatch retrieval, performance prediction, and Arachne/SWS parameter generation.</span></td>
           </tr>
           <tr>
             <td>CRM</td>
             <td>SQL</td>
-            <td><span class="zh">客户、联系人、销售机会、跟进任务。建议 API/Adapter，不直连生产写权限。</span><span class="en">Customers, contacts, opportunities, follow-ups. Use API/Adapter; avoid direct production write access.</span></td>
+            <td><span class="zh">瀹㈡埛銆佽仈绯讳汉銆侀攢鍞満浼氥€佽窡杩涗换鍔°€傚缓璁?API/Adapter锛屼笉鐩磋繛鐢熶骇鍐欐潈闄愩€?/span><span class="en">Customers, contacts, opportunities, follow-ups. Use API/Adapter; avoid direct production write access.</span></td>
           </tr>
           <tr>
             <td>CPQ</td>
-            <td><span class="zh">主要数据在 MongoDB</span><span class="en">Primary data in MongoDB</span></td>
-            <td><span class="zh">配置、报价、选项约束、成本和方案版本。</span><span class="en">Configuration, quotation, option constraints, cost, and versioning.</span></td>
+            <td><span class="zh">涓昏鏁版嵁鍦?MongoDB</span><span class="en">Primary data in MongoDB</span></td>
+            <td><span class="zh">閰嶇疆銆佹姤浠枫€侀€夐」绾︽潫銆佹垚鏈拰鏂规鐗堟湰銆?/span><span class="en">Configuration, quotation, option constraints, cost, and versioning.</span></td>
           </tr>
           <tr>
             <td>Service System</td>
             <td>MySQL</td>
-            <td><span class="zh">工单、派工、维修闭环、客户反馈。</span><span class="en">Tickets, dispatch, service closure, customer feedback.</span></td>
+            <td><span class="zh">宸ュ崟銆佹淳宸ャ€佺淮淇棴鐜€佸鎴峰弽棣堛€?/span><span class="en">Tickets, dispatch, service closure, customer feedback.</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture_V3.1_Service_Operations.html">Service Case Library</a></td>
-            <td><span class="zh">服务案例、在线步骤、安全警告、派工触发条件</span><span class="en">Service cases, online steps, safety warnings, dispatch triggers</span></td>
-            <td><span class="zh">服务 Agent 的知识和在线排查基础。</span><span class="en">Knowledge and online troubleshooting base for Service Agent.</span></td>
+            <td><span class="zh">鏈嶅姟妗堜緥銆佸湪绾挎楠ゃ€佸畨鍏ㄨ鍛娿€佹淳宸ヨЕ鍙戞潯浠?/span><span class="en">Service cases, online steps, safety warnings, dispatch triggers</span></td>
+            <td><span class="zh">鏈嶅姟 Agent 鐨勭煡璇嗗拰鍦ㄧ嚎鎺掓煡鍩虹銆?/span><span class="en">Knowledge and online troubleshooting base for Service Agent.</span></td>
           </tr>
           <tr>
             <td><a href="#iot-system">Santoni IOT System / Nautilus China Localized</a></td>
-            <td><span class="zh">机台实时监控、订单/程序下发、Dashboard、OEE/效率/停机/故障/产量分析、API、工厂资源配置</span><span class="en">Machine real-time monitoring, order/program dispatch, dashboard, OEE/efficiency/downtime/fault/output analysis, API, factory resource configuration</span></td>
-            <td><span class="zh">作为机联网和实际执行数据入口，支撑 Service 远程诊断、APS 计划 vs 实际反馈、ROI 机器小时收益、Predictive Maintenance、Advanced Maintenance 和 Smart Machine。</span><span class="en">Acts as the machine connectivity and actual-execution data entry point for Service remote diagnosis, APS plan-vs-actual feedback, ROI machine-hour return, Predictive Maintenance, Advanced Maintenance, and Smart Machine.</span></td>
+            <td><span class="zh">鏈哄彴瀹炴椂鐩戞帶銆佽鍗?绋嬪簭涓嬪彂銆丏ashboard銆丱EE/鏁堢巼/鍋滄満/鏁呴殰/浜ч噺鍒嗘瀽銆丄PI銆佸伐鍘傝祫婧愰厤缃?/span><span class="en">Machine real-time monitoring, order/program dispatch, dashboard, OEE/efficiency/downtime/fault/output analysis, API, factory resource configuration</span></td>
+            <td><span class="zh">浣滀负鏈鸿仈缃戝拰瀹為檯鎵ц鏁版嵁鍏ュ彛锛屾敮鎾?Service 杩滅▼璇婃柇銆丄PS 璁″垝 vs 瀹為檯鍙嶉銆丷OI 鏈哄櫒灏忔椂鏀剁泭銆丳redictive Maintenance銆丄dvanced Maintenance 鍜?Smart Machine銆?/span><span class="en">Acts as the machine connectivity and actual-execution data entry point for Service remote diagnosis, APS plan-vs-actual feedback, ROI machine-hour return, Predictive Maintenance, Advanced Maintenance, and Smart Machine.</span></td>
           </tr>
           <tr>
             <td><a href="APS_Development_Plan.html">APS</a></td>
-            <td><span class="zh">ERP 订单接收、排单/插单、工单下发、排产状态</span><span class="en">ERP order intake, scheduling, rush-order insertion, work-order release, scheduling status</span></td>
-            <td><span class="zh">支撑 ROI Engine 评估接单能力、交期风险、插单影响和利润率改善机会。</span><span class="en">Support ROI Engine in evaluating order acceptance, delivery risk, insertion impact, and margin-improvement opportunities.</span></td>
+            <td><span class="zh">ERP 璁㈠崟鎺ユ敹銆佹帓鍗?鎻掑崟銆佸伐鍗曚笅鍙戙€佹帓浜х姸鎬?/span><span class="en">ERP order intake, scheduling, rush-order insertion, work-order release, scheduling status</span></td>
+            <td><span class="zh">鏀拺 ROI Engine 璇勪及鎺ュ崟鑳藉姏銆佷氦鏈熼闄┿€佹彃鍗曞奖鍝嶅拰鍒╂鼎鐜囨敼鍠勬満浼氥€?/span><span class="en">Support ROI Engine in evaluating order acceptance, delivery risk, insertion impact, and margin-improvement opportunities.</span></td>
           </tr>
           <tr>
             <td><a href="ai_knitting_agent_commercialization_agenda.html">ERP / MES / Cost Data</a></td>
-            <td><span class="zh">OEE、班次、人工、能耗、换款、良率、成本</span><span class="en">OEE, shifts, labor, energy, changeover, yield, cost</span></td>
-            <td><span class="zh">支撑 ROI Engine 和产能风险判断。</span><span class="en">Support ROI Engine and capacity-risk decisions.</span></td>
+            <td><span class="zh">OEE銆佺彮娆°€佷汉宸ャ€佽兘鑰椼€佹崲娆俱€佽壇鐜囥€佹垚鏈?/span><span class="en">OEE, shifts, labor, energy, changeover, yield, cost</span></td>
+            <td><span class="zh">鏀拺 ROI Engine 鍜屼骇鑳介闄╁垽鏂€?/span><span class="en">Support ROI Engine and capacity-risk decisions.</span></td>
           </tr>
           <tr>
             <td><a href="AI_Knitting_Agent_Architecture.html">Industry Source Registry</a></td>
-            <td><span class="zh">展会、竞品、品牌、政策、媒体、RSS、关键词</span><span class="en">Exhibitions, competitors, brands, policy, media, RSS, keywords</span></td>
-            <td><span class="zh">支撑 Industry Radar 的定时检索和情报评分。</span><span class="en">Support scheduled collection and intelligence scoring for Industry Radar.</span></td>
+            <td><span class="zh">灞曚細銆佺珵鍝併€佸搧鐗屻€佹斂绛栥€佸獟浣撱€丷SS銆佸叧閿瘝</span><span class="en">Exhibitions, competitors, brands, policy, media, RSS, keywords</span></td>
+            <td><span class="zh">鏀拺 Industry Radar 鐨勫畾鏃舵绱㈠拰鎯呮姤璇勫垎銆?/span><span class="en">Support scheduled collection and intelligence scoring for Industry Radar.</span></td>
           </tr>
         </tbody>
       </table>
 
-      <h3 id="fabric-kb"><span class="zh">6.1 Fabric Intelligence Knowledge Base 面料智能知识库</span><span class="en">6.1 Fabric Intelligence Knowledge Base</span></h3>
+      <h3 id="fabric-kb"><span class="zh">6.1 Fabric Intelligence Knowledge Base 闈㈡枡鏅鸿兘鐭ヨ瘑搴?/span><span class="en">6.1 Fabric Intelligence Knowledge Base</span></h3>
       <p class="lead zh">
-        设计师最关心的是面料：它由什么纱线、什么组织结构织成，会带来什么性能和质感。Athena 需要把纱线库、面料结构库、样布库和性能测试库做成可追溯、可检索、可推荐、可对接参数系统的知识底座。
-      </p>
+        璁捐甯堟渶鍏冲績鐨勬槸闈㈡枡锛氬畠鐢变粈涔堢罕绾裤€佷粈涔堢粍缁囩粨鏋勭粐鎴愶紝浼氬甫鏉ヤ粈涔堟€ц兘鍜岃川鎰熴€侫thena 闇€瑕佹妸绾辩嚎搴撱€侀潰鏂欑粨鏋勫簱銆佹牱甯冨簱鍜屾€ц兘娴嬭瘯搴撳仛鎴愬彲杩芥函銆佸彲妫€绱€佸彲鎺ㄨ崘銆佸彲瀵规帴鍙傛暟绯荤粺鐨勭煡璇嗗簳搴с€?      </p>
       <p class="lead en">
         Designers care most about fabric: which yarns and structures create it, and what performance and handfeel it will deliver. Athena should turn yarns, structures, swatches, and performance tests into a traceable, searchable, recommendable knowledge base connected to the parameter system.
       </p>
 
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">目标 1：功能到方案</span><span class="en">Goal 1: Intent to Proposal</span></strong>
-          <p class="zh">把“透气、快干、轻压缩、柔软”等设计语言转成纱线候选、结构候选、参考样布、性能预测和风险说明。</p>
+          <strong><span class="zh">鐩爣 1锛氬姛鑳藉埌鏂规</span><span class="en">Goal 1: Intent to Proposal</span></strong>
+          <p class="zh">鎶娾€滈€忔皵銆佸揩骞层€佽交鍘嬬缉銆佹煍杞€濈瓑璁捐璇█杞垚绾辩嚎鍊欓€夈€佺粨鏋勫€欓€夈€佸弬鑰冩牱甯冦€佹€ц兘棰勬祴鍜岄闄╄鏄庛€?/p>
           <p class="en">Convert design language such as breathable, quick-dry, light compression, and soft into yarn candidates, structure candidates, reference swatches, predicted performance, and risks.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">目标 2：图片到初判</span><span class="en">Goal 2: Image to Assessment</span></strong>
-          <p class="zh">设计师上传面料图片后，Agent 初步判断结构、纹理、密度感、候选纱线类型和可能性能，并标注置信度。</p>
+          <strong><span class="zh">鐩爣 2锛氬浘鐗囧埌鍒濆垽</span><span class="en">Goal 2: Image to Assessment</span></strong>
+          <p class="zh">璁捐甯堜笂浼犻潰鏂欏浘鐗囧悗锛孉gent 鍒濇鍒ゆ柇缁撴瀯銆佺汗鐞嗐€佸瘑搴︽劅銆佸€欓€夌罕绾跨被鍨嬪拰鍙兘鎬ц兘锛屽苟鏍囨敞缃俊搴︺€?/p>
           <p class="en">When designers upload a fabric image, Agent estimates structure, texture, density, candidate yarn types, likely performance, and confidence level.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">目标 3：知识到参数</span><span class="en">Goal 3: Knowledge to Parameters</span></strong>
-          <p class="zh">推荐结果必须能映射到 Arachne Knit Pilot 和未来 SWS Advanced 的参数系统，而不是停留在文字建议。</p>
+          <strong><span class="zh">鐩爣 3锛氱煡璇嗗埌鍙傛暟</span><span class="en">Goal 3: Knowledge to Parameters</span></strong>
+          <p class="zh">鎺ㄨ崘缁撴灉蹇呴』鑳芥槧灏勫埌 Arachne Knit Pilot 鍜屾湭鏉?SWS Advanced 鐨勫弬鏁扮郴缁燂紝鑰屼笉鏄仠鐣欏湪鏂囧瓧寤鸿銆?/p>
           <p class="en">Recommendations must map into Arachne Knit Pilot and future SWS Advanced parameters instead of remaining text-only advice.</p>
         </div>
       </div>
@@ -951,167 +1173,165 @@
       <table>
         <thead>
           <tr>
-            <th><span class="zh">知识库</span><span class="en">Library</span></th>
-            <th><span class="zh">标准字段</span><span class="en">Standard Fields</span></th>
-            <th><span class="zh">Agent 用途</span><span class="en">Agent Use</span></th>
+            <th><span class="zh">鐭ヨ瘑搴?/span><span class="en">Library</span></th>
+            <th><span class="zh">鏍囧噯瀛楁</span><span class="en">Standard Fields</span></th>
+            <th><span class="zh">Agent 鐢ㄩ€?/span><span class="en">Agent Use</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">纱线库 Yarn Library</span><span class="en">Yarn Library</span></td>
+            <td><span class="zh">绾辩嚎搴?Yarn Library</span><span class="en">Yarn Library</span></td>
             <td><code>yarn_id</code>, <code>supplier</code>, <code>brand_name</code>, <code>material_composition</code>, <code>yarn_type</code>, <code>count_or_denier</code>, <code>filament_count</code>, <code>twist</code>, <code>elasticity</code>, <code>handfeel_tags</code>, <code>function_tags</code>, <code>certifications</code>, <code>compatible_gauge</code>, <code>risk_notes</code>, <code>source_confidence</code></td>
-            <td><span class="zh">根据功能、手感、成本、认证、适配机型推荐纱线，并提示断纱、起毛、染色、缩水等风险。</span><span class="en">Recommend yarns by function, handfeel, cost, certification, and machine fit, while flagging breakage, pilling, dyeing, and shrinkage risks.</span></td>
+            <td><span class="zh">鏍规嵁鍔熻兘銆佹墜鎰熴€佹垚鏈€佽璇併€侀€傞厤鏈哄瀷鎺ㄨ崘绾辩嚎锛屽苟鎻愮ず鏂罕銆佽捣姣涖€佹煋鑹层€佺缉姘寸瓑椋庨櫓銆?/span><span class="en">Recommend yarns by function, handfeel, cost, certification, and machine fit, while flagging breakage, pilling, dyeing, and shrinkage risks.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">面料结构库 Structure Library</span><span class="en">Structure Library</span></td>
+            <td><span class="zh">闈㈡枡缁撴瀯搴?Structure Library</span><span class="en">Structure Library</span></td>
             <td><code>structure_id</code>, <code>structure_name</code>, <code>machine_type</code>, <code>gauge_range</code>, <code>construction_method</code>, <code>parameter_requirements</code>, <code>visual_texture_tags</code>, <code>performance_tendency</code>, <code>suitable_products</code>, <code>yarn_constraints</code>, <code>failure_risks</code>, <code>example_swatch_ids</code></td>
-            <td><span class="zh">回答“什么结构适合什么功能”，也能反向回答“设计师要的功能适合哪些组织结构”。</span><span class="en">Answer which structures fit which functions, and reverse-map design intent to suitable structures.</span></td>
+            <td><span class="zh">鍥炵瓟鈥滀粈涔堢粨鏋勯€傚悎浠€涔堝姛鑳解€濓紝涔熻兘鍙嶅悜鍥炵瓟鈥滆璁″笀瑕佺殑鍔熻兘閫傚悎鍝簺缁勭粐缁撴瀯鈥濄€?/span><span class="en">Answer which structures fit which functions, and reverse-map design intent to suitable structures.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">样布库 Swatch Library</span><span class="en">Swatch Library</span></td>
+            <td><span class="zh">鏍峰竷搴?Swatch Library</span><span class="en">Swatch Library</span></td>
             <td><code>swatch_id</code>, <code>images</code>, <code>yarn_ids</code>, <code>structure_ids</code>, <code>machine_model</code>, <code>machine_parameters</code>, <code>gsm</code>, <code>thickness</code>, <code>handfeel_tags</code>, <code>visual_tags</code>, <code>application_tags</code>, <code>production_file_ref</code>, <code>test_report_ids</code>, <code>designer_notes</code>, <code>engineer_notes</code></td>
-            <td><span class="zh">作为真实世界锚点，支持相似样布检索、图片比对、推荐引用和打样可行性判断。</span><span class="en">Act as the real-world anchor for similar swatch retrieval, image comparison, recommendation evidence, and sampling feasibility.</span></td>
+            <td><span class="zh">浣滀负鐪熷疄涓栫晫閿氱偣锛屾敮鎸佺浉浼兼牱甯冩绱€佸浘鐗囨瘮瀵广€佹帹鑽愬紩鐢ㄥ拰鎵撴牱鍙鎬у垽鏂€?/span><span class="en">Act as the real-world anchor for similar swatch retrieval, image comparison, recommendation evidence, and sampling feasibility.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">性能测试库 Performance Test Library</span><span class="en">Performance Test Library</span></td>
+            <td><span class="zh">鎬ц兘娴嬭瘯搴?Performance Test Library</span><span class="en">Performance Test Library</span></td>
             <td><code>test_id</code>, <code>swatch_id</code>, <code>test_type</code>, <code>test_standard</code>, <code>test_method</code>, <code>result_value</code>, <code>unit</code>, <code>rating</code>, <code>lab_name</code>, <code>test_date</code>, <code>sample_condition</code>, <code>interpretation</code>, <code>confidence_level</code></td>
-            <td><span class="zh">把透气、快干、弹力回复、压缩、耐磨、起球、色牢度等测试结果转成设计师可理解的性能说明。</span><span class="en">Translate breathability, quick dry, stretch recovery, compression, abrasion, pilling, and color fastness results into designer-readable performance notes.</span></td>
+            <td><span class="zh">鎶婇€忔皵銆佸揩骞层€佸脊鍔涘洖澶嶃€佸帇缂┿€佽€愮（銆佽捣鐞冦€佽壊鐗㈠害绛夋祴璇曠粨鏋滆浆鎴愯璁″笀鍙悊瑙ｇ殑鎬ц兘璇存槑銆?/span><span class="en">Translate breathability, quick dry, stretch recovery, compression, abrasion, pilling, and color fastness results into designer-readable performance notes.</span></td>
           </tr>
         </tbody>
       </table>
 
-      <h3><span class="zh">参数系统对接</span><span class="en">Parameter System Connection</span></h3>
+      <h3><span class="zh">鍙傛暟绯荤粺瀵规帴</span><span class="en">Parameter System Connection</span></h3>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">参数层</span><span class="en">Parameter Layer</span></th>
-            <th><span class="zh">关键字段</span><span class="en">Key Fields</span></th>
-            <th><span class="zh">对接方式</span><span class="en">Connection Method</span></th>
+            <th><span class="zh">鍙傛暟灞?/span><span class="en">Parameter Layer</span></th>
+            <th><span class="zh">鍏抽敭瀛楁</span><span class="en">Key Fields</span></th>
+            <th><span class="zh">瀵规帴鏂瑰紡</span><span class="en">Connection Method</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">设计意图</span><span class="en">Design Intent</span></td>
+            <td><span class="zh">璁捐鎰忓浘</span><span class="en">Design Intent</span></td>
             <td><code>product_type</code>, <code>target_function</code>, <code>handfeel</code>, <code>visual_style</code>, <code>risk_preference</code></td>
-            <td><span class="zh">由自然语言、图片、参考样衣或设计 brief 解析而来。</span><span class="en">Parsed from natural language, images, reference garments, or design briefs.</span></td>
+            <td><span class="zh">鐢辫嚜鐒惰瑷€銆佸浘鐗囥€佸弬鑰冩牱琛ｆ垨璁捐 brief 瑙ｆ瀽鑰屾潵銆?/span><span class="en">Parsed from natural language, images, reference garments, or design briefs.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">知识引用</span><span class="en">Knowledge References</span></td>
+            <td><span class="zh">鐭ヨ瘑寮曠敤</span><span class="en">Knowledge References</span></td>
             <td><code>recommended_yarn_ids</code>, <code>recommended_structure_ids</code>, <code>reference_swatch_ids</code>, <code>test_report_ids</code></td>
-            <td><span class="zh">每次推荐必须引用纱线、结构、样布和测试数据，避免不可追溯的泛化建议。</span><span class="en">Each recommendation should reference yarns, structures, swatches, and tests to avoid untraceable generic advice.</span></td>
+            <td><span class="zh">姣忔鎺ㄨ崘蹇呴』寮曠敤绾辩嚎銆佺粨鏋勩€佹牱甯冨拰娴嬭瘯鏁版嵁锛岄伩鍏嶄笉鍙拷婧殑娉涘寲寤鸿銆?/span><span class="en">Each recommendation should reference yarns, structures, swatches, and tests to avoid untraceable generic advice.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">性能预测</span><span class="en">Predicted Performance</span></td>
+            <td><span class="zh">鎬ц兘棰勬祴</span><span class="en">Predicted Performance</span></td>
             <td><code>breathability</code>, <code>quick_dry</code>, <code>compression</code>, <code>stretch_recovery</code>, <code>opacity_risk</code>, <code>handfeel_summary</code>, <code>confidence_level</code></td>
-            <td><span class="zh">由样布历史、测试结果、结构倾向和纱线属性综合生成，并显示置信度。</span><span class="en">Generated from swatch history, test results, structural tendencies, and yarn attributes, with confidence level shown.</span></td>
+            <td><span class="zh">鐢辨牱甯冨巻鍙层€佹祴璇曠粨鏋溿€佺粨鏋勫€惧悜鍜岀罕绾垮睘鎬х患鍚堢敓鎴愶紝骞舵樉绀虹疆淇″害銆?/span><span class="en">Generated from swatch history, test results, structural tendencies, and yarn attributes, with confidence level shown.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">Arachne / SWS 参数</span><span class="en">Arachne / SWS Parameters</span></td>
+            <td><span class="zh">Arachne / SWS 鍙傛暟</span><span class="en">Arachne / SWS Parameters</span></td>
             <td><code>gauge</code>, <code>machine_model</code>, <code>zone_structure_map</code>, <code>yarn_feeder_map</code>, <code>density_range</code>, <code>tension_range</code>, <code>speed_range</code>, <code>production_file_ref</code></td>
-            <td><span class="zh">通过统一 Fabric Parameter Schema 输出给 Arachne Knit Pilot；未来扩展到 SWS Advanced 仿真和打样程序生成。</span><span class="en">Output through a unified Fabric Parameter Schema to Arachne Knit Pilot, and later extend to SWS Advanced simulation and sampling-program generation.</span></td>
+            <td><span class="zh">閫氳繃缁熶竴 Fabric Parameter Schema 杈撳嚭缁?Arachne Knit Pilot锛涙湭鏉ユ墿灞曞埌 SWS Advanced 浠跨湡鍜屾墦鏍风▼搴忕敓鎴愩€?/span><span class="en">Output through a unified Fabric Parameter Schema to Arachne Knit Pilot, and later extend to SWS Advanced simulation and sampling-program generation.</span></td>
           </tr>
         </tbody>
       </table>
 
       <div class="note ok">
-        <span class="zh">MVP 建议：先录入 30-50 条常用纱线、20-30 个无缝结构、50-100 块样布；每块样布至少关联纱线、结构、基础性能标签、正反面/微距图片和可追溯来源。</span>
+        <span class="zh">MVP 寤鸿锛氬厛褰曞叆 30-50 鏉″父鐢ㄧ罕绾裤€?0-30 涓棤缂濈粨鏋勩€?0-100 鍧楁牱甯冿紱姣忓潡鏍峰竷鑷冲皯鍏宠仈绾辩嚎銆佺粨鏋勩€佸熀纭€鎬ц兘鏍囩銆佹鍙嶉潰/寰窛鍥剧墖鍜屽彲杩芥函鏉ユ簮銆?/span>
         <span class="en">MVP suggestion: start with 30-50 common yarns, 20-30 seamless structures, and 50-100 swatches. Each swatch should link to yarns, structures, basic performance tags, front/back/macro images, and traceable sources.</span>
       </div>
 
-      <h3 id="iot-system"><span class="zh">6.2 Santoni IOT System / 中国本地化 Nautilus</span><span class="en">6.2 Santoni IOT System / China-Localized Nautilus</span></h3>
+      <h3 id="iot-system"><span class="zh">6.2 Santoni IOT System / 涓浗鏈湴鍖?Nautilus</span><span class="en">6.2 Santoni IOT System / China-Localized Nautilus</span></h3>
       <p class="lead zh">
-        Santoni IOT System 是中国团队本地化的机联网系统，可以理解为本地化 Nautilus。它负责把客户现场机器、订单执行、报警、停机、OEE、产量、质量和工厂资源数据接入 Athena，是 Service、APS、ROI、Predictive Maintenance、Advanced Maintenance 和 Smart Machine 的共同数据底座。
-      </p>
+        Santoni IOT System 鏄腑鍥藉洟闃熸湰鍦板寲鐨勬満鑱旂綉绯荤粺锛屽彲浠ョ悊瑙ｄ负鏈湴鍖?Nautilus銆傚畠璐熻矗鎶婂鎴风幇鍦烘満鍣ㄣ€佽鍗曟墽琛屻€佹姤璀︺€佸仠鏈恒€丱EE銆佷骇閲忋€佽川閲忓拰宸ュ巶璧勬簮鏁版嵁鎺ュ叆 Athena锛屾槸 Service銆丄PS銆丷OI銆丳redictive Maintenance銆丄dvanced Maintenance 鍜?Smart Machine 鐨勫叡鍚屾暟鎹簳搴с€?      </p>
       <p class="lead en">
         Santoni IOT System is the China-localized machine connectivity system, conceptually the localized Nautilus. It connects on-site machines, order execution, alarms, downtime, OEE, output, quality, and factory resources into Athena, forming a shared data foundation for Service, APS, ROI, Predictive Maintenance, Advanced Maintenance, and Smart Machine.
       </p>
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">实时监控</span><span class="en">Real-Time Monitoring</span></strong>
-          <p class="zh">支持大圆机、无缝/袜机的机器概览和明细，包含订单、班次、纱线、效率、机器信息、报警和工厂组织信息。</p>
+          <strong><span class="zh">瀹炴椂鐩戞帶</span><span class="en">Real-Time Monitoring</span></strong>
+          <p class="zh">鏀寔澶у渾鏈恒€佹棤缂?琚滄満鐨勬満鍣ㄦ瑙堝拰鏄庣粏锛屽寘鍚鍗曘€佺彮娆°€佺罕绾裤€佹晥鐜囥€佹満鍣ㄤ俊鎭€佹姤璀﹀拰宸ュ巶缁勭粐淇℃伅銆?/p>
           <p class="en">Supports machine overview and details for large diameter, seamless, and sock machines, including order, shift, yarn, efficiency, machine information, alarms, and plant structure.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">订单与程序下发</span><span class="en">Order and Program Dispatch</span></strong>
-          <p class="zh">无缝/袜机侧已有订单监控、订单管理、款式管理、Send Order、独立 Weave Part Order 和 knitting program 下发能力。</p>
+          <strong><span class="zh">璁㈠崟涓庣▼搴忎笅鍙?/span><span class="en">Order and Program Dispatch</span></strong>
+          <p class="zh">鏃犵紳/琚滄満渚у凡鏈夎鍗曠洃鎺с€佽鍗曠鐞嗐€佹寮忕鐞嗐€丼end Order銆佺嫭绔?Weave Part Order 鍜?knitting program 涓嬪彂鑳藉姏銆?/p>
           <p class="en">For seamless/sock machines, it includes order monitor, order management, style management, Send Order, independent Weave Part Order dispatch, and knitting program dispatch.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">Dashboard 与分析</span><span class="en">Dashboard and Analytics</span></strong>
-          <p class="zh">包含机器状态、产量、停机频次、故障时长、效率、OEE、生产趋势、停机分析、质量/瑕疵、工资等报表。</p>
+          <strong><span class="zh">Dashboard 涓庡垎鏋?/span><span class="en">Dashboard and Analytics</span></strong>
+          <p class="zh">鍖呭惈鏈哄櫒鐘舵€併€佷骇閲忋€佸仠鏈洪娆°€佹晠闅滄椂闀裤€佹晥鐜囥€丱EE銆佺敓浜ц秼鍔裤€佸仠鏈哄垎鏋愩€佽川閲?鐟曠柕銆佸伐璧勭瓑鎶ヨ〃銆?/p>
           <p class="en">Includes machine status, output, stop frequency, fault duration, efficiency, OEE, production trend, downtime analysis, quality/defect, and payroll reports.</p>
         </div>
       </div>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">数据域</span><span class="en">Data Domain</span></th>
-            <th><span class="zh">关键字段 / 能力</span><span class="en">Key Fields / Capabilities</span></th>
-            <th><span class="zh">Athena 用途</span><span class="en">Athena Use</span></th>
+            <th><span class="zh">鏁版嵁鍩?/span><span class="en">Data Domain</span></th>
+            <th><span class="zh">鍏抽敭瀛楁 / 鑳藉姏</span><span class="en">Key Fields / Capabilities</span></th>
+            <th><span class="zh">Athena 鐢ㄩ€?/span><span class="en">Athena Use</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">机台与现场资源</span><span class="en">Machine and Factory Resources</span></td>
+            <td><span class="zh">鏈哄彴涓庣幇鍦鸿祫婧?/span><span class="en">Machine and Factory Resources</span></td>
             <td><code>machine_code</code>, <code>machine_sn</code>, <code>machine_model</code>, plant, employee, shift, shift arrange, fabric settings</td>
-            <td><span class="zh">建立 Installed Base、客户现场上下文、班次和机器资源约束。</span><span class="en">Build installed base, customer-site context, shift constraints, and machine resource constraints.</span></td>
+            <td><span class="zh">寤虹珛 Installed Base銆佸鎴风幇鍦轰笂涓嬫枃銆佺彮娆″拰鏈哄櫒璧勬簮绾︽潫銆?/span><span class="en">Build installed base, customer-site context, shift constraints, and machine resource constraints.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">生产与效率</span><span class="en">Production and Efficiency</span></td>
+            <td><span class="zh">鐢熶骇涓庢晥鐜?/span><span class="en">Production and Efficiency</span></td>
             <td><code>order_code</code>, <code>style_code</code>, ideal/actual output, actual production time, actual down time, performance, availability, quality, OEE</td>
-            <td><span class="zh">为 ROI Engine 计算机器小时收益、良率、产能瓶颈和交期风险提供实际数据。</span><span class="en">Provide actual data for ROI Engine to calculate machine-hour return, yield, bottlenecks, and delivery risk.</span></td>
+            <td><span class="zh">涓?ROI Engine 璁＄畻鏈哄櫒灏忔椂鏀剁泭銆佽壇鐜囥€佷骇鑳界摱棰堝拰浜ゆ湡椋庨櫓鎻愪緵瀹為檯鏁版嵁銆?/span><span class="en">Provide actual data for ROI Engine to calculate machine-hour return, yield, bottlenecks, and delivery risk.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">报警与停机</span><span class="en">Faults and Downtime</span></td>
+            <td><span class="zh">鎶ヨ涓庡仠鏈?/span><span class="en">Faults and Downtime</span></td>
             <td><code>fault_code</code>, <code>fault_description</code>, fault start/end time, fault duration, stop count, time to repair, missing record duration</td>
-            <td><span class="zh">支撑 Service Agent 做报错诊断、相似故障检索、远程排查、派工判断和维护建议。</span><span class="en">Support Service Agent with alarm diagnosis, similar case retrieval, remote troubleshooting, dispatch decisions, and maintenance suggestions.</span></td>
+            <td><span class="zh">鏀拺 Service Agent 鍋氭姤閿欒瘖鏂€佺浉浼兼晠闅滄绱€佽繙绋嬫帓鏌ャ€佹淳宸ュ垽鏂拰缁存姢寤鸿銆?/span><span class="en">Support Service Agent with alarm diagnosis, similar case retrieval, remote troubleshooting, dispatch decisions, and maintenance suggestions.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">质量与验布</span><span class="en">Quality and Fabric Defects</span></td>
+            <td><span class="zh">璐ㄩ噺涓庨獙甯?/span><span class="en">Quality and Fabric Defects</span></td>
             <td>defect count, defect type/detail, roll code, defect picture, recovery time, fabric type, defect downtime</td>
-            <td><span class="zh">连接 Fabric KB、质量缺陷库和 Smart Machine / Smartex 视觉验布，用于质量分析和工艺改进。</span><span class="en">Connect Fabric KB, defect library, and Smart Machine / Smartex vision inspection for quality analysis and process improvement.</span></td>
+            <td><span class="zh">杩炴帴 Fabric KB銆佽川閲忕己闄峰簱鍜?Smart Machine / Smartex 瑙嗚楠屽竷锛岀敤浜庤川閲忓垎鏋愬拰宸ヨ壓鏀硅繘銆?/span><span class="en">Connect Fabric KB, defect library, and Smart Machine / Smartex vision inspection for quality analysis and process improvement.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">API 与定制功能</span><span class="en">API and Custom Functions</span></td>
+            <td><span class="zh">API 涓庡畾鍒跺姛鑳?/span><span class="en">API and Custom Functions</span></td>
             <td>API explanation download, customer-specific functions, parameter settings</td>
-            <td><span class="zh">优先通过只读或受控 API 接入 Athena；涉及订单/程序下发时必须增加权限、审计和人工确认。</span><span class="en">Connect Athena through read-only or controlled APIs first; order/program dispatch requires permission, audit, and human confirmation.</span></td>
+            <td><span class="zh">浼樺厛閫氳繃鍙鎴栧彈鎺?API 鎺ュ叆 Athena锛涙秹鍙婅鍗?绋嬪簭涓嬪彂鏃跺繀椤诲鍔犳潈闄愩€佸璁″拰浜哄伐纭銆?/span><span class="en">Connect Athena through read-only or controlled APIs first; order/program dispatch requires permission, audit, and human confirmation.</span></td>
           </tr>
         </tbody>
       </table>
       <div class="note ok">
-        <span class="zh">架构边界：APS 负责计划排单和插单模拟；Santoni IOT 负责机台联网、实际执行状态和机器数据回传。两者打通后，Athena 可以形成“计划 → 执行 → 偏差 → ROI/服务动作”的闭环。</span>
+        <span class="zh">鏋舵瀯杈圭晫锛欰PS 璐熻矗璁″垝鎺掑崟鍜屾彃鍗曟ā鎷燂紱Santoni IOT 璐熻矗鏈哄彴鑱旂綉銆佸疄闄呮墽琛岀姸鎬佸拰鏈哄櫒鏁版嵁鍥炰紶銆備袱鑰呮墦閫氬悗锛孉thena 鍙互褰㈡垚鈥滆鍒?鈫?鎵ц 鈫?鍋忓樊 鈫?ROI/鏈嶅姟鍔ㄤ綔鈥濈殑闂幆銆?/span>
         <span class="en">Architecture boundary: APS handles planning and rush-order simulation; Santoni IoT handles machine connectivity, actual execution status, and machine data feedback. When connected, Athena can close the loop from plan to execution to variance to ROI/service actions.</span>
       </div>
 
       <div class="note risk">
-        <span class="zh">数据原则：Agent 层不直接暴露 SQL、MongoDB 或 MySQL 的生产写权限。优先使用业务 API 或受控 Adapter；敏感工具必须有权限、审计和人工确认。</span>
+        <span class="zh">鏁版嵁鍘熷垯锛欰gent 灞備笉鐩存帴鏆撮湶 SQL銆丮ongoDB 鎴?MySQL 鐨勭敓浜у啓鏉冮檺銆備紭鍏堜娇鐢ㄤ笟鍔?API 鎴栧彈鎺?Adapter锛涙晱鎰熷伐鍏峰繀椤绘湁鏉冮檺銆佸璁″拰浜哄伐纭銆?/span>
         <span class="en">Data principle: Agent layer should not expose direct production write access to SQL, MongoDB, or MySQL. Prefer business APIs or controlled adapters; sensitive tools require permission, audit, and human confirmation.</span>
       </div>
     </section>
 
     <section id="smart-machine">
-      <h2><span class="zh">6.3 Smart Machine / Smartex 与预测性维护</span><span class="en">6.3 Smart Machine / Smartex and Predictive Maintenance</span></h2>
+      <h2><span class="zh">6.3 Smart Machine / Smartex 涓庨娴嬫€х淮鎶?/span><span class="en">6.3 Smart Machine / Smartex and Predictive Maintenance</span></h2>
       <p class="lead zh">
-        Santoni DT 对大圆机 Smart Machine 的方向，是在机器上增加传感器和边缘处理能力，让机器从“被动报警”升级为“自我监测、诊断和逐步自我修复”。当前应拆成两个项目管理：Smartex 智能验布作为短期商业化亮点；Predictive Maintenance 作为独立 P2 技术项目，先补齐振动采集、信号处理和数据闭环。
-      </p>
+        Santoni DT 瀵瑰ぇ鍦嗘満 Smart Machine 鐨勬柟鍚戯紝鏄湪鏈哄櫒涓婂鍔犱紶鎰熷櫒鍜岃竟缂樺鐞嗚兘鍔涳紝璁╂満鍣ㄤ粠鈥滆鍔ㄦ姤璀︹€濆崌绾т负鈥滆嚜鎴戠洃娴嬨€佽瘖鏂拰閫愭鑷垜淇鈥濄€傚綋鍓嶅簲鎷嗘垚涓や釜椤圭洰绠＄悊锛歋martex 鏅鸿兘楠屽竷浣滀负鐭湡鍟嗕笟鍖栦寒鐐癸紱Predictive Maintenance 浣滀负鐙珛 P2 鎶€鏈」鐩紝鍏堣ˉ榻愭尟鍔ㄩ噰闆嗐€佷俊鍙峰鐞嗗拰鏁版嵁闂幆銆?      </p>
       <p class="lead en">
         Santoni DT's Smart Machine direction for large-diameter machines is to add sensors and edge processing so machines evolve from passive alarms toward self-monitoring, diagnosis, and eventually guided self-recovery. It should now be managed as two projects: Smartex vision inspection as the near-term commercial highlight, and Predictive Maintenance as a separate P2 technical project focused first on vibration acquisition, signal processing, and data loops.
       </p>
 
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">Smartex 定位</span><span class="en">Smartex Positioning</span></strong>
-          <p class="zh">Smartex 智能验布是视觉 AI 产品化问题：在生产过程中完成验布动作，并对布匹质量进行 inspection 与分类。</p>
+          <strong><span class="zh">Smartex 瀹氫綅</span><span class="en">Smartex Positioning</span></strong>
+          <p class="zh">Smartex 鏅鸿兘楠屽竷鏄瑙?AI 浜у搧鍖栭棶棰橈細鍦ㄧ敓浜ц繃绋嬩腑瀹屾垚楠屽竷鍔ㄤ綔锛屽苟瀵瑰竷鍖硅川閲忚繘琛?inspection 涓庡垎绫汇€?/p>
           <p class="en">Smartex vision inspection is a vision-AI productization problem: inspect fabric during production and classify roll quality.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">核心优势</span><span class="en">Core Advantage</span></strong>
-          <p class="zh">相较单摄像头上方安装方案，Smartex 在 take-down 安装 8 个摄像头，并结合可见光、红外、紫外三种波段，目标最高分辨率 1mm。</p>
+          <strong><span class="zh">鏍稿績浼樺娍</span><span class="en">Core Advantage</span></strong>
+          <p class="zh">鐩歌緝鍗曟憚鍍忓ご涓婃柟瀹夎鏂规锛孲martex 鍦?take-down 瀹夎 8 涓憚鍍忓ご锛屽苟缁撳悎鍙鍏夈€佺孩澶栥€佺传澶栦笁绉嶆尝娈碉紝鐩爣鏈€楂樺垎杈ㄧ巼 1mm銆?/p>
           <p class="en">Compared with single top-camera inspection, Smartex uses eight take-down cameras with visible, infrared, and ultraviolet bands, targeting up to 1 mm resolution.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">真正护城河</span><span class="en">Real Moat</span></strong>
-          <p class="zh">优势不只是摄像头数量，而是能和机台速度、take-down 张力、订单、纱线、组织、报警和缺陷位置绑定，形成织造过程质量感知系统。</p>
+          <strong><span class="zh">鐪熸鎶ゅ煄娌?/span><span class="en">Real Moat</span></strong>
+          <p class="zh">浼樺娍涓嶅彧鏄憚鍍忓ご鏁伴噺锛岃€屾槸鑳藉拰鏈哄彴閫熷害銆乼ake-down 寮犲姏銆佽鍗曘€佺罕绾裤€佺粍缁囥€佹姤璀﹀拰缂洪櫡浣嶇疆缁戝畾锛屽舰鎴愮粐閫犺繃绋嬭川閲忔劅鐭ョ郴缁熴€?/p>
           <p class="en">The moat is not camera count alone, but the ability to bind defects to speed, take-down tension, order, yarn, structure, alarms, and machine position.</p>
         </div>
       </div>
@@ -1119,276 +1339,275 @@
       <table>
         <thead>
           <tr>
-            <th><span class="zh">项目</span><span class="en">Project</span></th>
-            <th><span class="zh">当前判断</span><span class="en">Current Judgment</span></th>
-            <th><span class="zh">下一步</span><span class="en">Next Step</span></th>
+            <th><span class="zh">椤圭洰</span><span class="en">Project</span></th>
+            <th><span class="zh">褰撳墠鍒ゆ柇</span><span class="en">Current Judgment</span></th>
+            <th><span class="zh">涓嬩竴姝?/span><span class="en">Next Step</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">Smartex 智能验布</span><span class="en">Smartex Vision Inspection</span></td>
-            <td><span class="zh">短期最适合作为 Smart Machine 的商业化展示点。先不要追求过细缺陷分类，建议第一阶段输出 OK / Warning / Defect，再逐步扩展 defect taxonomy 和 root-cause hint。</span><span class="en">Best near-term Smart Machine commercial showcase. Do not over-split defect categories at first; start with OK / Warning / Defect, then expand defect taxonomy and root-cause hints.</span></td>
-            <td><span class="zh">确认 BOM、国内供应商、组装测试流程、support fee、验收标准、缺陷标注规则和与 IOT 质量字段的映射。</span><span class="en">Confirm BOM, local suppliers, assembly/testing flow, support fee, acceptance criteria, defect labeling rules, and mapping to IoT quality fields.</span></td>
+            <td><span class="zh">Smartex 鏅鸿兘楠屽竷</span><span class="en">Smartex Vision Inspection</span></td>
+            <td><span class="zh">鐭湡鏈€閫傚悎浣滀负 Smart Machine 鐨勫晢涓氬寲灞曠ず鐐广€傚厛涓嶈杩芥眰杩囩粏缂洪櫡鍒嗙被锛屽缓璁涓€闃舵杈撳嚭 OK / Warning / Defect锛屽啀閫愭鎵╁睍 defect taxonomy 鍜?root-cause hint銆?/span><span class="en">Best near-term Smart Machine commercial showcase. Do not over-split defect categories at first; start with OK / Warning / Defect, then expand defect taxonomy and root-cause hints.</span></td>
+            <td><span class="zh">纭 BOM銆佸浗鍐呬緵搴斿晢銆佺粍瑁呮祴璇曟祦绋嬨€乻upport fee銆侀獙鏀舵爣鍑嗐€佺己闄锋爣娉ㄨ鍒欏拰涓?IOT 璐ㄩ噺瀛楁鐨勬槧灏勩€?/span><span class="en">Confirm BOM, local suppliers, assembly/testing flow, support fee, acceptance criteria, defect labeling rules, and mapping to IoT quality fields.</span></td>
           </tr>
           <tr>
             <td><span class="zh">Predictive Maintenance</span><span class="en">Predictive Maintenance</span></td>
-            <td><span class="zh">这是独立 P2 技术项目，不应和 Smartex 混在一个 Smart Machine 项目里管理。最大风险点是振动监测链路和团队缺少实战诊断经验。</span><span class="en">This is a separate P2 technical project and should not be managed inside the Smartex project. The largest risk is vibration monitoring and the team's lack of practical diagnostic experience.</span></td>
-            <td><span class="zh">优先建立大圆机振动测试 protocol、连续原始波形采集链路、频谱/包络/阶次分析能力和正常基线数据集。</span><span class="en">Prioritize a large-diameter-machine vibration test protocol, continuous raw waveform acquisition, FFT/envelope/order-analysis capability, and a normal baseline dataset.</span></td>
+            <td><span class="zh">杩欐槸鐙珛 P2 鎶€鏈」鐩紝涓嶅簲鍜?Smartex 娣峰湪涓€涓?Smart Machine 椤圭洰閲岀鐞嗐€傛渶澶ч闄╃偣鏄尟鍔ㄧ洃娴嬮摼璺拰鍥㈤槦缂哄皯瀹炴垬璇婃柇缁忛獙銆?/span><span class="en">This is a separate P2 technical project and should not be managed inside the Smartex project. The largest risk is vibration monitoring and the team's lack of practical diagnostic experience.</span></td>
+            <td><span class="zh">浼樺厛寤虹珛澶у渾鏈烘尟鍔ㄦ祴璇?protocol銆佽繛缁師濮嬫尝褰㈤噰闆嗛摼璺€侀璋?鍖呯粶/闃舵鍒嗘瀽鑳藉姏鍜屾甯稿熀绾挎暟鎹泦銆?/span><span class="en">Prioritize a large-diameter-machine vibration test protocol, continuous raw waveform acquisition, FFT/envelope/order-analysis capability, and a normal baseline dataset.</span></td>
           </tr>
         </tbody>
       </table>
 
       <div class="note risk">
-        <span class="zh">Predictive Maintenance 风险结论：SICK MPB10 + IO-Link 更适合状态特征上报，不适合作为前期算法验证的主采集链路；实际测试中已出现丢包、采样率低、无法获取连续频谱等问题。3 轴 MEMS + 100k 同步采集卡已经能获取连续频谱，后续应以此类原始波形数据作为算法开发地基。</span>
+        <span class="zh">Predictive Maintenance 椋庨櫓缁撹锛歋ICK MPB10 + IO-Link 鏇撮€傚悎鐘舵€佺壒寰佷笂鎶ワ紝涓嶉€傚悎浣滀负鍓嶆湡绠楁硶楠岃瘉鐨勪富閲囬泦閾捐矾锛涘疄闄呮祴璇曚腑宸插嚭鐜颁涪鍖呫€侀噰鏍风巼浣庛€佹棤娉曡幏鍙栬繛缁璋辩瓑闂銆? 杞?MEMS + 100k 鍚屾閲囬泦鍗″凡缁忚兘鑾峰彇杩炵画棰戣氨锛屽悗缁簲浠ユ绫诲師濮嬫尝褰㈡暟鎹綔涓虹畻娉曞紑鍙戝湴鍩恒€?/span>
         <span class="en">Predictive Maintenance risk conclusion: SICK MPB10 + IO-Link is better suited to condition-feature reporting than to early algorithm validation; practical tests showed packet loss, low sampling rate, and no continuous spectrum. The 3-axis MEMS plus 100k synchronous DAQ path can already capture continuous spectra and should be the foundation for algorithm development.</span>
       </div>
 
-      <h3><span class="zh">Predictive Maintenance 技术路线</span><span class="en">Predictive Maintenance Technical Route</span></h3>
+      <h3><span class="zh">Predictive Maintenance 鎶€鏈矾绾?/span><span class="en">Predictive Maintenance Technical Route</span></h3>
       <div class="grid-4">
         <div class="card">
-          <strong><span class="zh">采集协议</span><span class="en">Acquisition Protocol</span></strong>
-          <p class="zh">统一传感器位置、固定方式、采样率、记录时长、转速、机型、diameter、gauge、纱线、组织和工况备注。</p>
+          <strong><span class="zh">閲囬泦鍗忚</span><span class="en">Acquisition Protocol</span></strong>
+          <p class="zh">缁熶竴浼犳劅鍣ㄤ綅缃€佸浐瀹氭柟寮忋€侀噰鏍风巼銆佽褰曟椂闀裤€佽浆閫熴€佹満鍨嬨€乨iameter銆乬auge銆佺罕绾裤€佺粍缁囧拰宸ュ喌澶囨敞銆?/p>
           <p class="en">Standardize sensor location, mounting, sampling rate, record length, speed, model, diameter, gauge, yarn, structure, and operating notes.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">信号处理</span><span class="en">Signal Processing</span></strong>
-          <p class="zh">至少覆盖 time waveform、FFT、envelope spectrum、order analysis、RMS、kurtosis、crest factor、band energy 和 spectrogram。</p>
+          <strong><span class="zh">淇″彿澶勭悊</span><span class="en">Signal Processing</span></strong>
+          <p class="zh">鑷冲皯瑕嗙洊 time waveform銆丗FT銆乪nvelope spectrum銆乷rder analysis銆丷MS銆乲urtosis銆乧rest factor銆乥and energy 鍜?spectrogram銆?/p>
           <p class="en">Cover time waveform, FFT, envelope spectrum, order analysis, RMS, kurtosis, crest factor, band energy, and spectrogram.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">振动指纹库</span><span class="en">Vibration Fingerprint Library</span></strong>
-          <p class="zh">先建立不同机型、针距、转速、run-in、正常生产、维护前后状态的基线，而不是直接承诺 AI 预测故障。</p>
+          <strong><span class="zh">鎸姩鎸囩汗搴?/span><span class="en">Vibration Fingerprint Library</span></strong>
+          <p class="zh">鍏堝缓绔嬩笉鍚屾満鍨嬨€侀拡璺濄€佽浆閫熴€乺un-in銆佹甯哥敓浜с€佺淮鎶ゅ墠鍚庣姸鎬佺殑鍩虹嚎锛岃€屼笉鏄洿鎺ユ壙璇?AI 棰勬祴鏁呴殰銆?/p>
           <p class="en">Build baselines by model, gauge, speed, run-in, normal production, and before/after maintenance before promising AI fault prediction.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">诊断闭环</span><span class="en">Diagnostic Loop</span></strong>
-          <p class="zh">先做正常基线 + 异常检测 + 工程师确认 + 标签沉淀，再逐步进入模型训练和服务工单联动。</p>
+          <strong><span class="zh">璇婃柇闂幆</span><span class="en">Diagnostic Loop</span></strong>
+          <p class="zh">鍏堝仛姝ｅ父鍩虹嚎 + 寮傚父妫€娴?+ 宸ョ▼甯堢‘璁?+ 鏍囩娌夋穩锛屽啀閫愭杩涘叆妯″瀷璁粌鍜屾湇鍔″伐鍗曡仈鍔ㄣ€?/p>
           <p class="en">Start with baseline, anomaly detection, engineer confirmation, and label capture, then move toward model training and service-ticket linkage.</p>
         </div>
       </div>
     </section>
 
     <section id="aps">
-      <h2><span class="zh">7. APS 排单与利润率提升</span><span class="en">7. APS Scheduling and Margin Improvement</span></h2>
+      <h2><span class="zh">7. APS 鎺掑崟涓庡埄娑︾巼鎻愬崌</span><span class="en">7. APS Scheduling and Margin Improvement</span></h2>
       <p class="lead zh">
-        APS 是应用在生产计划排单步骤的网页版工具。客户 ERP 接到订单、采购和库管完成物料准备后，APS 接收 ERP 订单信息，由计划人员进行排单和插单，并生成工单下发到机台排产。
-      </p>
+        APS 鏄簲鐢ㄥ湪鐢熶骇璁″垝鎺掑崟姝ラ鐨勭綉椤电増宸ュ叿銆傚鎴?ERP 鎺ュ埌璁㈠崟銆侀噰璐拰搴撶瀹屾垚鐗╂枡鍑嗗鍚庯紝APS 鎺ユ敹 ERP 璁㈠崟淇℃伅锛岀敱璁″垝浜哄憳杩涜鎺掑崟鍜屾彃鍗曪紝骞剁敓鎴愬伐鍗曚笅鍙戝埌鏈哄彴鎺掍骇銆?      </p>
       <p class="lead en">
         APS is a web-based production planning and scheduling tool. After customer ERP receives orders and materials are purchased/released, APS receives order information, planners schedule or insert orders, and APS generates work orders for machine production.
       </p>
       <div class="note">
-        <span class="zh">详细需求、优先级和待 APS 研发确认的问题已整理到 <a href="APS_Development_Plan.html">APS 待开发计划</a>。</span>
+        <span class="zh">璇︾粏闇€姹傘€佷紭鍏堢骇鍜屽緟 APS 鐮斿彂纭鐨勯棶棰樺凡鏁寸悊鍒?<a href="APS_Development_Plan.html">APS 寰呭紑鍙戣鍒?/a>銆?/span>
         <span class="en">Detailed requirements, priorities, and questions for APS R&D are organized in the <a href="APS_Development_Plan.html">APS Development Plan</a>.</span>
       </div>
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">现场问题 1：ERP 推单丢失</span><span class="en">Issue 1: ERP Push Loss</span></strong>
-          <p class="zh">客户自研 ERP 通过 API 主动向 APS 派单；ERP 端口重启或修复 bug 时，APS 可能丢失工单。目前靠手动按钮让 APS 向 ERP 请求更新。</p>
+          <strong><span class="zh">鐜板満闂 1锛欵RP 鎺ㄥ崟涓㈠け</span><span class="en">Issue 1: ERP Push Loss</span></strong>
+          <p class="zh">瀹㈡埛鑷爺 ERP 閫氳繃 API 涓诲姩鍚?APS 娲惧崟锛汦RP 绔彛閲嶅惎鎴栦慨澶?bug 鏃讹紝APS 鍙兘涓㈠け宸ュ崟銆傜洰鍓嶉潬鎵嬪姩鎸夐挳璁?APS 鍚?ERP 璇锋眰鏇存柊銆?/p>
           <p class="en">Customer-built ERP pushes orders to APS by API. When ERP endpoints restart or are patched, APS may miss orders. Current workaround is a manual APS refresh request to ERP.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">现场问题 2：排单人员缺少动力</span><span class="en">Issue 2: Planner Adoption</span></strong>
-          <p class="zh">APS 提高排单效率并降低排单工作量，但排单人员未必有动力用 APS 代替自己的经验和手工流程。</p>
+          <strong><span class="zh">鐜板満闂 2锛氭帓鍗曚汉鍛樼己灏戝姩鍔?/span><span class="en">Issue 2: Planner Adoption</span></strong>
+          <p class="zh">APS 鎻愰珮鎺掑崟鏁堢巼骞堕檷浣庢帓鍗曞伐浣滈噺锛屼絾鎺掑崟浜哄憳鏈繀鏈夊姩鍔涚敤 APS 浠ｆ浛鑷繁鐨勭粡楠屽拰鎵嬪伐娴佺▼銆?/p>
           <p class="en">APS improves scheduling efficiency and reduces workload, but planners may not be motivated to replace their experience-driven manual workflow.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">现场问题 3：设备联网不足</span><span class="en">Issue 3: Low Machine Connectivity</span></strong>
-          <p class="zh">客户设备联网程度不高，APS 的自动化优势无法充分发挥，需要支持半自动、人工确认和逐步联网的部署路径。</p>
+          <strong><span class="zh">鐜板満闂 3锛氳澶囪仈缃戜笉瓒?/span><span class="en">Issue 3: Low Machine Connectivity</span></strong>
+          <p class="zh">瀹㈡埛璁惧鑱旂綉绋嬪害涓嶉珮锛孉PS 鐨勮嚜鍔ㄥ寲浼樺娍鏃犳硶鍏呭垎鍙戞尌锛岄渶瑕佹敮鎸佸崐鑷姩銆佷汉宸ョ‘璁ゅ拰閫愭鑱旂綉鐨勯儴缃茶矾寰勩€?/p>
           <p class="en">Machine connectivity is often limited, so APS automation cannot be fully realized. A semi-automatic, human-confirmed, staged connectivity path is needed.</p>
         </div>
       </div>
-      <h3><span class="zh">建议的 APS + Athena 产品需求</span><span class="en">Suggested APS + Athena Product Requirements</span></h3>
+      <h3><span class="zh">寤鸿鐨?APS + Athena 浜у搧闇€姹?/span><span class="en">Suggested APS + Athena Product Requirements</span></h3>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">需求</span><span class="en">Requirement</span></th>
-            <th><span class="zh">说明</span><span class="en">Description</span></th>
-            <th><span class="zh">价值</span><span class="en">Value</span></th>
+            <th><span class="zh">闇€姹?/span><span class="en">Requirement</span></th>
+            <th><span class="zh">璇存槑</span><span class="en">Description</span></th>
+            <th><span class="zh">浠峰€?/span><span class="en">Value</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">订单同步防丢机制</span><span class="en">Reliable Order Sync</span></td>
-            <td><span class="zh">ERP push + APS pull 双通道；订单 ACK、重试、幂等 order_id、版本号、异常队列和同步健康看板。</span><span class="en">Dual ERP push + APS pull; order ACK, retry, idempotent order_id, versioning, exception queue, sync health dashboard.</span></td>
-            <td><span class="zh">减少漏单和人工补单。</span><span class="en">Reduce lost orders and manual recovery.</span></td>
+            <td><span class="zh">璁㈠崟鍚屾闃蹭涪鏈哄埗</span><span class="en">Reliable Order Sync</span></td>
+            <td><span class="zh">ERP push + APS pull 鍙岄€氶亾锛涜鍗?ACK銆侀噸璇曘€佸箓绛?order_id銆佺増鏈彿銆佸紓甯搁槦鍒楀拰鍚屾鍋ュ悍鐪嬫澘銆?/span><span class="en">Dual ERP push + APS pull; order ACK, retry, idempotent order_id, versioning, exception queue, sync health dashboard.</span></td>
+            <td><span class="zh">鍑忓皯婕忓崟鍜屼汉宸ヨˉ鍗曘€?/span><span class="en">Reduce lost orders and manual recovery.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">排单人员 Copilot</span><span class="en">Planner Copilot</span></td>
-            <td><span class="zh">解释排单建议、展示插单影响、比较不同排单方案，并保留人工最终确认权。</span><span class="en">Explain scheduling suggestions, show insertion impact, compare scenarios, and keep human final confirmation.</span></td>
-            <td><span class="zh">让 APS 成为排单人员的助手，而不是替代者。</span><span class="en">Position APS as planner assistance rather than replacement.</span></td>
+            <td><span class="zh">鎺掑崟浜哄憳 Copilot</span><span class="en">Planner Copilot</span></td>
+            <td><span class="zh">瑙ｉ噴鎺掑崟寤鸿銆佸睍绀烘彃鍗曞奖鍝嶃€佹瘮杈冧笉鍚屾帓鍗曟柟妗堬紝骞朵繚鐣欎汉宸ユ渶缁堢‘璁ゆ潈銆?/span><span class="en">Explain scheduling suggestions, show insertion impact, compare scenarios, and keep human final confirmation.</span></td>
+            <td><span class="zh">璁?APS 鎴愪负鎺掑崟浜哄憳鐨勫姪鎵嬶紝鑰屼笉鏄浛浠ｈ€呫€?/span><span class="en">Position APS as planner assistance rather than replacement.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">利润率导向排单</span><span class="en">Margin-Oriented Scheduling</span></td>
-            <td><span class="zh">把 APS 的产能、交期、换款和插单影响接入 ROI Engine，计算订单毛利、机器小时收益和机会成本。</span><span class="en">Feed APS capacity, delivery, changeover, and insertion impact into ROI Engine to calculate margin, machine-hour return, and opportunity cost.</span></td>
-            <td><span class="zh">从“降本”升级为“提高利润率”。</span><span class="en">Move from cost reduction to margin improvement.</span></td>
+            <td><span class="zh">鍒╂鼎鐜囧鍚戞帓鍗?/span><span class="en">Margin-Oriented Scheduling</span></td>
+            <td><span class="zh">鎶?APS 鐨勪骇鑳姐€佷氦鏈熴€佹崲娆惧拰鎻掑崟褰卞搷鎺ュ叆 ROI Engine锛岃绠楄鍗曟瘺鍒┿€佹満鍣ㄥ皬鏃舵敹鐩婂拰鏈轰細鎴愭湰銆?/span><span class="en">Feed APS capacity, delivery, changeover, and insertion impact into ROI Engine to calculate margin, machine-hour return, and opportunity cost.</span></td>
+            <td><span class="zh">浠庘€滈檷鏈€濆崌绾т负鈥滄彁楂樺埄娑︾巼鈥濄€?/span><span class="en">Move from cost reduction to margin improvement.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">低联网部署模式</span><span class="en">Low-Connectivity Mode</span></td>
-            <td><span class="zh">支持手动状态回填、扫码/批量导入、机台状态人工确认和联网成熟度评分。</span><span class="en">Support manual status update, scan/batch import, human machine-status confirmation, and connectivity readiness scoring.</span></td>
-            <td><span class="zh">让 APS 在设备未完全联网时也能产生价值。</span><span class="en">Let APS create value before full machine connectivity.</span></td>
+            <td><span class="zh">浣庤仈缃戦儴缃叉ā寮?/span><span class="en">Low-Connectivity Mode</span></td>
+            <td><span class="zh">鏀寔鎵嬪姩鐘舵€佸洖濉€佹壂鐮?鎵归噺瀵煎叆銆佹満鍙扮姸鎬佷汉宸ョ‘璁ゅ拰鑱旂綉鎴愮啛搴﹁瘎鍒嗐€?/span><span class="en">Support manual status update, scan/batch import, human machine-status confirmation, and connectivity readiness scoring.</span></td>
+            <td><span class="zh">璁?APS 鍦ㄨ澶囨湭瀹屽叏鑱旂綉鏃朵篃鑳戒骇鐢熶环鍊笺€?/span><span class="en">Let APS create value before full machine connectivity.</span></td>
           </tr>
         </tbody>
       </table>
       <div class="note ok">
-        <span class="zh">GTM 叙事建议：不要只讲 APS 减少排单人员工作量，而要讲 APS + Athena 如何帮助老板识别高利润订单、减少低价值插单、降低交期风险、提升机器小时收益。</span>
+        <span class="zh">GTM 鍙欎簨寤鸿锛氫笉瑕佸彧璁?APS 鍑忓皯鎺掑崟浜哄憳宸ヤ綔閲忥紝鑰岃璁?APS + Athena 濡備綍甯姪鑰佹澘璇嗗埆楂樺埄娑﹁鍗曘€佸噺灏戜綆浠峰€兼彃鍗曘€侀檷浣庝氦鏈熼闄┿€佹彁鍗囨満鍣ㄥ皬鏃舵敹鐩娿€?/span>
         <span class="en">GTM message: do not only sell APS as workload reduction. Sell APS + Athena as a way for owners to identify high-margin orders, avoid low-value insertion, reduce delivery risk, and improve machine-hour return.</span>
       </div>
     </section>
 
     <section id="radar">
-      <h2><span class="zh">8. Industry Radar 行业情报雷达</span><span class="en">8. Industry Radar</span></h2>
-      <p class="lead zh">Industry Radar 不是新闻推送，而是“行业信号 → Santoni 影响 → 可执行动作”的情报分析系统。</p>
+      <h2><span class="zh">8. Industry Radar 琛屼笟鎯呮姤闆疯揪</span><span class="en">8. Industry Radar</span></h2>
+      <p class="lead zh">Industry Radar 涓嶆槸鏂伴椈鎺ㄩ€侊紝鑰屾槸鈥滆涓氫俊鍙?鈫?Santoni 褰卞搷 鈫?鍙墽琛屽姩浣溾€濈殑鎯呮姤鍒嗘瀽绯荤粺銆?/p>
       <p class="lead en">Industry Radar is not a news feed. It is an intelligence system that turns industry signals into Santoni impact and executable actions.</p>
 
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">发生了什么</span><span class="en">What Happened</span></strong>
-          <p class="zh">简短事实摘要，必须带来源 URL、发布日期、地区、公司/展会/政策名称。</p>
+          <strong><span class="zh">鍙戠敓浜嗕粈涔?/span><span class="en">What Happened</span></strong>
+          <p class="zh">绠€鐭簨瀹炴憳瑕侊紝蹇呴』甯︽潵婧?URL銆佸彂甯冩棩鏈熴€佸湴鍖恒€佸叕鍙?灞曚細/鏀跨瓥鍚嶇О銆?/p>
           <p class="en">Short factual summary with source URL, publish date, region, company/event/policy name.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">为什么重要</span><span class="en">Why It Matters</span></strong>
-          <p class="zh">说明对针织机械、Santoni、OEM 工厂、品牌客户或服务业务的影响。</p>
+          <strong><span class="zh">涓轰粈涔堥噸瑕?/span><span class="en">Why It Matters</span></strong>
+          <p class="zh">璇存槑瀵归拡缁囨満姊般€丼antoni銆丱EM 宸ュ巶銆佸搧鐗屽鎴锋垨鏈嶅姟涓氬姟鐨勫奖鍝嶃€?/p>
           <p class="en">Explain impact on knitting machinery, Santoni, OEM factories, brand customers, or service business.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">建议做什么</span><span class="en">What To Do</span></strong>
-          <p class="zh">转成销售话术、产品策略、客户名单、demo 场景、服务动作或 CRM 跟进任务。</p>
+          <strong><span class="zh">寤鸿鍋氫粈涔?/span><span class="en">What To Do</span></strong>
+          <p class="zh">杞垚閿€鍞瘽鏈€佷骇鍝佺瓥鐣ャ€佸鎴峰悕鍗曘€乨emo 鍦烘櫙銆佹湇鍔″姩浣滄垨 CRM 璺熻繘浠诲姟銆?/p>
           <p class="en">Convert into sales talk tracks, product strategy, customer list, demo scenarios, service actions, or CRM tasks.</p>
         </div>
       </div>
 
-      <h3><span class="zh">定时任务建议</span><span class="en">Automation Schedule</span></h3>
+      <h3><span class="zh">瀹氭椂浠诲姟寤鸿</span><span class="en">Automation Schedule</span></h3>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">任务</span><span class="en">Task</span></th>
-            <th><span class="zh">频率</span><span class="en">Frequency</span></th>
-            <th><span class="zh">输出</span><span class="en">Output</span></th>
+            <th><span class="zh">浠诲姟</span><span class="en">Task</span></th>
+            <th><span class="zh">棰戠巼</span><span class="en">Frequency</span></th>
+            <th><span class="zh">杈撳嚭</span><span class="en">Output</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="zh">每日晨报</span><span class="en">Daily Brief</span></td>
-            <td><span class="zh">工作日 08:30</span><span class="en">Weekdays 08:30</span></td>
-            <td><span class="zh">销售/产品/管理层摘要。</span><span class="en">Summary for sales, product, and management.</span></td>
+            <td><span class="zh">姣忔棩鏅ㄦ姤</span><span class="en">Daily Brief</span></td>
+            <td><span class="zh">宸ヤ綔鏃?08:30</span><span class="en">Weekdays 08:30</span></td>
+            <td><span class="zh">閿€鍞?浜у搧/绠＄悊灞傛憳瑕併€?/span><span class="en">Summary for sales, product, and management.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">每周深度报告</span><span class="en">Weekly Deep Dive</span></td>
-            <td><span class="zh">每周一</span><span class="en">Every Monday</span></td>
-            <td><span class="zh">市场、竞品、客户、政策趋势。</span><span class="en">Market, competitor, customer, and policy trends.</span></td>
+            <td><span class="zh">姣忓懆娣卞害鎶ュ憡</span><span class="en">Weekly Deep Dive</span></td>
+            <td><span class="zh">姣忓懆涓€</span><span class="en">Every Monday</span></td>
+            <td><span class="zh">甯傚満銆佺珵鍝併€佸鎴枫€佹斂绛栬秼鍔裤€?/span><span class="en">Market, competitor, customer, and policy trends.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">展会日历</span><span class="en">Exhibition Calendar</span></td>
-            <td><span class="zh">每周；展前 90/30/7 天提醒</span><span class="en">Weekly; 90/30/7 days before events</span></td>
-            <td><span class="zh">展会、买家线索、参展建议、demo 场景。</span><span class="en">Exhibitions, buyer leads, participation suggestions, demo scenarios.</span></td>
+            <td><span class="zh">灞曚細鏃ュ巻</span><span class="en">Exhibition Calendar</span></td>
+            <td><span class="zh">姣忓懆锛涘睍鍓?90/30/7 澶╂彁閱?/span><span class="en">Weekly; 90/30/7 days before events</span></td>
+            <td><span class="zh">灞曚細銆佷拱瀹剁嚎绱€佸弬灞曞缓璁€乨emo 鍦烘櫙銆?/span><span class="en">Exhibitions, buyer leads, participation suggestions, demo scenarios.</span></td>
           </tr>
           <tr>
-            <td><span class="zh">竞品/政策预警</span><span class="en">Competitor / Policy Alert</span></td>
-            <td><span class="zh">高优先级来源每 2-4 小时</span><span class="en">Every 2-4 hours for high-priority sources</span></td>
-            <td><span class="zh">竞品回应话术、产品策略、风险提醒。</span><span class="en">Competitive response, product strategy, risk alerts.</span></td>
+            <td><span class="zh">绔炲搧/鏀跨瓥棰勮</span><span class="en">Competitor / Policy Alert</span></td>
+            <td><span class="zh">楂樹紭鍏堢骇鏉ユ簮姣?2-4 灏忔椂</span><span class="en">Every 2-4 hours for high-priority sources</span></td>
+            <td><span class="zh">绔炲搧鍥炲簲璇濇湳銆佷骇鍝佺瓥鐣ャ€侀闄╂彁閱掋€?/span><span class="en">Competitive response, product strategy, risk alerts.</span></td>
           </tr>
         </tbody>
       </table>
       <div class="note">
-        <span class="zh">所有情报必须保留来源 URL 和发布日期；未经二次确认的传闻只能标记为“待验证”，不能作为事实推送。</span>
+        <span class="zh">鎵€鏈夋儏鎶ュ繀椤讳繚鐣欐潵婧?URL 鍜屽彂甯冩棩鏈燂紱鏈粡浜屾纭鐨勪紶闂诲彧鑳芥爣璁颁负鈥滃緟楠岃瘉鈥濓紝涓嶈兘浣滀负浜嬪疄鎺ㄩ€併€?/span>
         <span class="en">Every intelligence item must keep source URL and publish date; unverified rumors must be marked as "to verify" and cannot be pushed as facts.</span>
       </div>
     </section>
 
     <section id="commercial">
-      <h2><span class="zh">9. 商业化框架</span><span class="en">9. Commercialization Framework</span></h2>
+      <h2><span class="zh">9. 鍟嗕笟鍖栨鏋?/span><span class="en">9. Commercialization Framework</span></h2>
       <div class="grid-3">
         <div class="card">
-          <strong><span class="zh">基础版</span><span class="en">Basic</span></strong>
-          <p class="zh">适合轻量试用和小团队：基础设计咨询、有限参数化设计、部分服务问答。</p>
+          <strong><span class="zh">鍩虹鐗?/span><span class="en">Basic</span></strong>
+          <p class="zh">閫傚悎杞婚噺璇曠敤鍜屽皬鍥㈤槦锛氬熀纭€璁捐鍜ㄨ銆佹湁闄愬弬鏁板寲璁捐銆侀儴鍒嗘湇鍔￠棶绛斻€?/p>
           <p class="en">For light trials and small teams: basic design consultation, limited parameterized design, partial service Q&A.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">进阶版</span><span class="en">Advanced</span></strong>
-          <p class="zh">适合有明确打样和协作需求的工厂：Arachne 深度能力、项目历史、服务知识、积分机制。</p>
+          <strong><span class="zh">杩涢樁鐗?/span><span class="en">Advanced</span></strong>
+          <p class="zh">閫傚悎鏈夋槑纭墦鏍峰拰鍗忎綔闇€姹傜殑宸ュ巶锛欰rachne 娣卞害鑳藉姏銆侀」鐩巻鍙层€佹湇鍔＄煡璇嗐€佺Н鍒嗘満鍒躲€?/p>
           <p class="en">For factories with clear sampling and collaboration needs: deeper Arachne capabilities, project history, service knowledge, credit mechanism.</p>
         </div>
         <div class="card">
-          <strong><span class="zh">专业版</span><span class="en">Professional</span></strong>
-          <p class="zh">适合中大型工厂：ROI Pro、工厂智能包、Service Manager Console、未来 SWS Advanced。</p>
+          <strong><span class="zh">涓撲笟鐗?/span><span class="en">Professional</span></strong>
+          <p class="zh">閫傚悎涓ぇ鍨嬪伐鍘傦細ROI Pro銆佸伐鍘傛櫤鑳藉寘銆丼ervice Manager Console銆佹湭鏉?SWS Advanced銆?/p>
           <p class="en">For mid-large factories: ROI Pro, Factory Intelligence Package, Service Manager Console, future SWS Advanced.</p>
         </div>
       </div>
-      <h3><span class="zh">MVP 节奏</span><span class="en">MVP Path</span></h3>
+      <h3><span class="zh">MVP 鑺傚</span><span class="en">MVP Path</span></h3>
       <ol>
-        <li><span class="zh">免费入口：Web 免登录试用，验证需求和销售故事。</span><span class="en">Free entry: web trial without login to validate demand and sales story.</span></li>
-        <li><span class="zh">设计打样 MVP：Arachne 参数化设计、3D 静态展示和生产文件闭环。</span><span class="en">Design MVP: Arachne parameterized design, static 3D preview, and production-file loop.</span></li>
-        <li><span class="zh">工厂智能包试点：ROI Lite、服务运营、基础数据接入。</span><span class="en">Factory intelligence pilot: ROI Lite, service operations, basic data integration.</span></li>
+        <li><span class="zh">鍏嶈垂鍏ュ彛锛歐eb 鍏嶇櫥褰曡瘯鐢紝楠岃瘉闇€姹傚拰閿€鍞晠浜嬨€?/span><span class="en">Free entry: web trial without login to validate demand and sales story.</span></li>
+        <li><span class="zh">璁捐鎵撴牱 MVP锛欰rachne 鍙傛暟鍖栬璁°€?D 闈欐€佸睍绀哄拰鐢熶骇鏂囦欢闂幆銆?/span><span class="en">Design MVP: Arachne parameterized design, static 3D preview, and production-file loop.</span></li>
+        <li><span class="zh">宸ュ巶鏅鸿兘鍖呰瘯鐐癸細ROI Lite銆佹湇鍔¤繍钀ャ€佸熀纭€鏁版嵁鎺ュ叆銆?/span><span class="en">Factory intelligence pilot: ROI Lite, service operations, basic data integration.</span></li>
       </ol>
       <div class="note ok">
-        <span class="zh">商业价值故事：短期主打设计打样提效；中期主打服务闭环和 ROI；长期主打工厂智能包和 Santoni 数字生态。</span>
+        <span class="zh">鍟嗕笟浠峰€兼晠浜嬶細鐭湡涓绘墦璁捐鎵撴牱鎻愭晥锛涗腑鏈熶富鎵撴湇鍔￠棴鐜拰 ROI锛涢暱鏈熶富鎵撳伐鍘傛櫤鑳藉寘鍜?Santoni 鏁板瓧鐢熸€併€?/span>
         <span class="en">Commercial value story: short term focuses on design/sampling efficiency; mid term on service loop and ROI; long term on factory intelligence and Santoni digital ecosystem.</span>
       </div>
     </section>
 
     <section id="service">
-      <h2><span class="zh">10. Service Operations 摘要</span><span class="en">10. Service Operations Summary</span></h2>
-      <p class="lead zh">服务分支已经从 Maintenance Agent 升级为 Service Operations Agent，覆盖 intake、在线协助、案例治理、受控工具和 handoff payload。</p>
+      <h2><span class="zh">10. Service Operations 鎽樿</span><span class="en">10. Service Operations Summary</span></h2>
+      <p class="lead zh">鏈嶅姟鍒嗘敮宸茬粡浠?Maintenance Agent 鍗囩骇涓?Service Operations Agent锛岃鐩?intake銆佸湪绾垮崗鍔┿€佹渚嬫不鐞嗐€佸彈鎺у伐鍏峰拰 handoff payload銆?/p>
       <p class="lead en">The service branch has evolved from a Maintenance Agent into a Service Operations Agent covering intake, online assistance, case governance, controlled tools, and handoff payloads.</p>
       <div class="grid-4">
-        <div class="card"><strong>Intake</strong><p class="zh">收集机器、序列号、症状、报警、图片、产线影响。</p><p class="en">Collect machine, serial, symptom, alarm, photo, production impact.</p></div>
-        <div class="card"><strong>Case Match</strong><p class="zh">匹配服务案例，优先安全在线排查。</p><p class="en">Match service cases and try safe online assistance first.</p></div>
-        <div class="card"><strong>Controlled Tool</strong><p class="zh">锁机激活等高风险工具必须权限、审计、确认。</p><p class="en">High-risk tools such as lock activation need permission, audit, confirmation.</p></div>
-        <div class="card"><strong>Handoff</strong><p class="zh">生成给服务经理、工程师、工单系统的结构化 payload。</p><p class="en">Generate structured payloads for service managers, engineers, and ticket systems.</p></div>
+        <div class="card"><strong>Intake</strong><p class="zh">鏀堕泦鏈哄櫒銆佸簭鍒楀彿銆佺棁鐘躲€佹姤璀︺€佸浘鐗囥€佷骇绾垮奖鍝嶃€?/p><p class="en">Collect machine, serial, symptom, alarm, photo, production impact.</p></div>
+        <div class="card"><strong>Case Match</strong><p class="zh">鍖归厤鏈嶅姟妗堜緥锛屼紭鍏堝畨鍏ㄥ湪绾挎帓鏌ャ€?/p><p class="en">Match service cases and try safe online assistance first.</p></div>
+        <div class="card"><strong>Controlled Tool</strong><p class="zh">閿佹満婵€娲荤瓑楂橀闄╁伐鍏峰繀椤绘潈闄愩€佸璁°€佺‘璁ゃ€?/p><p class="en">High-risk tools such as lock activation need permission, audit, confirmation.</p></div>
+        <div class="card"><strong>Handoff</strong><p class="zh">鐢熸垚缁欐湇鍔＄粡鐞嗐€佸伐绋嬪笀銆佸伐鍗曠郴缁熺殑缁撴瀯鍖?payload銆?/p><p class="en">Generate structured payloads for service managers, engineers, and ticket systems.</p></div>
       </div>
-      <h3><span class="zh">建议下一步</span><span class="en">Recommended Next Build</span></h3>
-      <p class="zh">Service Manager Console：案例审核、在线步骤编辑、客户可见性控制、工单/派工 payload 审核、服务数据闭环。</p>
+      <h3><span class="zh">寤鸿涓嬩竴姝?/span><span class="en">Recommended Next Build</span></h3>
+      <p class="zh">Service Manager Console锛氭渚嬪鏍搞€佸湪绾挎楠ょ紪杈戙€佸鎴峰彲瑙佹€ф帶鍒躲€佸伐鍗?娲惧伐 payload 瀹℃牳銆佹湇鍔℃暟鎹棴鐜€?/p>
       <p class="en">Service Manager Console: case review, online-step editing, customer visibility control, ticket/dispatch payload review, and service-data loop.</p>
     </section>
 
     <section id="glossary">
-      <h2><span class="zh">11. 术语库摘录</span><span class="en">11. Glossary Extract</span></h2>
-      <p class="lead zh">术语库用于统一销售、产品、研发、服务和业务团队的中英文表达。</p>
+      <h2><span class="zh">11. 鏈搴撴憳褰?/span><span class="en">11. Glossary Extract</span></h2>
+      <p class="lead zh">鏈搴撶敤浜庣粺涓€閿€鍞€佷骇鍝併€佺爺鍙戙€佹湇鍔″拰涓氬姟鍥㈤槦鐨勪腑鑻辨枃琛ㄨ揪銆?/p>
       <p class="lead en">The glossary aligns bilingual terminology across sales, product, R&D, service, and business teams.</p>
       <table>
         <thead>
           <tr>
             <th>English</th>
-            <th>中文</th>
-            <th><span class="zh">说明</span><span class="en">Explanation</span></th>
+            <th>涓枃</th>
+            <th><span class="zh">璇存槑</span><span class="en">Explanation</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Knitting</td><td>针织</td><td><span class="zh">用织针把纱线弯曲成线圈并互相串套形成织物。</span><span class="en">Fabric formation by bending yarn into intermeshed loops with needles.</span></td></tr>
-          <tr><td>Weft knitting</td><td>纬编</td><td><span class="zh">纱线沿横向形成线圈横列，常见于圆机、横机、无缝针织。</span><span class="en">Yarn forms courses horizontally; common in circular, flat, and seamless knitting.</span></td></tr>
-          <tr><td>Warp knitting</td><td>经编</td><td><span class="zh">多根经向纱线分别供给织针，常用于网布、蕾丝、运动面料。</span><span class="en">Multiple warp yarns feed needles lengthwise; common in mesh, lace, and sports fabrics.</span></td></tr>
-          <tr><td>Gauge</td><td>机号 / 针距</td><td><span class="zh">机器语境中常指每英寸针数，影响可织纱线和布面细密程度。</span><span class="en">Usually needles per inch in machine context; affects yarn fineness and fabric density.</span></td></tr>
-          <tr><td>Stitch length</td><td>线圈长度</td><td><span class="zh">单个线圈消耗的纱线长度，影响克重、手感、弹性和尺寸稳定性。</span><span class="en">Yarn length consumed by one loop; affects weight, hand feel, elasticity, and stability.</span></td></tr>
-          <tr><td>Covered yarn</td><td>包覆纱</td><td><span class="zh">以氨纶等为芯纱，外层用其他纱线包覆，常用于袜子、无缝、运动服。</span><span class="en">Core yarn such as elastane covered by other yarns; used in socks, seamless, sportswear.</span></td></tr>
-          <tr><td>Jacquard</td><td>提花</td><td><span class="zh">通过选针形成图案、纹理或颜色变化。</span><span class="en">Pattern, texture, or color effects created through needle selection.</span></td></tr>
-          <tr><td>Mesh</td><td>网眼布</td><td><span class="zh">形成孔眼结构，常用于透气运动服、鞋面、内衬。</span><span class="en">Open-hole structure used for breathable sportswear, uppers, and lining.</span></td></tr>
-          <tr><td>Plating</td><td>添纱 / 衬垫编织</td><td><span class="zh">多根纱在同一线圈中按正反位置排列，可实现内外层不同性能。</span><span class="en">Multiple yarns positioned in the same loop to create different inner/outer properties.</span></td></tr>
-          <tr><td>Needle</td><td>织针</td><td><span class="zh">形成线圈的核心部件。</span><span class="en">Core component used to form loops.</span></td></tr>
+          <tr><td>Knitting</td><td>閽堢粐</td><td><span class="zh">鐢ㄧ粐閽堟妸绾辩嚎寮洸鎴愮嚎鍦堝苟浜掔浉涓插褰㈡垚缁囩墿銆?/span><span class="en">Fabric formation by bending yarn into intermeshed loops with needles.</span></td></tr>
+          <tr><td>Weft knitting</td><td>绾紪</td><td><span class="zh">绾辩嚎娌挎í鍚戝舰鎴愮嚎鍦堟í鍒楋紝甯歌浜庡渾鏈恒€佹í鏈恒€佹棤缂濋拡缁囥€?/span><span class="en">Yarn forms courses horizontally; common in circular, flat, and seamless knitting.</span></td></tr>
+          <tr><td>Warp knitting</td><td>缁忕紪</td><td><span class="zh">澶氭牴缁忓悜绾辩嚎鍒嗗埆渚涚粰缁囬拡锛屽父鐢ㄤ簬缃戝竷銆佽暰涓濄€佽繍鍔ㄩ潰鏂欍€?/span><span class="en">Multiple warp yarns feed needles lengthwise; common in mesh, lace, and sports fabrics.</span></td></tr>
+          <tr><td>Gauge</td><td>鏈哄彿 / 閽堣窛</td><td><span class="zh">鏈哄櫒璇涓父鎸囨瘡鑻卞閽堟暟锛屽奖鍝嶅彲缁囩罕绾垮拰甯冮潰缁嗗瘑绋嬪害銆?/span><span class="en">Usually needles per inch in machine context; affects yarn fineness and fabric density.</span></td></tr>
+          <tr><td>Stitch length</td><td>绾垮湀闀垮害</td><td><span class="zh">鍗曚釜绾垮湀娑堣€楃殑绾辩嚎闀垮害锛屽奖鍝嶅厠閲嶃€佹墜鎰熴€佸脊鎬у拰灏哄绋冲畾鎬с€?/span><span class="en">Yarn length consumed by one loop; affects weight, hand feel, elasticity, and stability.</span></td></tr>
+          <tr><td>Covered yarn</td><td>鍖呰绾?/td><td><span class="zh">浠ユ皑绾剁瓑涓鸿姱绾憋紝澶栧眰鐢ㄥ叾浠栫罕绾垮寘瑕嗭紝甯哥敤浜庤瀛愩€佹棤缂濄€佽繍鍔ㄦ湇銆?/span><span class="en">Core yarn such as elastane covered by other yarns; used in socks, seamless, sportswear.</span></td></tr>
+          <tr><td>Jacquard</td><td>鎻愯姳</td><td><span class="zh">閫氳繃閫夐拡褰㈡垚鍥炬銆佺汗鐞嗘垨棰滆壊鍙樺寲銆?/span><span class="en">Pattern, texture, or color effects created through needle selection.</span></td></tr>
+          <tr><td>Mesh</td><td>缃戠溂甯?/td><td><span class="zh">褰㈡垚瀛旂溂缁撴瀯锛屽父鐢ㄤ簬閫忔皵杩愬姩鏈嶃€侀瀷闈€佸唴琛€?/span><span class="en">Open-hole structure used for breathable sportswear, uppers, and lining.</span></td></tr>
+          <tr><td>Plating</td><td>娣荤罕 / 琛灚缂栫粐</td><td><span class="zh">澶氭牴绾卞湪鍚屼竴绾垮湀涓寜姝ｅ弽浣嶇疆鎺掑垪锛屽彲瀹炵幇鍐呭灞備笉鍚屾€ц兘銆?/span><span class="en">Multiple yarns positioned in the same loop to create different inner/outer properties.</span></td></tr>
+          <tr><td>Needle</td><td>缁囬拡</td><td><span class="zh">褰㈡垚绾垮湀鐨勬牳蹇冮儴浠躲€?/span><span class="en">Core component used to form loops.</span></td></tr>
         </tbody>
       </table>
     </section>
 
     <section id="governance">
-      <h2><span class="zh">12. 文档治理与源文件关系</span><span class="en">12. Documentation Governance and Source Files</span></h2>
+      <h2><span class="zh">12. 鏂囨。娌荤悊涓庢簮鏂囦欢鍏崇郴</span><span class="en">12. Documentation Governance and Source Files</span></h2>
       <div class="note ok">
-        <span class="zh">更新规则：未来任何架构更新，都要同时更新 `Athena.html` 和相关部门/专题 HTML 文件，并维护版本号、更新日期和 Change Log。Athena 是总入口；部门文件保留更细的实施细节。</span>
+        <span class="zh">鏇存柊瑙勫垯锛氭湭鏉ヤ换浣曟灦鏋勬洿鏂帮紝閮借鍚屾椂鏇存柊 `Athena.html` 鍜岀浉鍏抽儴闂?涓撻 HTML 鏂囦欢锛屽苟缁存姢鐗堟湰鍙枫€佹洿鏂版棩鏈熷拰 Change Log銆侫thena 鏄€诲叆鍙ｏ紱閮ㄩ棬鏂囦欢淇濈暀鏇寸粏鐨勫疄鏂界粏鑺傘€?/span>
         <span class="en">Update rule: any future architecture update should update both `Athena.html` and the relevant department/topic HTML files, while maintaining version, updated date, and Change Log. Athena is the portal; department files keep implementation details.</span>
       </div>
-      <h3><span class="zh">版本信息</span><span class="en">Version Information</span></h3>
+      <h3><span class="zh">鐗堟湰淇℃伅</span><span class="en">Version Information</span></h3>
       <table>
         <tbody>
           <tr>
-            <td><span class="zh">当前版本</span><span class="en">Current Version</span></td>
+            <td><span class="zh">褰撳墠鐗堟湰</span><span class="en">Current Version</span></td>
             <td>v0.0.4</td>
           </tr>
           <tr>
-            <td><span class="zh">更新日期</span><span class="en">Updated Date</span></td>
+            <td><span class="zh">鏇存柊鏃ユ湡</span><span class="en">Updated Date</span></td>
             <td>2026-06-01</td>
           </tr>
           <tr>
-            <td><span class="zh">版本定位</span><span class="en">Version Purpose</span></td>
-            <td><span class="zh">产品架构草案基线，用于内部讨论、模块拆解、研发准备和项目进度管理。</span><span class="en">Product architecture draft baseline for internal discussion, module breakdown, engineering preparation, and project progress management.</span></td>
+            <td><span class="zh">鐗堟湰瀹氫綅</span><span class="en">Version Purpose</span></td>
+            <td><span class="zh">浜у搧鏋舵瀯鑽夋鍩虹嚎锛岀敤浜庡唴閮ㄨ璁恒€佹ā鍧楁媶瑙ｃ€佺爺鍙戝噯澶囧拰椤圭洰杩涘害绠＄悊銆?/span><span class="en">Product architecture draft baseline for internal discussion, module breakdown, engineering preparation, and project progress management.</span></td>
           </tr>
         </tbody>
       </table>
@@ -1396,9 +1615,9 @@
       <table>
         <thead>
           <tr>
-            <th><span class="zh">版本</span><span class="en">Version</span></th>
-            <th><span class="zh">日期</span><span class="en">Date</span></th>
-            <th><span class="zh">更新内容</span><span class="en">Changes</span></th>
+            <th><span class="zh">鐗堟湰</span><span class="en">Version</span></th>
+            <th><span class="zh">鏃ユ湡</span><span class="en">Date</span></th>
+            <th><span class="zh">鏇存柊鍐呭</span><span class="en">Changes</span></th>
           </tr>
         </thead>
         <tbody>
@@ -1406,7 +1625,7 @@
             <td>v0.0.4</td>
             <td>2026-06-01</td>
             <td>
-              <span class="zh">新增 Smart Machine 专区：更新 Smartex 智能验布定位、竞品差异和质量检测路线；将 Predictive Maintenance 从 Smart Machine 中拆出为独立 P2 技术项目，记录振动采集、频谱处理、正常基线和诊断闭环的风险结论。</span>
+              <span class="zh">鏂板 Smart Machine 涓撳尯锛氭洿鏂?Smartex 鏅鸿兘楠屽竷瀹氫綅銆佺珵鍝佸樊寮傚拰璐ㄩ噺妫€娴嬭矾绾匡紱灏?Predictive Maintenance 浠?Smart Machine 涓媶鍑轰负鐙珛 P2 鎶€鏈」鐩紝璁板綍鎸姩閲囬泦銆侀璋卞鐞嗐€佹甯稿熀绾垮拰璇婃柇闂幆鐨勯闄╃粨璁恒€?/span>
               <span class="en">Added the Smart Machine section: updated Smartex vision inspection positioning, competitive differentiation, and quality-inspection path; split Predictive Maintenance into a separate P2 technical project with risk conclusions for vibration acquisition, spectrum processing, normal baselines, and diagnostic loops.</span>
             </td>
           </tr>
@@ -1414,7 +1633,7 @@
             <td>v0.0.3</td>
             <td>2026-05-29</td>
             <td>
-              <span class="zh">新增 Athena 统一项目数据层：以 `data/athena_project_data.json` 作为模块 priority、owner、状态、商业化状态等字段的主数据源；新增本地 Athena PMO Server，支持 HTML 视图通过 API 读取和保存共享项目数据。</span>
+              <span class="zh">鏂板 Athena 缁熶竴椤圭洰鏁版嵁灞傦細浠?`data/athena_project_data.json` 浣滀负妯″潡 priority銆乷wner銆佺姸鎬併€佸晢涓氬寲鐘舵€佺瓑瀛楁鐨勪富鏁版嵁婧愶紱鏂板鏈湴 Athena PMO Server锛屾敮鎸?HTML 瑙嗗浘閫氳繃 API 璇诲彇鍜屼繚瀛樺叡浜」鐩暟鎹€?/span>
               <span class="en">Added the Athena shared project data layer: `data/athena_project_data.json` is now the source of truth for module priority, owner, status, commercialization status, and related fields; added a local Athena PMO Server so HTML views can read and save shared project data through APIs.</span>
             </td>
           </tr>
@@ -1422,7 +1641,7 @@
             <td>v0.0.2</td>
             <td>2026-05-29</td>
             <td>
-              <span class="zh">明确项目进度第一版自动计算公式：MVP 状态 50%、项目状态 20%、商业化状态 30%；项目进度页移除手动百分比输入，保存和导出时写入计算结果。</span>
+              <span class="zh">鏄庣‘椤圭洰杩涘害绗竴鐗堣嚜鍔ㄨ绠楀叕寮忥細MVP 鐘舵€?50%銆侀」鐩姸鎬?20%銆佸晢涓氬寲鐘舵€?30%锛涢」鐩繘搴﹂〉绉婚櫎鎵嬪姩鐧惧垎姣旇緭鍏ワ紝淇濆瓨鍜屽鍑烘椂鍐欏叆璁＄畻缁撴灉銆?/span>
               <span class="en">Defined the first automatic project progress formula: MVP status 50%, project status 20%, and commercialization status 30%; removed manual percentage entry from the project progress page and writes calculated results on save/export.</span>
             </td>
           </tr>
@@ -1430,7 +1649,7 @@
             <td>v0.0.1</td>
             <td>2026-05-29</td>
             <td>
-              <span class="zh">新增 PMO Agent / Project Intelligence Agent，明确其作为内部项目管理子 Agent 的定位；补充证据驱动进度计算、Project Evidence Adapter、Project Graph、Progress Calculation Engine、PMO Summary Agent 和分阶段落地路径。</span>
+              <span class="zh">鏂板 PMO Agent / Project Intelligence Agent锛屾槑纭叾浣滀负鍐呴儴椤圭洰绠＄悊瀛?Agent 鐨勫畾浣嶏紱琛ュ厖璇佹嵁椹卞姩杩涘害璁＄畻銆丳roject Evidence Adapter銆丳roject Graph銆丳rogress Calculation Engine銆丳MO Summary Agent 鍜屽垎闃舵钀藉湴璺緞銆?/span>
               <span class="en">Added PMO Agent / Project Intelligence Agent as an internal project-management sub-agent; documented evidence-driven progress calculation, Project Evidence Adapter, Project Graph, Progress Calculation Engine, PMO Summary Agent, and phased implementation path.</span>
             </td>
           </tr>
@@ -1438,13 +1657,13 @@
             <td>v0.0.0</td>
             <td>2026-05-29</td>
             <td>
-              <span class="zh">建立 Athena 产品架构入口基线；整合 Agent 总架构、Arachne Knit Pilot、SWS Advanced、Service Operations、OEM ROI、APS、Industry Radar、Fabric Intelligence Knowledge Base、Santoni IOT / 中国本地化 Nautilus、项目进度管理和文档治理规则。</span>
+              <span class="zh">寤虹珛 Athena 浜у搧鏋舵瀯鍏ュ彛鍩虹嚎锛涙暣鍚?Agent 鎬绘灦鏋勩€丄rachne Knit Pilot銆丼WS Advanced銆丼ervice Operations銆丱EM ROI銆丄PS銆両ndustry Radar銆丗abric Intelligence Knowledge Base銆丼antoni IOT / 涓浗鏈湴鍖?Nautilus銆侀」鐩繘搴︾鐞嗗拰鏂囨。娌荤悊瑙勫垯銆?/span>
               <span class="en">Established Athena product architecture portal baseline; consolidated Agent architecture, Arachne Knit Pilot, SWS Advanced, Service Operations, OEM ROI, APS, Industry Radar, Fabric Intelligence Knowledge Base, Santoni IOT / China-localized Nautilus, project progress management, and documentation governance rules.</span>
             </td>
           </tr>
         </tbody>
       </table>
-      <h3><span class="zh">当前整合来源</span><span class="en">Current Source Documents</span></h3>
+      <h3><span class="zh">褰撳墠鏁村悎鏉ユ簮</span><span class="en">Current Source Documents</span></h3>
       <div class="source-list">
         <a href="AI_Knitting_Agent_Architecture.html">AI_Knitting_Agent_Architecture.html</a>
         <a href="ai_knitting_agent_architecture_meeting_2026-05-22.html">ai_knitting_agent_architecture_meeting_2026-05-22.html</a>
@@ -1454,40 +1673,40 @@
         <a href="APS_Development_Plan.html">APS_Development_Plan.html</a>
         <a href="knitting_terms_glossary.html">knitting_terms_glossary.html</a>
       </div>
-      <h3><span class="zh">建议责任分工</span><span class="en">Suggested Ownership</span></h3>
+      <h3><span class="zh">寤鸿璐ｄ换鍒嗗伐</span><span class="en">Suggested Ownership</span></h3>
       <table>
         <thead>
           <tr>
-            <th><span class="zh">文件</span><span class="en">File</span></th>
-            <th><span class="zh">定位</span><span class="en">Purpose</span></th>
-            <th><span class="zh">更新触发</span><span class="en">Update Trigger</span></th>
+            <th><span class="zh">鏂囦欢</span><span class="en">File</span></th>
+            <th><span class="zh">瀹氫綅</span><span class="en">Purpose</span></th>
+            <th><span class="zh">鏇存柊瑙﹀彂</span><span class="en">Update Trigger</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>Athena.html</td>
-            <td><span class="zh">总入口、产品逻辑、跨部门共识。</span><span class="en">Portal, product logic, cross-team alignment.</span></td>
-            <td><span class="zh">任何架构、命名、入口、核心能力变化。</span><span class="en">Any architecture, naming, entry, or core capability change.</span></td>
+            <td><span class="zh">鎬诲叆鍙ｃ€佷骇鍝侀€昏緫銆佽法閮ㄩ棬鍏辫瘑銆?/span><span class="en">Portal, product logic, cross-team alignment.</span></td>
+            <td><span class="zh">浠讳綍鏋舵瀯銆佸懡鍚嶃€佸叆鍙ｃ€佹牳蹇冭兘鍔涘彉鍖栥€?/span><span class="en">Any architecture, naming, entry, or core capability change.</span></td>
           </tr>
           <tr>
             <td>Architecture</td>
-            <td><span class="zh">技术架构、部署、系统接入、子 Agent。</span><span class="en">Technical architecture, deployment, integrations, sub-agents.</span></td>
-            <td><span class="zh">Agent Core、Runtime、Adapter、部署策略变化。</span><span class="en">Agent Core, runtime, adapter, deployment strategy changes.</span></td>
+            <td><span class="zh">鎶€鏈灦鏋勩€侀儴缃层€佺郴缁熸帴鍏ャ€佸瓙 Agent銆?/span><span class="en">Technical architecture, deployment, integrations, sub-agents.</span></td>
+            <td><span class="zh">Agent Core銆丷untime銆丄dapter銆侀儴缃茬瓥鐣ュ彉鍖栥€?/span><span class="en">Agent Core, runtime, adapter, deployment strategy changes.</span></td>
           </tr>
           <tr>
             <td>Service Operations</td>
-            <td><span class="zh">售后服务、案例库、受控工具、派工、服务控制台。</span><span class="en">After-sales, case library, controlled tools, dispatch, service console.</span></td>
-            <td><span class="zh">服务流程、工单、激活密码、案例治理变化。</span><span class="en">Service flow, ticketing, activation password, case governance changes.</span></td>
+            <td><span class="zh">鍞悗鏈嶅姟銆佹渚嬪簱銆佸彈鎺у伐鍏枫€佹淳宸ャ€佹湇鍔℃帶鍒跺彴銆?/span><span class="en">After-sales, case library, controlled tools, dispatch, service console.</span></td>
+            <td><span class="zh">鏈嶅姟娴佺▼銆佸伐鍗曘€佹縺娲诲瘑鐮併€佹渚嬫不鐞嗗彉鍖栥€?/span><span class="en">Service flow, ticketing, activation password, case governance changes.</span></td>
           </tr>
           <tr>
             <td>Commercialization</td>
-            <td><span class="zh">MVP、套餐、积分、试点客户、ROI 商业化。</span><span class="en">MVP, packages, credits, pilot customers, ROI commercialization.</span></td>
-            <td><span class="zh">收费、套餐、试点路径、客户定位变化。</span><span class="en">Pricing, package, pilot path, customer positioning changes.</span></td>
+            <td><span class="zh">MVP銆佸椁愩€佺Н鍒嗐€佽瘯鐐瑰鎴枫€丷OI 鍟嗕笟鍖栥€?/span><span class="en">MVP, packages, credits, pilot customers, ROI commercialization.</span></td>
+            <td><span class="zh">鏀惰垂銆佸椁愩€佽瘯鐐硅矾寰勩€佸鎴峰畾浣嶅彉鍖栥€?/span><span class="en">Pricing, package, pilot path, customer positioning changes.</span></td>
           </tr>
           <tr>
             <td>Glossary</td>
-            <td><span class="zh">中英文术语和业务定义。</span><span class="en">Bilingual terminology and business definitions.</span></td>
-            <td><span class="zh">新增技术、材料、机器、工艺、业务术语。</span><span class="en">New technology, material, machine, process, or business terms.</span></td>
+            <td><span class="zh">涓嫳鏂囨湳璇拰涓氬姟瀹氫箟銆?/span><span class="en">Bilingual terminology and business definitions.</span></td>
+            <td><span class="zh">鏂板鎶€鏈€佹潗鏂欍€佹満鍣ㄣ€佸伐鑹恒€佷笟鍔℃湳璇€?/span><span class="en">New technology, material, machine, process, or business terms.</span></td>
           </tr>
         </tbody>
       </table>
@@ -1541,3 +1760,6 @@
   </script>
 </body>
 </html>
+
+
+

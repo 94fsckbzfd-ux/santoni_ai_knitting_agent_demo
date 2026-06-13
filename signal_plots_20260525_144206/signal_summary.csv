@@ -1,0 +1,10 @@
+﻿source_file,C:\Users\rem_i\xwechat_files\wxid_l82sysnee24e12_9763\msg\file\2026-05\模拟 - 2026-5-25 14-42-06.6668.csv
+sample_rate_hz,10000.0
+samples_loaded,1000000
+expected_samples,1000000
+duration_s,100.000000
+
+channel,mean_g,rms_g,min_g,max_g,peak_to_peak_g
+AI0 (g),0.039673003,0.03992404,0.019,0.062,0.043
+AI1 (g),0.003334392,0.0052150626,-0.016,0.022,0.038
+AI2 (g),-0.00264482,0.0076472697,-0.038,0.035,0.073

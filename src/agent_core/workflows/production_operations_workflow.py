@@ -1,4 +1,4 @@
-"""Production Operations workflow for Athena local demo.
+﻿"""Production Operations workflow for Athena local demo.
 
 The first implementation is deliberately read-only and mock-backed. It models
 the management workflow from order intake to garment output without writing to
@@ -9,13 +9,23 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
+from datetime import date, datetime
 from pathlib import Path
+
+from agent_core.skills import (
+    production_skill_registry,
+    production_skill_trace_for_priority,
+    production_skills_for_theme,
+)
+
+from .tianpai_aps_erp_export_adapter import TianpaiApsErpExportAdapter
 
 
 PRODUCTION_TEMPLATE_ID = "athena.production_operations.v1"
-PRODUCTION_VERSION = "v0.25.3"
+PRODUCTION_VERSION = "v0.113.0"
 ADAPTER_CONTRACT_ID = "athena.production_aps_iot_read_only_contract.v1"
 DATA_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_operations.mock.json"
+FOLLOW_UP_REVIEW_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_follow_up_reviews.json"
 
 
 @dataclass(frozen=True)
@@ -56,7 +66,7 @@ def production_operations_template() -> dict:
         positioning=(
             "Production Operations Agent is a management and production-supervisor console. "
             "It monitors order, ERP, APS, IOT, production/service-escalation, and garment-output data "
-            "through read-only contracts."
+            "through read-only contracts, then turns evidence into management priorities."
         ),
         workflow=[
             "order_intake",
@@ -71,6 +81,7 @@ def production_operations_template() -> dict:
             "Read mock APS schedule and work-order state.",
             "Read mock IOT machine status, program-file evidence, OEE, alarm, output, and quality state.",
             "Create local analysis objects, evidence logs, KPI logs, and service request candidates.",
+            "Suggest confirmation owners and local follow-up actions while keeping final confirmation with the general manager.",
             "No schedule confirmation, no .co/.cx upload, no order release, no machine control, and no real ticket creation.",
         ],
         adapter_contracts=[
@@ -98,55 +109,75 @@ def production_operations_template() -> dict:
                 "read": "production alarms and quality holds",
                 "write": "candidate only; no dispatch",
             },
+            {
+                "adapter": "Tianpai Material Inventory Adapter",
+                "status": "mock_contract",
+                "read": "yarn product master data, production-task material balance aggregate, color, batch, twist, supplier, and stock movement fields",
+                "write": "none",
+            },
+            {
+                "adapter": "Tianpai APS/ERP Export Adapter",
+                "status": "read_only_external_csv",
+                "read": "Produce_Order, Weaving_Part_Order, Planned_Task, Manual_Machine_Production, Style_Component, Style_Sku, and T_Machine_Info exports using 琛ㄥ瓧娈?DDL field order for actual-data Q&A.",
+                "write": "none",
+            },
         ],
         adapter_field_mapping=[
             {
                 "object": "production_order",
                 "console_section": "order",
                 "source_system": "APS",
-                "source_pages": ["织造监控", "生产单", "款式管理"],
-                "observed_fields": ["订单号", "交期", "逾期天数", "款式数", "剩余数量", "客户", "需求款式", "状态"],
+                "source_pages": ["weaving_monitor", "production_order", "style_management"],
+                "observed_fields": ["order_code", "delivery_date", "overdue_days", "style_count", "remaining_quantity", "customer", "required_style", "status"],
                 "normalized_fields": ["order_id", "due_date", "overdue_days", "style_count", "remaining_quantity", "customer", "style_code", "production_status"],
             },
             {
                 "object": "yarn_material_forecast",
                 "console_section": "order",
                 "source_system": "APS",
-                "source_pages": ["纱线预估"],
-                "observed_fields": ["SKU", "部位", "机器尺寸", "预测产量", "纱线代码", "批次", "供应商", "颜色", "需求量(KG)", "库存量(KG)", "在途量(KG)"],
+                "source_pages": ["yarn_forecast"],
+                "observed_fields": ["sku", "garment_part", "machine_size", "forecast_quantity", "yarn_code", "lot", "supplier", "color", "demand_kg", "stock_kg", "in_transit_kg"],
                 "normalized_fields": ["sku", "garment_part", "machine_size", "forecast_quantity", "yarn_code", "lot", "supplier", "color", "demand_kg", "stock_kg", "in_transit_kg"],
             },
             {
                 "object": "aps_schedule_capacity",
                 "console_section": "scheduling",
                 "source_system": "APS",
-                "source_pages": ["机器排产", "自动排产", "机台汇总", "机台计划单"],
-                "observed_fields": ["机台号", "筒径", "针距", "订单号", "款式号", "计划生产件数", "已生产件数", "计划时间", "开机数", "开机率", "单机生产天数"],
+                "source_pages": ["machine_scheduling", "auto_scheduling", "machine_summary", "machine_task"],
+                "observed_fields": ["machine_id", "cylinder_diameter", "gauge", "order_code", "style_code", "planned_quantity", "produced_quantity", "planned_window", "running_machine_count", "machine_running_rate", "capacity_pressure_days"],
                 "normalized_fields": ["machine_id", "cylinder_diameter", "gauge", "order_id", "style_code", "planned_quantity", "produced_quantity", "planned_window", "running_machine_count", "machine_running_rate", "capacity_pressure_days"],
             },
             {
                 "object": "iot_machine_execution",
                 "console_section": "machine",
                 "source_system": "Santoni IOT",
-                "source_pages": ["实时监控", "仪表盘", "单机详情"],
-                "observed_fields": ["机台号", "当前状态", "持续时长", "机型", "筒径", "针距", "班次实际产量", "班次理论产量", "时间开动率", "性能开动率", "当前告警"],
+                "source_pages": ["iot_monitor", "iot_dashboard", "machine_detail"],
+                "observed_fields": ["machine_id", "current_status", "status_duration", "model", "cylinder_diameter", "gauge", "shift_actual_output", "shift_theoretical_output", "time_availability_rate", "performance_availability_rate", "current_alarm"],
                 "normalized_fields": ["machine_id", "iot_status", "status_duration", "model", "cylinder_diameter", "gauge", "actual_output", "theoretical_output", "time_availability_rate", "performance_availability_rate", "alarm"],
             },
             {
                 "object": "iot_program_evidence",
                 "console_section": "machine",
                 "source_system": "Santoni IOT",
-                "source_pages": ["单机详情", "程序接口"],
-                "observed_fields": ["订单号", "款式号", ".co文件", ".cx文件", "最近实际周期", "理论生产周期", "协议版本", "最后一条数据更新时间"],
+                "source_pages": ["machine_detail", "program_interface"],
+                "observed_fields": ["order_code", "style_code", ".co_file", ".cx_file", "last_actual_cycle_seconds", "theoretical_cycle_seconds", "protocol_version", "last_data_time"],
                 "normalized_fields": ["order_id", "style_code", "co_file", "cx_file", "last_actual_cycle_seconds", "theoretical_cycle_seconds", "protocol_version", "last_data_time"],
             },
             {
                 "object": "garment_quality_output",
                 "console_section": "garment",
                 "source_system": "Santoni IOT",
-                "source_pages": ["数据分析", "单机详情"],
-                "observed_fields": ["实际产量(件)", "理论产量(件)", "废弃数量", "成品率", "班次OEE", "班次废弃件数", "班次不良品件数"],
+                "source_pages": ["data_analysis", "machine_detail"],
+                "observed_fields": ["actual_output_pieces", "theoretical_output_pieces", "scrap_quantity", "yield_rate", "shift_oee", "shift_scrap_quantity", "shift_defect_quantity"],
                 "normalized_fields": ["actual_output", "theoretical_output", "scrap_quantity", "yield_rate", "shift_oee", "shift_scrap_quantity", "defect_quantity"],
+            },
+            {
+                "object": "production_task_material_balance",
+                "console_section": "material",
+                "source_system": "ERP / Yarn inventory export",
+                "source_pages": ["Yarn_Product", "Tianpai yarn inventory export"],
+                "observed_fields": ["production_task_no", "material_code", "material_name", "color", "batch_no", "twist", "supplier", "unit", "opening_qty", "in_qty", "adjustment_qty", "out_qty", "balance_qty"],
+                "normalized_fields": ["produce_order_code", "yarn_code", "yarn_name", "color", "batch", "twist", "supplier_code_or_name", "unit", "opening_qty", "in_qty", "adjustment_qty", "out_qty", "balance_qty"],
             },
         ],
         integration_notes=[
@@ -159,19 +190,35 @@ def production_operations_template() -> dict:
         ],
         workflow_primary_key={
             "field": "order_id",
-            "label": "订单号",
+            "label": "order_id / order number",
             "role": "unique_workflow_spine",
-            "description": "订单号 is the only canonical key used to join order intake, ERP sync, APS scheduling, IOT execution, production/service candidates, and garment output.",
+            "description": "order_id / order number is the only canonical key used to join order intake, ERP sync, APS scheduling, IOT execution, production/service candidates, and garment output.",
             "future_integration_rule": "When APS/IOT databases or formal APIs are connected, every normalized production object must retain the same canonical order_id for workflow traceability.",
         },
         resource_lenses=["people", "machine", "material", "method", "environment", "measurement"],
         output_objects=[
             "production_overview",
+            "production_object_model",
+            "skill_registry",
+            "management_priority_brief",
+            "evidence_review_queue",
+            "first_screen_service_risk",
+            "mvp_demo_story",
+            "stable_demo_story_pack",
+            "mvp_success_check",
+            "internal_demo_readiness_mode",
+            "prd_alignment_audit",
+            "tianpai_aps_erp_export",
+            "actual_data_snapshot",
+            "permission_boundary",
             "workflow_stages",
             "resource_lens",
             "optimization_signals",
             "service_escalations",
             "garment_output",
+            "material_risk",
+            "data_readiness",
+            "general_manager_question_bank",
             "evidence_log",
             "kpi_log",
             "chatbi_root_cause_analysis",
@@ -195,6 +242,18 @@ def production_operations_template() -> dict:
             "capacity_occupation",
             "scrap_rate",
             "adapter_contract_coverage",
+            "management_priority_items",
+            "material_inventory_join_readiness",
+            "data_readiness_score",
+            "question_bank_coverage",
+            "mvp_demo_story_coverage",
+            "mvp_success_check_coverage",
+            "prd_alignment_coverage",
+            "tianpai_actual_export_readiness",
+            "actual_data_evidence_chain_coverage",
+            "skill_registry_coverage",
+            "skill_execution_trace_coverage",
+            "permission_boundary_coverage",
         ],
     )
     return asdict(template)
@@ -215,15 +274,22 @@ def production_adapter_contract() -> dict:
                 "system": "APS",
                 "adapter": "APS Scheduling Adapter",
                 "status": "read_only_planned",
-                "source_pages": ["织造监控", "机器排产", "机台汇总", "自动排产", "纱线预估", "机台计划单", "生产单", "款式管理", "机器资料"],
+                "source_pages": ["weaving_monitor", "machine_scheduling", "machine_summary", "auto_scheduling", "yarn_forecast", "machine_task", "production_order", "style_management", "machine_resource"],
                 "primary_console_sections": ["order", "scheduling"],
             },
             {
                 "system": "Santoni IOT",
                 "adapter": "Santoni IOT Adapter",
                 "status": "read_only_planned",
-                "source_pages": ["实时监控", "仪表盘", "数据分析", "单机详情", "程序接口", "工厂资源"],
+                "source_pages": ["iot_monitor", "iot_dashboard", "data_analysis", "machine_detail", "program_interface", "factory_resource"],
                 "primary_console_sections": ["machine", "garment"],
+            },
+            {
+                "system": "ERP / Yarn Inventory",
+                "adapter": "Tianpai Material Inventory Adapter",
+                "status": "mock_contract",
+                "source_pages": ["Yarn_Product", "Tianpai yarn inventory export"],
+                "primary_console_sections": ["material", "data_readiness"],
             },
         ],
         "field_mapping": template["adapter_field_mapping"],
@@ -249,8 +315,9 @@ def production_adapter_contract() -> dict:
 class ProductionOperationsWorkflow:
     """Read-only production operations workflow over local mock data."""
 
-    def __init__(self, data_path: Path | None = None) -> None:
+    def __init__(self, data_path: Path | None = None, follow_up_store_path: Path | None = None) -> None:
         self.data_path = data_path or DATA_PATH
+        self.follow_up_store_path = follow_up_store_path or FOLLOW_UP_REVIEW_PATH
 
     def template(self) -> dict:
         return production_operations_template()
@@ -258,10 +325,217 @@ class ProductionOperationsWorkflow:
     def adapter_contract(self) -> dict:
         return production_adapter_contract()
 
+    def skill_registry(self) -> dict:
+        return production_skill_registry()
+
+    def tianpai_aps_erp_export(self) -> dict:
+        return self.tianpai_aps_erp_export_adapter().report()
+
+    def tianpai_aps_erp_export_adapter(self) -> TianpaiApsErpExportAdapter:
+        return TianpaiApsErpExportAdapter()
+
+    def evidence_review_queue(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="evidence_review_queue")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "production_object_model": result["production_object_model"],
+            "evidence_review_queue": result["evidence_review_queue"],
+            "management_priority_brief": result["management_priority_brief"],
+            "permission_boundary": result["permission_boundary"],
+            "data_source": result["data_source"],
+            "workflow_primary_key": result["workflow_primary_key"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def priority_brief(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="management_priority_brief")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "production_object_model": result["production_object_model"],
+            "skill_registry": result["skill_registry"],
+            "management_priority_brief": result["management_priority_brief"],
+            "data_source": result["data_source"],
+            "workflow_primary_key": result["workflow_primary_key"],
+            "evidence_log": result["evidence_log"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def follow_up_loop(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="decision_loop_follow_up")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "production_object_model": result["production_object_model"],
+            "skill_registry": result["skill_registry"],
+            "management_priority_brief": result["management_priority_brief"],
+            "decision_loop": result["decision_loop"],
+            "data_source": result["data_source"],
+            "workflow_primary_key": result["workflow_primary_key"],
+            "evidence_log": result["evidence_log"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def demo_story_pack(self) -> dict:
+        data = self._load_data()
+        result = self._build_result(data, {}, scenario="stable_demo_story_pack")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "stable_demo_story_pack": result["stable_demo_story_pack"],
+            "management_priority_brief": result["management_priority_brief"],
+            "first_screen_service_risk": result["first_screen_service_risk"],
+            "actual_data_snapshot": result["actual_data_snapshot"],
+            "permission_boundary": result["permission_boundary"],
+            "data_source": result["data_source"],
+            "workflow_primary_key": result["workflow_primary_key"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def internal_demo_candidate(self) -> dict:
+        data = self._load_data()
+        result = self._build_result(data, {}, scenario="internal_demo_candidate")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "internal_demo_candidate": result["internal_demo_candidate"],
+            "guided_demo_flow": result["guided_demo_flow"],
+            "presenter_mode": result["presenter_mode"],
+            "evidence_boundary_layer": result["evidence_boundary_layer"],
+            "gm_question_regression_set": result["gm_question_regression_set"],
+            "data_request_wizard": result["data_request_wizard"],
+            "service_risk_confirmation_flow": result["service_risk_confirmation_flow"],
+            "visible_athena_skill_process": result["visible_athena_skill_process"],
+            "hermes_training_memory_review": result["hermes_training_memory_review"],
+            "stable_demo_story_pack": result["stable_demo_story_pack"],
+            "permission_boundary": result["permission_boundary"],
+            "data_source": result["data_source"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def material_risk(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="tianpai_material_risk")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "material_risk": result["material_risk"],
+            "data_readiness": result["data_readiness"],
+            "workflow_primary_key": result["workflow_primary_key"],
+            "data_source": result["data_source"],
+            "evidence_log": [
+                item for item in result["evidence_log"] if item.get("evidence_id") in result["material_risk"].get("evidence_refs", [])
+            ],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def data_readiness(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="tianpai_data_readiness")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "data_readiness": result["data_readiness"],
+            "general_manager_question_bank": result["general_manager_question_bank"],
+            "material_risk": result["material_risk"],
+            "data_source": result["data_source"],
+            "evidence_log": result["evidence_log"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def question_bank(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="general_manager_question_bank")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "general_manager_question_bank": result["general_manager_question_bank"],
+            "data_readiness": result["data_readiness"],
+            "data_source": result["data_source"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
+
+    def apply_follow_up_review(self, payload: dict | None = None) -> dict:
+        payload = payload or {}
+        action_id = str(payload.get("action_id") or "").strip()
+        review_status = str(payload.get("review_status") or "").strip()
+        allowed_statuses = {
+            "pending_confirmation",
+            "assigned",
+            "waiting_evidence",
+            "confirmed",
+            "closed",
+            "unable_to_process",
+            "needs_more_data",
+            "resolved",
+            "dismissed",
+        }
+        if not action_id:
+            raise ValueError("action_id is required")
+        if review_status not in allowed_statuses:
+            raise ValueError(f"review_status must be one of {sorted(allowed_statuses)}")
+
+        note = str(payload.get("review_note") or payload.get("owner_note") or "").strip()
+        evidence_note = str(payload.get("evidence_note") or "").strip()
+        self._reject_sensitive_review_text("review_note", note)
+        self._reject_sensitive_review_text("evidence_note", evidence_note)
+
+        loop = self.follow_up_loop()
+        action_ids = {item["action_id"] for item in loop["decision_loop"]["action_items"]}
+        if action_id not in action_ids:
+            raise ValueError(f"Unknown action_id: {action_id}")
+
+        store = self._load_follow_up_store()
+        review = {
+            "review_id": f"FUR-{PRODUCTION_VERSION}-{len(store.get('reviews', [])) + 1:03d}",
+            "action_id": action_id,
+            "follow_up_id": str(payload.get("follow_up_id") or f"FU-{action_id.removeprefix('ACT-')}").strip(),
+            "review_status": review_status,
+            "owner_role": str(payload.get("owner_role") or "").strip(),
+            "review_note": note,
+            "evidence_note": evidence_note,
+            "reviewed_by": str(payload.get("reviewed_by") or "production_console").strip(),
+            "reviewed_at": datetime.now().isoformat(timespec="seconds"),
+            "contains_raw_file": False,
+            "contains_credentials": False,
+            "write_actions_blocked": True,
+        }
+        store.setdefault("reviews", []).append(review)
+        store["version"] = PRODUCTION_VERSION
+        store["latest_reviewed_at"] = review["reviewed_at"]
+        self._save_follow_up_store(store)
+        return self.follow_up_loop()
+
     def overview(self, filters: dict | None = None) -> dict:
         data = self._load_data()
         filtered = self._apply_filters(data, filters or {})
         return self._build_result(filtered, filters or {}, scenario=None)
+
+    def daily_brief(self, filters: dict | None = None) -> dict:
+        data = self._load_data()
+        filtered = self._apply_filters(data, filters or {})
+        result = self._build_result(filtered, filters or {}, scenario="daily_brief_narrative")
+        return {
+            "workflow_template": result["workflow_template"],
+            "workflow_instance": result["workflow_instance"],
+            "daily_brief_narrative": result["daily_brief_narrative"],
+            "management_priority_brief": result["management_priority_brief"],
+            "evidence_review_queue": result["evidence_review_queue"],
+            "first_screen_service_risk": result["first_screen_service_risk"],
+            "decision_loop": result["decision_loop"],
+            "permission_boundary": result["permission_boundary"],
+            "blocked_actions": result["workflow_instance"]["blocked_actions"],
+        }
 
     def analyze(self, payload: dict | None = None) -> dict:
         payload = payload or {}
@@ -280,12 +554,23 @@ class ProductionOperationsWorkflow:
         question = str(payload.get("question") or payload.get("message") or "").strip()
         data = self._load_data()
         result = self._build_result(data, payload.get("filters", {}), scenario="chatbi_root_cause")
-        analysis = self._chatbi_analysis(data, result, question)
+        actual_analysis = self.tianpai_aps_erp_export_adapter().answer_management_question(question)
+        analysis = self._with_management_template(actual_analysis or self._chatbi_analysis(data, result, question))
         evidence_refs = {
             ref
             for cause in analysis.get("root_causes", [])
             for ref in cause.get("evidence_refs", [])
         }
+        trace_source_priority = self._trace_priority_for_chatbi_metric(result["management_priority_brief"], analysis.get("metric", ""))
+        skill_execution_trace = analysis.get("skill_execution_trace") or (
+            trace_source_priority.get("skill_execution_trace", []) if trace_source_priority else []
+        )
+        verification_process = self._manager_verification_process(
+            analysis,
+            skill_execution_trace,
+            trace_source_priority,
+            result,
+        )
         return {
             "agent": {
                 "agent_id": "athena.production_chatbi_agent.v1",
@@ -296,21 +581,192 @@ class ProductionOperationsWorkflow:
             "question": question,
             "language": analysis["language"],
             "metric": analysis["metric"],
+            "actual_data_mode": analysis.get("actual_data_mode", False),
             "read_only": True,
             "write_actions_blocked": True,
             "answer_summary": analysis["answer_summary"],
+            "executive_answer": analysis["executive_answer"],
             "metric_snapshot": analysis["metric_snapshot"],
             "root_causes": analysis["root_causes"],
             "recommended_actions": analysis["recommended_actions"],
             "next_drilldowns": analysis["next_drilldowns"],
+            "data_gaps": analysis["data_gaps"],
+            "management_priority_brief": analysis.get("management_priority_brief") or result["management_priority_brief"],
+            "decision_loop": analysis.get("decision_loop") or result["decision_loop"],
             "confidence": analysis["confidence"],
             "source_objects": analysis["source_objects"],
+            "actual_evidence_chains": analysis.get("actual_evidence_chains", []),
+            "evidence_review_queue": result.get("evidence_review_queue", {}),
+            "verification_process": verification_process,
+            "skill_registry": self.skill_registry(),
+            "skills_used": trace_source_priority.get("skills_used", []) if trace_source_priority else [],
+            "skill_execution_trace": skill_execution_trace,
             "data_source": self._data_source_metadata(),
             "blocked_actions": result["workflow_instance"]["blocked_actions"],
-            "evidence_log": [
+            "evidence_log": analysis.get("evidence_log", []) or [
                 item for item in data.get("evidence_log", []) if item.get("evidence_id") in evidence_refs
             ],
         }
+
+    def _manager_verification_process(
+        self,
+        analysis: dict,
+        skill_execution_trace: list[dict],
+        trace_source_priority: dict,
+        result: dict,
+    ) -> dict:
+        language = analysis.get("language", "en")
+        root_causes = analysis.get("root_causes", [])
+        data_gaps = analysis.get("data_gaps", [])
+        evidence_refs = list(dict.fromkeys(
+            ref
+            for cause in root_causes
+            for ref in cause.get("evidence_refs", [])
+            if ref
+        ))
+        if not evidence_refs:
+            evidence_refs = list(dict.fromkeys(
+                ref
+                for step in skill_execution_trace
+                for ref in step.get("evidence_refs", [])
+                if ref
+            ))
+        evidence_level = (
+            (skill_execution_trace[0].get("evidence_level") if skill_execution_trace else "")
+            or trace_source_priority.get("evidence_level")
+            or ("Level 2: external APS/ERP export evidence" if analysis.get("actual_data_mode") else "Level 1: mock / demo evidence")
+        )
+        checked_object_ids = []
+        for step in skill_execution_trace:
+            checked_object_ids.extend(step.get("data_objects_checked", [])[:4])
+        checked_object_ids.extend(analysis.get("source_objects", []))
+        checked_object_ids = list(dict.fromkeys([item for item in checked_object_ids if item]))[:8]
+
+        checked_objects = [
+            {
+                "object": item,
+                "manager_label": self._manager_object_label(item, "en"),
+                "manager_label_zh": self._manager_object_label(item, "zh"),
+                "why_checked": self._manager_object_reason(item, language),
+            }
+            for item in checked_object_ids
+        ]
+        findings = [
+            {
+                "finding": cause.get("cause", ""),
+                "evidence_refs": cause.get("evidence_refs", []),
+                "support_level": evidence_level,
+            }
+            for cause in root_causes[:3]
+        ]
+        suggested_owner = (
+            trace_source_priority.get("owner_role")
+            or trace_source_priority.get("action_candidate", {}).get("owner_role")
+            or self._choose(language, "Production Manager / Maintenance Owner", "鐢熶骇涓荤 / 鏈轰慨璐熻矗浜?")
+        )
+        cannot_conclude = data_gaps[:4] or [
+            self._choose(
+                language,
+                "Current evidence is enough for risk review, but not enough for a final root-cause conclusion.",
+                "褰撳墠璇佹嵁瓒冲鎻愮ず椋庨櫓锛屼絾杩樹笉瓒充互纭鏈€缁堟牴鍥犮€?",
+            )
+        ]
+        return {
+            "schema_id": "athena.manager_verification_process.v1",
+            "version": PRODUCTION_VERSION,
+            "summary": self._choose(
+                language,
+                "Athena checked the available production evidence before recommending the next confirmation owner.",
+                "Athena 宸插厛鏌ヨ瘉褰撳墠鍙敤鐨勭敓浜ц瘉鎹紝鍐嶅缓璁笅涓€姝ョ敱璋佺‘璁ゃ€?",
+            ),
+            "checked_objects": checked_objects,
+            "findings": findings,
+            "evidence_level": evidence_level,
+            "evidence_level_label_zh": self._manager_evidence_level_label(evidence_level),
+            "cannot_conclude": cannot_conclude,
+            "data_gap": cannot_conclude[0] if cannot_conclude else "",
+            "suggested_confirmation_owner": suggested_owner,
+            "evidence_refs": evidence_refs[:12],
+            "raw_debug_trace_hidden": True,
+            "read_only": True,
+            "blocked_actions": result["workflow_instance"].get("blocked_actions", []),
+        }
+
+    @staticmethod
+    def _manager_object_label(item: str, language: str) -> str:
+        text = str(item or "").lower()
+        labels = [
+            (("order", "produce_order", "delivery"), ("Order / delivery", "Order / delivery")),
+            (("aps", "schedule", "planned_task"), ("APS schedule", "APS schedule")),
+            (("machine", "iot", "alarm", "downtime"), ("Machine / IOT signal", "Machine / IOT signal")),
+            (("material", "yarn"), ("Material / yarn", "Material / yarn")),
+            (("service", "maintenance"), ("Service risk", "Service risk")),
+            (("quality", "scrap", "defect", "yield"), ("Quality / scrap", "Quality / scrap")),
+            (("labor", "team", "shift"), ("Labor / shift", "Labor / shift")),
+            (("evidence",), ("Evidence chain", "Evidence chain")),
+        ]
+        for tokens, value in labels:
+            if any(token in text for token in tokens):
+                return value[1] if language == "zh" else value[0]
+        return item
+
+    def _manager_object_reason(self, item: str, language: str) -> str:
+        label = self._manager_object_label(item, language)
+        reasons_en = {
+            "Order / delivery": "Check whether the risk affects delivery.",
+            "APS schedule": "Check whether schedule, planned quantity, and completion support the judgment.",
+            "Machine / IOT signal": "Check whether stoppage, alarm, or machine load creates a bottleneck.",
+            "Material / yarn": "Check whether material may limit production progress.",
+            "Service risk": "Check whether maintenance or Service owner should intervene.",
+            "Quality / scrap": "Check whether quality issues affect replenishment or rework.",
+            "Labor / shift": "Check whether effective hours or manual intervention affects pace.",
+            "Evidence chain": "Check whether the conclusion is supported by evidence.",
+        }
+        reasons_zh = {
+            "Order / delivery": "????????????????",
+            "APS schedule": "?????????????????????",
+            "Machine / IOT signal": "???????????????????",
+            "Material / yarn": "?????????????",
+            "Service risk": "????????? Service ??????",
+            "Quality / scrap": "????????????????",
+            "Labor / shift": "??????????????????",
+            "Evidence chain": "????????????",
+        }
+        if language == "zh":
+            return reasons_zh.get(label, "????????????????")
+        return reasons_en.get(label, "Check whether this object supports the current risk judgment.")
+    @staticmethod
+    def _manager_evidence_level_label(evidence_level: str) -> str:
+        text = str(evidence_level or "").lower()
+        if "level 4" in text:
+            return "Level 4：实时系统证据"
+        if "level 3" in text:
+            return "Level 3：跨系统一致证据"
+        if "level 2" in text or "export" in text:
+            return "Level 2：Excel / APS 导出证据"
+        return "Level 1：mock / demo 证据"
+    @staticmethod
+    def _trace_priority_for_chatbi_metric(brief: dict, metric: str) -> dict:
+        metric_theme = {
+            "order_delay": "delivery",
+            "machine_style_mismatch": "equipment",
+            "machine_plan_load": "equipment",
+            "unscheduled_weaving_part_order": "material",
+            "material_risk": "material",
+            "quantity_report_gap": "cost",
+            "machine_bottleneck": "equipment",
+            "scrap_rate": "quality",
+            "oee": "equipment",
+            "downtime": "equipment",
+            "labor_efficiency": "labor",
+            "management_priority": "",
+        }.get(metric, "")
+        priorities = brief.get("top_priorities", [])
+        if metric_theme:
+            for priority in priorities:
+                if (priority.get("risk_theme") or priority.get("management_theme")) == metric_theme:
+                    return priority
+        return priorities[0] if priorities else {}
 
     def _load_data(self) -> dict:
         return json.loads(self.data_path.read_text(encoding="utf-8"))
@@ -357,6 +813,2857 @@ class ProductionOperationsWorkflow:
 
         return result
 
+    def _production_object_model(self) -> dict:
+        return {
+            "schema_id": "athena.production_object_model.v1",
+            "version": PRODUCTION_VERSION,
+            "positioning": (
+                "Athena reads production through structured objects instead of free-form BI questions. "
+                "Every decision must connect order, process, signal, evidence, action, and future memory."
+            ),
+            "canonical_workflow_key": {
+                "field": "order_id",
+                "site_term": "璁㈠崟",
+                "rule": "Use order_id as the workflow spine whenever a source system exposes it; otherwise mark the object as unjoined evidence.",
+            },
+            "objects": [
+                {
+                    "object": "order",
+                    "site_term": "璁㈠崟",
+                    "required_fields": ["order_id", "customer", "style_code", "quantity", "remaining_quantity", "due_date", "erp_status", "aps_status"],
+                    "joins": ["style", "material", "aps_schedule", "machine", "measurement", "garment_output"],
+                    "evidence_policy": "Order-level claims require ERP/APS evidence or an explicit mock evidence_ref.",
+                },
+                {
+                    "object": "style",
+                    "site_term": "娆惧紡",
+                    "required_fields": ["style_code", "garment", "style_count"],
+                    "joins": ["order", "machine", "method", "measurement"],
+                    "evidence_policy": "Style risk must be linked to an order or quality/engineering evidence.",
+                },
+                {
+                    "object": "machine",
+                    "site_term": "鏈哄彴",
+                    "required_fields": ["machine_id", "model", "state", "order_id", "oee", "downtime_minutes", "alarm"],
+                    "joins": ["order", "aps_schedule", "method", "service_request_candidate"],
+                    "evidence_policy": "Machine bottlenecks require IOT or machine-monitor evidence.",
+                },
+                {
+                    "object": "material_inventory",
+                    "site_term": "鏂?/ 绾辩嚎搴撳瓨",
+                    "required_fields": ["produce_order_code", "yarn_code", "batch", "supplier_code_or_name", "unit", "balance_qty"],
+                    "joins": ["order", "style", "aps_schedule", "measurement"],
+                    "evidence_policy": "Material-risk claims can use inventory aggregates now; order impact still requires ERP/APS produce_order_code confirmation and BOM demand.",
+                },
+                {
+                    "object": "process_stage",
+                    "site_term": "宸ュ簭",
+                    "required_fields": ["process_id", "order_id", "route", "setup_minutes", "changeover_variance_minutes"],
+                    "joins": ["order", "method", "measurement"],
+                    "evidence_policy": ".co/.cx status is read-only evidence; it never triggers upload or machine control.",
+                },
+                {
+                    "object": "production_signal",
+                    "site_term": "寮傚父淇″彿",
+                    "required_fields": ["signal_id", "theme", "severity", "affected_objects", "evidence_refs"],
+                    "joins": ["decision", "action", "follow_up"],
+                    "evidence_policy": "A signal without evidence_refs cannot become a management priority.",
+                },
+                {
+                    "object": "evidence",
+                    "site_term": "璇佹嵁",
+                    "required_fields": ["evidence_id", "source", "claim", "adapter_status"],
+                    "joins": ["production_signal", "decision", "memory_event"],
+                    "evidence_policy": "Evidence must name its source and adapter status before Athena can cite it in a decision.",
+                },
+                {
+                    "object": "decision",
+                    "site_term": "鍒ゆ柇",
+                    "required_fields": ["decision_id", "priority", "conclusion", "reason", "evidence_refs", "data_gaps"],
+                    "joins": ["action", "follow_up", "memory_event"],
+                    "evidence_policy": "Decision text must separate evidence-backed findings from unavailable data.",
+                },
+                {
+                    "object": "action",
+                    "site_term": "鍔ㄤ綔",
+                    "required_fields": ["action_id", "owner_role", "recommended_action", "requires_human_confirmation", "status"],
+                    "joins": ["decision", "follow_up"],
+                    "evidence_policy": "Production MVP can propose actions only; it cannot write APS/IOT/service systems.",
+                },
+                {
+                    "object": "follow_up",
+                    "site_term": "璺熻繘",
+                    "required_fields": ["follow_up_id", "owner_role", "expected_evidence", "review_time", "status"],
+                    "joins": ["action", "memory_event"],
+                    "evidence_policy": "Follow-up closure will require owner confirmation and result evidence in the next engine stage.",
+                },
+                {
+                    "object": "memory_event",
+                    "site_term": "缁勭粐璁板繂",
+                    "required_fields": ["scope", "tenant_id", "factory_id", "source", "retention_policy", "sensitivity_level", "promotion_status"],
+                    "joins": ["decision", "action", "follow_up", "playbook"],
+                    "evidence_policy": "Memory starts as candidate and needs review before promotion to product/domain playbook.",
+                },
+            ],
+            "blocked_actions": [
+                "change_production_schedule",
+                "upload_co_file",
+                "upload_cx_file",
+                "control_machine",
+                "create_real_service_ticket",
+                "promote_memory_without_review",
+            ],
+        }
+
+    def _material_risk(self, data: dict) -> dict:
+        inventory = data.get("tianpai_material_inventory", {})
+        source = inventory.get("source_summary", {})
+        balance = inventory.get("balance_summary", {})
+        zero_rows = int(balance.get("zero_balance_rows", 0))
+        negative_rows = int(balance.get("negative_balance_rows", 0))
+        row_count = int(source.get("row_count", 0))
+        exception_rows = zero_rows + negative_rows
+        exception_ratio = self._ratio(exception_rows, row_count)
+        readiness_blockers = [
+            "Confirm whether 鐢熶骇浠诲姟鍗?equals APS/ERP produce_order_code, with or without prefix normalization.",
+            "Confirm why negative balance exists before treating it as shortage.",
+            "Connect BOM yarn demand by style_code and yarn_code before calculating shortage quantity.",
+            "Connect quality/scrap records by produce_order_code, yarn_code, batch, and date before claiming material root cause.",
+        ]
+        return {
+            "schema_id": "athena.production_material_risk.v1",
+            "version": PRODUCTION_VERSION,
+            "adapter_status": "mock_contract",
+            "read_only": True,
+            "source_summary": source,
+            "inventory_structure": {
+                "row_count": row_count,
+                "task_order_rows": source.get("task_order_rows", 0),
+                "common_inventory_rows": source.get("common_inventory_rows", 0),
+                "unique_task_order_count": source.get("unique_task_order_count", 0),
+                "unique_yarn_code_count": source.get("unique_yarn_code_count", 0),
+                "unique_batch_count": source.get("unique_batch_count", 0),
+                "unique_supplier_count": source.get("unique_supplier_count", 0),
+                "unit_distribution": source.get("unit_distribution", []),
+            },
+            "dimension_distribution": inventory.get("dimension_distribution", {}),
+            "balance_exceptions": {
+                "zero_balance_rows": zero_rows,
+                "negative_balance_rows": negative_rows,
+                "positive_balance_rows": balance.get("positive_balance_rows", 0),
+                "exception_row_count": exception_rows,
+                "exception_row_ratio": round(exception_ratio, 3),
+                "total_balance_quantity": balance.get("total_balance_quantity", 0),
+                "quantity_unit": balance.get("quantity_unit", "kg"),
+                "interpretation_required": balance.get("interpretation_required", True),
+                "interpretation_note": balance.get("interpretation_note", ""),
+            },
+            "field_mapping": inventory.get("field_mapping", []),
+            "yarn_product_schema": inventory.get("yarn_product_schema", {}),
+            "risk_rules": inventory.get("risk_rules", []),
+            "risk_signals": [
+                {
+                    "signal_id": "MAT-SIGNAL-BALANCE-001",
+                    "priority": "P1",
+                    "theme": "material_balance_interpretation",
+                    "conclusion": f"{exception_rows} inventory rows have zero or negative balance and need warehouse/ERP interpretation.",
+                    "conclusion_zh": f"{exception_rows} 琛屽簱瀛樼粨瀛樹负 0 鎴栬礋鏁帮紝闇€瑕佷粨搴?ERP 璐熻矗浜虹‘璁や笟鍔″惈涔夈€?",
+                    "evidence_refs": ["EV-PROD-027"],
+                    "owner_role": "Warehouse / ERP Owner",
+                    "data_gap": "Negative balance cannot be treated as true shortage until sign and movement rules are confirmed.",
+                },
+                {
+                    "signal_id": "MAT-SIGNAL-JOIN-001",
+                    "priority": "P0",
+                    "theme": "order_join_readiness",
+                    "conclusion": "Material data has production task order fields, but ERP order and APS produce_order_code mapping still need confirmation.",
+                    "conclusion_zh": "鐗╂枡鏁版嵁宸叉湁鐢熶骇浠诲姟鍗曞瓧娈碉紝浣嗚繕闇€瑕佺‘璁ゅ畠鍜?ERP 璁㈠崟銆丄PS produce_order_code 鐨勬槧灏勫叧绯汇€?",
+                    "evidence_refs": ["EV-PROD-028"],
+                    "owner_role": "ERP / APS Owner",
+                    "data_gap": "Without the join rule, Athena can describe material inventory but cannot prove delivery impact by order.",
+                },
+            ],
+            "future_join_plan": inventory.get("future_join_plan", []),
+            "readiness_blockers": readiness_blockers,
+            "can_answer_now": [
+                "Yarn inventory structure by task order, yarn code, batch, color, twist, supplier count, and unit.",
+                "Zero/negative/positive balance row counts as material-risk review signals.",
+                "Which fields are ready for future ERP/APS/BOM/quality joins.",
+            ],
+            "cannot_answer_yet": [
+                "Whether a specific customer order will be delayed by yarn shortage.",
+                "Exact shortage quantity by order or style.",
+                "Whether a yarn batch caused scrap or quality defects.",
+                "Purchasing-cost or per-garment material-cost impact.",
+            ],
+            "evidence_refs": inventory.get("evidence_refs", []),
+            "blocked_actions": [
+                "write_inventory",
+                "reserve_material",
+                "change_aps_schedule",
+                "claim_order_delay_without_erp_aps_join",
+                "claim_material_quality_root_cause_without_quality_join",
+            ],
+        }
+
+    def _general_manager_question_bank(self, data: dict) -> dict:
+        questions = [
+            ("GMQ-001", "P0", "delivery", "Which orders are most likely to be delayed?", ["erp_orders", "split_delivery", "aps_schedule", "production_output"], "conclusion_reason_evidence_recommendation", "hypothesis"),
+            ("GMQ-002", "P0", "delivery", "How many backlog orders and remaining quantities do we have this week/month?", ["erp_orders", "shipment_records"], "summary_table_and_risk_list", "hypothesis"),
+            ("GMQ-003", "P0", "management_priority", "Which three issues should the general manager review today?", ["erp_orders", "aps_schedule", "material_inventory", "quality", "iot"], "top_three_management_brief", "hypothesis"),
+            ("GMQ-004", "P0", "root_cause", "Is delivery risk caused by scheduling, material, quality, or capacity?", ["erp_orders", "aps_schedule", "material_inventory", "quality", "iot"], "root_cause_split_with_data_gaps", "hypothesis"),
+            ("GMQ-005", "P1", "style", "Which styles are dragging delivery?", ["erp_orders", "aps_schedule", "production_output"], "style_risk_ranking", "hypothesis"),
+            ("GMQ-006", "P1", "material", "Which production task orders do not have enough yarn?", ["material_inventory", "bom_yarn_demand", "erp_aps_mapping"], "material_gap_by_task_order", "hypothesis"),
+            ("GMQ-007", "P1", "material", "Which yarn batches or suppliers are highest risk?", ["material_inventory", "quality"], "batch_supplier_risk_ranking", "hypothesis"),
+            ("GMQ-008", "P1", "early_warning", "Which orders are not late yet but close to the risk boundary?", ["erp_orders", "aps_schedule", "material_inventory"], "early_warning_list", "hypothesis"),
+            ("GMQ-009", "P1", "cost_proxy", "Which orders may need air freight or acceleration?", ["erp_orders", "estimated_finish", "freight_rules"], "delivery_to_cost_risk", "hypothesis"),
+            ("GMQ-010", "P1", "quality", "Which styles or process stages concentrate quality issues?", ["quality", "rework", "process_stage"], "quality_reason_ranking", "hypothesis"),
+            ("GMQ-011", "P1", "quality_root_cause", "Is scrap caused by style, machine, material, team, or method?", ["iot_scrap", "machine", "style", "material_inventory", "shift_team"], "scrap_root_cause_split", "hypothesis"),
+            ("GMQ-012", "P2", "machine", "Which machines are current bottlenecks?", ["aps_schedule", "iot_machine"], "machine_bottleneck_ranking", "hypothesis"),
+            ("GMQ-013", "P2", "schedule_variance", "Which orders deviate most from plan?", ["aps_schedule", "actual_output"], "plan_vs_actual_variance", "hypothesis"),
+            ("GMQ-014", "P2", "customer_style_history", "Which customers or styles often create rush orders, delays, or rework?", ["erp_history", "order_changes", "rework"], "history_risk_patterns", "hypothesis"),
+            ("GMQ-015", "P2", "inventory", "Which yarn inventory is excessive or possibly idle?", ["material_inventory", "demand_history"], "slow_moving_inventory", "hypothesis"),
+            ("GMQ-016", "P2", "cost", "Which orders have high cost risk?", ["purchasing_cost", "labor", "rework", "freight"], "cost_proxy_until_real_cost", "hypothesis"),
+            ("GMQ-017", "P2", "data_governance", "Which data gaps prevent Athena from making a conclusion?", ["all_connected_sources"], "missing_data_owner_list", "hypothesis"),
+        ]
+        available_sources = self._available_data_source_ids(data)
+        question_items = []
+        for question_id, priority, theme, question, required_sources, template, status in questions:
+            available_required = [source for source in required_sources if source in available_sources]
+            missing_required = [source for source in required_sources if source not in available_sources]
+            readiness = "answerable_now" if not missing_required else "partial" if available_required else "blocked"
+            question_items.append(
+                {
+                    "question_id": question_id,
+                    "priority": priority,
+                    "theme": theme,
+                    "question": question,
+                    "required_data_sources": required_sources,
+                    "available_data_sources": available_required,
+                    "missing_data_sources": missing_required,
+                    "answer_template": template,
+                    "evidence_requirements": self._question_evidence_requirements(theme),
+                    "data_gap_behavior": "State the unavailable source and avoid claiming root cause when required evidence is missing.",
+                    "verification_status": status,
+                    "current_readiness": readiness,
+                }
+            )
+        return {
+            "schema_id": "athena.general_manager_question_bank.v1",
+            "version": PRODUCTION_VERSION,
+            "persona": "tianpai_general_manager",
+            "status": "hypothesis_pending_voc",
+            "verification_owner": "Product Owner + Agnes + Tianpai onsite roles",
+            "question_count": len(question_items),
+            "questions": question_items,
+            "answer_format": {
+                "template": "conclusion + reason/evidence + risk + recommendation + data_gap + next_confirmation_owner",
+                "required_sections": ["conclusion", "reason_evidence", "risk", "recommendation", "data_gap", "next_confirmation_owner"],
+            },
+            "review_plan": [
+                "Product Owner reviews whether each question belongs in Athena long-term.",
+                "Agnes validates whether the question reflects management concern.",
+                "Planner, warehouse, production, quality, APS/IOT/ERP owners validate field meaning and actionability.",
+                "Final customer management review changes verification_status from hypothesis to reviewed or approved.",
+            ],
+            "blocked_actions": [
+                "treat_hypothesis_as_confirmed_voc",
+                "train_as_approved_without_customer_review",
+                "claim_answerability_when_required_sources_are_missing",
+            ],
+        }
+
+    def _data_readiness(self, data: dict, material_risk: dict, question_bank: dict) -> dict:
+        sources = [
+            {
+                "source_id": "agnes_voc",
+                "name": "Agnes VOC",
+                "status": "available",
+                "fields": ["delivery_priority", "quality_priority", "cost_data_need", "data_limitations"],
+                "supports_questions": ["GMQ-001", "GMQ-003", "GMQ-004", "GMQ-016", "GMQ-017"],
+                "confidence": "medium",
+                "owner_to_confirm": "Agnes / Product Owner",
+            },
+            {
+                "source_id": "aps_schedule",
+                "name": "APS Planned Task / schedule evidence",
+                "status": "partial_available",
+                "fields": ["produce_order_code", "machine_id", "style_code", "planned_quantity", "produced_quantity", "plan_start_time", "plan_end_time", "estimate_end_time", "delivery_time"],
+                "supports_questions": ["GMQ-001", "GMQ-004", "GMQ-005", "GMQ-012", "GMQ-013"],
+                "confidence": "medium",
+                "owner_to_confirm": "APS Owner / Planner",
+            },
+            {
+                "source_id": "iot",
+                "name": "Tianpai IOT weekly exports",
+                "status": "partial_available_unjoined",
+                "fields": ["machine", "style", "shift output", "scrap", "fault"],
+                "supports_questions": ["GMQ-011", "GMQ-012"],
+                "confidence": "low_medium",
+                "owner_to_confirm": "IOT Owner / Production Supervisor",
+            },
+            {
+                "source_id": "material_inventory",
+                "name": "Tianpai yarn inventory aggregate",
+                "status": "available_aggregate",
+                "fields": ["produce_order_code", "yarn_code", "yarn_name", "color", "batch", "twist", "supplier", "opening_qty", "in_qty", "adjustment_qty", "out_qty", "balance_qty"],
+                "supports_questions": ["GMQ-006", "GMQ-007", "GMQ-015", "GMQ-017"],
+                "confidence": "medium",
+                "owner_to_confirm": "Warehouse / ERP Owner",
+            },
+            {
+                "source_id": "erp_orders",
+                "name": "ERP order and split-delivery records",
+                "status": "not_available",
+                "fields": ["order_id", "customer_id", "style_code", "order_qty", "created_date", "delivery_date", "split_delivery", "order_status"],
+                "supports_questions": ["GMQ-001", "GMQ-002", "GMQ-003", "GMQ-004", "GMQ-008", "GMQ-014"],
+                "confidence": "blocked",
+                "owner_to_confirm": "Customer ERP Owner",
+            },
+            {
+                "source_id": "bom_yarn_demand",
+                "name": "Style/BOM yarn demand",
+                "status": "not_available",
+                "fields": ["style_code", "yarn_code", "required_qty_per_piece", "loss_rate", "required_total_qty"],
+                "supports_questions": ["GMQ-006", "GMQ-015"],
+                "confidence": "blocked",
+                "owner_to_confirm": "ERP/BOM Owner",
+            },
+            {
+                "source_id": "quality",
+                "name": "Quality inspection, rework, replenishment records",
+                "status": "not_available",
+                "fields": ["order_id", "process_stage", "defect_reason", "defect_qty", "rework_qty", "replenishment_order"],
+                "supports_questions": ["GMQ-007", "GMQ-010", "GMQ-011"],
+                "confidence": "blocked",
+                "owner_to_confirm": "Quality Owner",
+            },
+        ]
+        source_status = {item["source_id"]: item["status"] for item in sources}
+        ready_questions = [item for item in question_bank.get("questions", []) if item.get("current_readiness") == "answerable_now"]
+        partial_questions = [item for item in question_bank.get("questions", []) if item.get("current_readiness") == "partial"]
+        blocked_questions = [item for item in question_bank.get("questions", []) if item.get("current_readiness") == "blocked"]
+        score = round(
+            self._ratio(len(ready_questions) * 1.0 + len(partial_questions) * 0.45, max(1, question_bank.get("question_count", 1))),
+            3,
+        )
+        return {
+            "schema_id": "athena.tianpai_data_readiness.v1",
+            "version": PRODUCTION_VERSION,
+            "status": "partial_ready",
+            "readiness_score": score,
+            "data_sources": sources,
+            "source_status": source_status,
+            "question_coverage": {
+                "question_count": question_bank.get("question_count", 0),
+                "answerable_now": len(ready_questions),
+                "partial": len(partial_questions),
+                "blocked": len(blocked_questions),
+                "answerable_question_ids": [item["question_id"] for item in ready_questions],
+                "partial_question_ids": [item["question_id"] for item in partial_questions],
+                "blocked_question_ids": [item["question_id"] for item in blocked_questions],
+            },
+            "can_answer_now": [
+                "Material inventory structure, batch/color/twist/supplier coverage, and balance-exception review.",
+                "APS schedule/task progress questions where produce_order_code is sufficient.",
+                "IOT machine/scrap/fault trend questions when order-level causality is not claimed.",
+                "Data-gap questions and next data request ownership.",
+            ],
+            "cannot_answer_yet": [
+                "Full order-level delivery root cause without ERP order and split-delivery records.",
+                "Material shortage impact by customer order without ERP/APS produce_order_code and BOM demand confirmation.",
+                "Material-caused quality root cause without quality records joined to yarn batch and date.",
+                "True per-garment cost without purchasing, labor, rework, and freight cost records.",
+            ],
+            "next_data_requests": [
+                {
+                    "request_id": "DATA-ERP-ORDER-MIN",
+                    "owner_role": "Customer ERP Owner",
+                    "fields": ["order_id", "style_code", "order_qty", "created_date", "delivery_date", "split_delivery", "status"],
+                    "purpose": "Join ERP order commitments to APS weaving execution and delivery-risk analysis.",
+                    "priority": "P0",
+                    "sensitivity_level": "customer_operational",
+                    "needed_for": ["GMQ-001", "GMQ-002", "GMQ-003", "GMQ-004", "GMQ-008"],
+                },
+                {
+                    "request_id": "DATA-BOM-YARN-MIN",
+                    "owner_role": "ERP/BOM Owner",
+                    "fields": ["style_code", "yarn_code", "required_qty_per_piece", "loss_rate"],
+                    "purpose": "Connect yarn material availability to order and style delivery risk.",
+                    "priority": "P1",
+                    "sensitivity_level": "customer_operational",
+                    "needed_for": ["GMQ-006", "GMQ-015"],
+                },
+                {
+                    "request_id": "DATA-QUALITY-MIN",
+                    "owner_role": "Quality Owner",
+                    "fields": ["produce_order_code", "style_code", "process_stage", "defect_reason", "defect_qty", "rework_qty"],
+                    "purpose": "Connect defect and rework evidence to quality risk and replenishment decisions.",
+                    "priority": "P1",
+                    "sensitivity_level": "customer_operational",
+                    "needed_for": ["GMQ-007", "GMQ-010", "GMQ-011"],
+                },
+            ],
+            "material_readiness_link": {
+                "material_schema_id": material_risk.get("schema_id"),
+                "material_exception_row_ratio": material_risk.get("balance_exceptions", {}).get("exception_row_ratio"),
+                "material_join_blockers": material_risk.get("readiness_blockers", []),
+            },
+            "blocked_actions": [
+                "claim_full_tianpai_root_cause",
+                "claim_customer_cost_savings",
+                "write_to_erp_aps_iot",
+                "store_raw_customer_files",
+            ],
+        }
+
+    def _available_data_source_ids(self, data: dict) -> set[str]:
+        available = set()
+        if data.get("orders"):
+            available.add("mock_orders")
+        if data.get("aps_schedule"):
+            available.add("aps_schedule")
+        if data.get("machines"):
+            available.add("iot_machine")
+        if data.get("measurement"):
+            available.add("iot_scrap")
+        if data.get("tianpai_material_inventory"):
+            available.add("material_inventory")
+        if data.get("materials"):
+            available.add("aps_yarn_forecast")
+        available.add("agnes_voc")
+        available.add("all_connected_sources")
+        return available
+
+    def _question_evidence_requirements(self, theme: str) -> list[str]:
+        base = ["evidence_refs", "data_source_status", "owner_confirmation_before_action"]
+        by_theme = {
+            "delivery": ["ERP order due date", "remaining quantity", "APS schedule or explicit data gap"],
+            "management_priority": ["ranked KPI impact", "affected objects", "recommended owner"],
+            "root_cause": ["cause category evidence", "missing-source statement when evidence is incomplete"],
+            "material": ["produce_order_code", "yarn_code", "batch", "balance_qty", "BOM demand if shortage quantity is claimed"],
+            "quality": ["inspection row", "defect reason", "process stage", "rework or replenishment impact"],
+            "quality_root_cause": ["style", "machine", "material batch", "team/method evidence", "causal confidence"],
+            "machine": ["machine_id", "OEE/downtime", "alarm/fault evidence", "program evidence if setup is mentioned"],
+            "data_governance": ["missing field", "affected question", "data owner", "next request"],
+        }
+        return [*base, *by_theme.get(theme, ["structured source object"])]
+
+    def _management_priority_brief(
+        self,
+        data: dict,
+        overview: dict,
+        resource_lens: dict,
+        optimization_signals: list[dict],
+        service_escalations: list[dict],
+        garment_output: dict,
+        actual_priority_analyses: list[dict] | None = None,
+    ) -> dict:
+        orders = data.get("orders", [])
+        machines = data.get("machines", [])
+        materials = data.get("materials", [])
+        measurements = data.get("measurement", [])
+        labor = data.get("labor", [])
+        inventory = data.get("tianpai_material_inventory", {})
+        inventory_source = inventory.get("source_summary", {})
+        inventory_balance = inventory.get("balance_summary", {})
+        process = data.get("process", [])
+        evidence_by_id = {item.get("evidence_id"): item for item in data.get("evidence_log", [])}
+        orders_by_id = {item.get("order_id"): item for item in orders}
+        machines_by_order = self._group_by(machines, "order_id")
+        process_by_order = self._group_by(process, "order_id")
+
+        priorities: list[dict] = []
+        actual_priorities = self._actual_management_priorities(actual_priority_analyses or [])
+        priorities.extend(actual_priorities)
+
+        quality_items = sorted(
+            [item for item in measurements if item.get("status") != "ok" or item.get("defect_rate", 0) >= 0.03],
+            key=lambda item: (item.get("defect_rate", 0), item.get("scrap_quantity", 0)),
+            reverse=True,
+        )
+        if quality_items:
+            quality = quality_items[0]
+            order = orders_by_id.get(quality.get("order_id"), {})
+            linked_machines = machines_by_order.get(quality.get("order_id"), [])
+            linked_process = process_by_order.get(quality.get("order_id"), [])
+            evidence_refs = self._unique_refs(
+                [
+                    order.get("evidence_ref"),
+                    quality.get("evidence_ref"),
+                    *[item.get("evidence_ref") for item in linked_machines],
+                    *[item.get("evidence_ref") for item in linked_process],
+                ]
+            )
+            priorities.append(
+                {
+                    "priority_id": "MGMT-PRIO-QUALITY-001",
+                    "rank": 0,
+                    "priority": "P0" if order.get("production_status") == "quality_hold" else "P1",
+                    "score": 96 if order.get("production_status") == "quality_hold" else 88,
+                    "management_theme": "quality",
+                    "theme_label": "璐ㄩ噺浼樺厛",
+                    "title": f"Stabilize {order.get('style_code', quality.get('order_id'))} quality before expanding production",
+                    "title_zh": f"鍏堢ǔ瀹?{order.get('style_code', quality.get('order_id'))} 璐ㄩ噺锛屽啀鎵╁ぇ鐢熶骇",
+                    "management_question": "Will this quality issue damage customer trust or trigger replenishment cost?",
+                    "conclusion": (
+                        f"{order.get('order_id', quality.get('order_id'))} has quality warning, "
+                        f"defect rate {quality.get('defect_rate', 0):.1%}, yield {quality.get('yield_rate', 0):.1%}."
+                    ),
+                    "conclusion_zh": (
+                        f"{order.get('order_id', quality.get('order_id'))} 瑙﹀彂璐ㄩ噺棰勮锛?"
+                        f"缂洪櫡鐜?{quality.get('defect_rate', 0):.1%}锛岃壇鍝佺巼 {quality.get('yield_rate', 0):.1%}銆?"
+                    ),
+                    "reason": "Quality is ranked first because poor quality can lose repeat orders and create hidden cost beyond visible scrap.",
+                    "reason_zh": "璐ㄩ噺鎺掔涓€锛屽洜涓鸿川閲忛棶棰樹笉鍙骇鐢熷彲瑙佸簾鍝侊紝杩樺彲鑳芥崯瀹冲鎴峰璐苟褰㈡垚闅愭€ф垚鏈€?",
+                    "risk_if_ignored": "More rework, replenishment orders, delayed downstream sewing/packing, and customer confidence loss.",
+                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘甯︽潵杩斿伐銆佽ˉ鍗曘€佸悗閬撶紳鍒?鍖呰寤惰鍜屽鎴蜂俊浠绘崯澶便€?",
+                    "recommended_action": "Hold expansion on the affected style, review SM8-03 setup/program evidence, and confirm defect reasons before the next shift.",
+                    "recommended_action_zh": "鍏堟殏鍋滄墿澶ц娆剧敓浜э紝鍦ㄤ笅涓€涓彮娆″墠澶嶆牳 SM8-03 鐨?setup/绋嬪簭璇佹嵁锛屽苟纭涓嶈壇鍘熷洜銆?",
+                    "owner_role": "Production Manager / Quality Owner",
+                    "confirmation_needed_by": "next_shift_start",
+                    "decision_gate": "quality_owner_confirms_root_cause_or_releases_hold",
+                    "affected_objects": {
+                        "orders": [quality.get("order_id")],
+                        "styles": [order.get("style_code", "")],
+                        "machines": [item.get("machine_id") for item in linked_machines],
+                        "process_stages": [item.get("process_id") for item in linked_process],
+                    },
+                    "kpi_links": ["quality_risk", "scrap_rate", "average_yield_rate", "oee"],
+                    "evidence_refs": evidence_refs,
+                    "evidence_claims": self._evidence_claims(evidence_by_id, evidence_refs),
+                    "data_gaps": [
+                        "Need real defect inspection rows and downstream rework/replenishment records to prove full cost impact.",
+                    ],
+                    "action_candidate": self._priority_action_candidate(
+                        "ACT-QUALITY-001",
+                        "Production Manager / Quality Owner",
+                        "Confirm whether fabric tension, logo elasticity, setup variance, or machine condition is the first cause.",
+                        ["defect inspection row", "machine alarm history", ".co/.cx read-only evidence", "owner confirmation"],
+                    ),
+                }
+            )
+
+        risky_orders = [
+            item for item in orders if item.get("aps_status") != "scheduled" or item.get("erp_status") == "exception"
+        ]
+        if risky_orders:
+            material_refs = {
+                material_ref
+                for order in risky_orders
+                for material_ref in order.get("yarn_material_refs", [])
+            }
+            linked_materials = [item for item in materials if item.get("material_id") in material_refs]
+            evidence_refs = self._unique_refs(
+                [
+                    *[item.get("evidence_ref") for item in risky_orders],
+                    *[item.get("evidence_ref") for item in linked_materials],
+                ]
+            )
+            priorities.append(
+                {
+                    "priority_id": "MGMT-PRIO-DELIVERY-001",
+                    "rank": 0,
+                    "priority": "P1",
+                    "score": 86,
+                    "management_theme": "delivery",
+                    "theme_label": "浜ゆ湡椋庨櫓",
+                    "title": "Resolve unscheduled and material-held orders before they force air freight",
+                    "title_zh": "鍏堝鐞嗘湭鎺掑崟鍜岀己鏂欒鍗曪紝閬垮厤鍚庣画琚揩绌鸿繍銆?",
+                    "management_question": "Which backlog items can still be protected before delivery risk becomes cost?",
+                    "conclusion": (
+                        f"{len(risky_orders)} orders need scheduling or ERP/material review; "
+                        f"remaining quantity {sum(int(item.get('remaining_quantity', 0)) for item in risky_orders)}."
+                    ),
+                    "conclusion_zh": (
+                        f"{len(risky_orders)} 涓鍗曢渶瑕佹帓鍗曟垨 ERP/鐗╂枡澶嶆牳锛?"
+                        f"鍓╀綑鏁伴噺 {sum(int(item.get('remaining_quantity', 0)) for item in risky_orders)}銆?"
+                    ),
+                    "reason": "Delivery risk converts into cost when buffer is consumed and the only recovery option becomes overtime or air freight.",
+                    "reason_zh": "浜ゆ湡椋庨櫓浼氬湪缂撳啿琚秷鑰楀悗杞寲涓烘垚鏈紝甯歌琛ユ晳鏂瑰紡鏄姞鐝垨绌鸿繍銆?",
+                    "risk_if_ignored": "Planner firefighting, production resequencing, overtime, or air freight escalation.",
+                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘鍑虹幇璁″垝鍛樻晳鐏€佺敓浜ч噸鎺掋€佸姞鐝垨绌鸿繍鎴愭湰涓婂崌銆?",
+                    "recommended_action": "Confirm ERP exception on ORD-20260605-004 and elastane lot E-224 availability before changing APS sequence.",
+                    "recommended_action_zh": "鍦ㄨ皟鏁?APS 椤哄簭鍓嶏紝鍏堢‘璁?ORD-20260605-004 鐨?ERP 寮傚父鍜?E-224 姘ㄧ憾鎵规鍒版枡鎯呭喌銆?",
+                    "owner_role": "Planner / ERP Owner",
+                    "confirmation_needed_by": "same_day_planning_meeting",
+                    "decision_gate": "erp_exception_closed_and_material_eta_confirmed",
+                    "affected_objects": {
+                        "orders": [item.get("order_id") for item in risky_orders],
+                        "styles": [item.get("style_code") for item in risky_orders],
+                        "materials": [item.get("material_id") for item in linked_materials],
+                    },
+                    "kpi_links": ["order_delay_risk", "material_risk", "capacity_occupation"],
+                    "evidence_refs": evidence_refs,
+                    "evidence_claims": self._evidence_claims(evidence_by_id, evidence_refs),
+                    "data_gaps": [
+                        "Need real order-created, promised delivery, shipment, and freight-mode records for production-grade delay cost.",
+                    ],
+                    "action_candidate": self._priority_action_candidate(
+                        "ACT-DELIVERY-001",
+                        "Planner / ERP Owner",
+                        "Close ERP exception and confirm material ETA before APS resequencing.",
+                        ["ERP exception reason", "material ETA", "planner confirmation"],
+                    ),
+                }
+            )
+
+        labor_candidates = sorted(
+            [item for item in labor if item.get("risk") != "low" or item.get("efficiency", 1) < 0.85],
+            key=lambda item: (float(item.get("efficiency", 1)), -int(item.get("manual_interventions", 0))),
+        )
+        if labor_candidates:
+            labor_item = labor_candidates[0]
+            service_refs = [item.get("evidence_ref") for item in service_escalations]
+            evidence_refs = self._unique_refs([labor_item.get("evidence_ref"), *service_refs[:2]])
+            priorities.append(
+                {
+                    "priority_id": "MGMT-PRIO-LABOR-001",
+                    "rank": 0,
+                    "priority": "P1" if float(labor_item.get("efficiency", 1)) < 0.8 else "P2",
+                    "score": 84 if float(labor_item.get("efficiency", 1)) < 0.8 else 74,
+                    "management_theme": "labor",
+                    "theme_label": "浜哄伐鏈夋晥宸ユ椂",
+                    "title": f"Confirm {labor_item.get('team_id')} effective-hour loss before it hides delivery risk",
+                    "title_zh": f"纭 {labor_item.get('team_id')} 鐨勬湁鏁堝伐鏃舵崯澶憋紝閬垮厤浜や粯椋庨櫓琚帺鐩?",
+                    "management_question": "Is low effective labor time caused by repeated machine intervention, waiting, rework, or unclear ownership?",
+                    "conclusion": (
+                        f"{labor_item.get('team_id')} efficiency is {labor_item.get('efficiency', 0):.0%} with "
+                        f"{labor_item.get('manual_interventions', 0)} manual interventions."
+                    ),
+                    "conclusion_zh": (
+                        f"{labor_item.get('team_id')} 鏈夋晥宸ユ椂鏁堢巼涓?{labor_item.get('efficiency', 0):.0%}锛?"
+                        f"浜哄伐骞查 {labor_item.get('manual_interventions', 0)} 娆°€?"
+                    ),
+                    "reason": "Low effective hours can hide waiting, repeated mechanic intervention, rework, or unclear handoff before they become visible delivery misses.",
+                    "reason_zh": "鏈夋晥宸ユ椂鍋忎綆浼氭妸绛夊緟銆佸弽澶嶆満淇共棰勩€佽繑宸ユ垨浜ゆ帴涓嶆竻闅愯棌璧锋潵锛岀洿鍒板畠浠彉鎴愪氦浠橀棶棰樸€?",
+                    "risk_if_ignored": "The same people may stay busy while useful output stays low, creating missed delivery recovery windows and hidden labor cost.",
+                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鐜板満鍙兘鐪嬭捣鏉ュ緢蹇欎絾鏈夋晥浜у嚭鍋忎綆锛岄敊杩囦氦浠樻仮澶嶇獥鍙ｅ苟褰㈡垚闅愭€т汉宸ユ垚鏈€?",
+                    "recommended_action": "Ask the team leader and maintenance owner to confirm whether interventions are service, setup, waiting, or rework before the next shift review.",
+                    "recommended_action_zh": "涓嬫鐝澶嶇洏鍓嶏紝璇风彮缁勯暱鍜岃澶囪礋璐ｄ汉纭浜哄伐骞查鏉ヨ嚜鏈嶅姟銆佽皟鏈恒€佺瓑寰呰繕鏄繑宸ャ€?",
+                    "owner_role": "Team Leader / Maintenance Owner",
+                    "confirmation_needed_by": "next_shift_review",
+                    "decision_gate": "team_leader_confirms_effective_hour_cause",
+                    "affected_objects": {
+                        "teams": [labor_item.get("team_id")],
+                        "roles": [labor_item.get("role")],
+                        "machines": [item.get("machine_id") for item in service_escalations if item.get("machine_id")],
+                        "orders": [item.get("order_id") for item in service_escalations if item.get("order_id")],
+                    },
+                    "kpi_links": ["labor_efficiency", "downtime_minutes", "service_escalation_count"],
+                    "evidence_refs": evidence_refs,
+                    "evidence_claims": self._evidence_claims(evidence_by_id, evidence_refs),
+                    "data_gaps": [
+                        "Need historical effective-hour baseline, team assignment history, and confirmed intervention reasons to separate normal support from waste.",
+                    ],
+                    "action_candidate": self._priority_action_candidate(
+                        "ACT-LABOR-001",
+                        "Team Leader / Maintenance Owner",
+                        "Confirm whether repeated manual interventions are service, setup, waiting, or rework.",
+                        ["shift labor record", "manual intervention reason", "team leader confirmation"],
+                    ),
+                }
+            )
+
+        machine_candidates = sorted(
+            [item for item in machines if item.get("state") in {"stopped", "idle"} or item.get("downtime_minutes", 0) >= 60],
+            key=lambda item: (int(item.get("downtime_minutes", 0)), 1 if item.get("state") == "stopped" else 0),
+            reverse=True,
+        )
+        if len(priorities) < 3 and machine_candidates:
+            machine = machine_candidates[0]
+            evidence_refs = self._unique_refs([machine.get("evidence_ref"), *[item.get("evidence_ref") for item in service_escalations if item.get("machine_id") == machine.get("machine_id")]])
+            priorities.append(
+                {
+                    "priority_id": "MGMT-PRIO-CAPACITY-001",
+                    "rank": 0,
+                    "priority": "P1" if machine.get("state") == "stopped" else "P2",
+                    "score": 82 if machine.get("state") == "stopped" else 72,
+                    "management_theme": "cost",
+                    "theme_label": "鎴愭湰/浜ц兘",
+                    "title": f"Recover {machine.get('machine_id')} capacity leakage",
+                    "title_zh": f"鎭㈠ {machine.get('machine_id')} 鐨勪骇鑳芥崯澶?",
+                    "management_question": "Which machine capacity loss is turning into avoidable labor or waiting cost?",
+                    "conclusion": (
+                        f"{machine.get('machine_id')} is {machine.get('state')} with "
+                        f"{machine.get('downtime_minutes', 0)} downtime minutes and OEE {machine.get('oee', 0):.0%}."
+                    ),
+                    "conclusion_zh": (
+                        f"{machine.get('machine_id')} 褰撳墠鐘舵€佷负 {machine.get('state')}锛?"
+                        f"鍋滄満 {machine.get('downtime_minutes', 0)} 鍒嗛挓锛孫EE {machine.get('oee', 0):.0%}銆?"
+                    ),
+                    "reason": "Idle or stopped machine time creates hidden cost even before it shows up as a delivery miss.",
+                    "reason_zh": "鏈哄彴绌洪棽鎴栧仠鏈哄湪褰㈡垚浜ゆ湡闂涔嬪墠锛屽氨宸茬粡浜х敓闅愭€ф垚鏈€?",
+                    "risk_if_ignored": "Lost machine hours, repeated mechanic intervention, lower labor efficiency, and delayed recovery.",
+                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘鎹熷け鏈哄彴宸ユ椂銆佸鍔犵淮淇弽澶嶅共棰勩€侀檷浣庝汉宸ユ晥鐜囧苟寤堕暱鎭㈠鏃堕棿銆?",
+                    "recommended_action": "Confirm whether the machine is waiting for work order, material, setup, or service review; do not auto-dispatch.",
+                    "recommended_action_zh": "纭鏈哄彴鏄湪绛夊伐鍗曘€佺瓑鐗╂枡銆佺瓑璋冩満杩樻槸闇€瑕佹湇鍔″鏍革紱涓嶈鑷姩娲惧伐銆?",
+                    "owner_role": "Production Supervisor / Service Manager",
+                    "confirmation_needed_by": "current_shift_review",
+                    "decision_gate": "machine_recovery_owner_assigned",
+                    "affected_objects": {
+                        "orders": [machine.get("order_id")] if machine.get("order_id") else [],
+                        "machines": [machine.get("machine_id")],
+                        "service_candidates": [item.get("candidate_id") for item in service_escalations if item.get("machine_id") == machine.get("machine_id")],
+                    },
+                    "kpi_links": ["oee", "downtime_minutes", "labor_efficiency", "waste_cost_opportunity"],
+                    "evidence_refs": evidence_refs,
+                    "evidence_claims": self._evidence_claims(evidence_by_id, evidence_refs),
+                    "data_gaps": [
+                        "Need longer IOT history, planned downtime, and maintenance closure records to separate planned idle from avoidable loss.",
+                    ],
+                    "action_candidate": self._priority_action_candidate(
+                        "ACT-CAPACITY-001",
+                        "Production Supervisor / Service Manager",
+                        "Assign a recovery owner and confirm whether the issue is planning, material, setup, or service.",
+                        ["IOT alarm duration", "service candidate review", "shift owner confirmation"],
+                    ),
+                }
+            )
+
+        if len(priorities) < 3 and optimization_signals:
+            for index, signal in enumerate(optimization_signals[: 3 - len(priorities)]):
+                priorities.append(
+                    {
+                        "priority_id": f"MGMT-PRIO-SIGNAL-{index + 1:03d}",
+                        "rank": 0,
+                        "priority": "P2",
+                        "score": 60 - index,
+                        "management_theme": signal.get("type", "operations"),
+                        "theme_label": "杩愯惀淇″彿",
+                        "title": signal.get("title", ""),
+                        "title_zh": signal.get("title", ""),
+                        "management_question": "Does this evidence signal need an owner before the next shift?",
+                        "conclusion": signal.get("title", ""),
+                        "reason": signal.get("waste_or_cost_point", ""),
+                        "risk_if_ignored": "The same waste signal may recur without owner confirmation.",
+                        "recommended_action": signal.get("suggested_action", ""),
+                        "owner_role": "Production Owner",
+                        "confirmation_needed_by": "next_shift_review",
+                        "decision_gate": "owner_confirms_or_closes_signal",
+                        "affected_objects": {},
+                        "kpi_links": ["waste_cost_opportunity"],
+                        "evidence_refs": self._unique_refs([signal.get("evidence_ref")]),
+                        "evidence_claims": self._evidence_claims(evidence_by_id, self._unique_refs([signal.get("evidence_ref")])),
+                        "data_gaps": ["Need owner confirmation to turn this signal into a closed-loop action."],
+                        "action_candidate": self._priority_action_candidate(
+                            f"ACT-SIGNAL-{index + 1:03d}",
+                            "Production Owner",
+                            signal.get("suggested_action", ""),
+                            ["owner confirmation"],
+                        ),
+                    }
+                )
+
+        theme_order = {"delivery": 0, "equipment": 1, "material": 2, "cost": 3, "quality": 4, "labor": 5}
+        sorted_priorities = sorted(
+            priorities,
+            key=lambda item: (theme_order.get(item.get("management_theme", ""), 9), -int(item.get("score", 0)), item["priority_id"]),
+        )
+        priorities = []
+        seen_themes = set()
+        for item in sorted_priorities:
+            theme = item.get("risk_theme") or item.get("management_theme") or item.get("priority_id")
+            if theme in seen_themes:
+                continue
+            priorities.append(item)
+            seen_themes.add(theme)
+            if len(priorities) == 3:
+                break
+        if len(priorities) < 3:
+            for item in sorted_priorities:
+                if item in priorities:
+                    continue
+                priorities.append(item)
+                if len(priorities) == 3:
+                    break
+        for index, item in enumerate(priorities, start=1):
+            item["rank"] = index
+            item["risk_level"] = self._priority_risk_level(item)
+            item["risk_level_label"] = self._priority_risk_level_label(item["risk_level"])
+            self._ensure_priority_card_contract(item)
+
+        data_gaps = [
+            {
+                "gap_id": "MGMT-GAP-ORDER-HISTORY",
+                "needed_for": ["delivery", "cost"],
+                "gap": "Missing order-created dates, actual delivery dates, shipment mode, and downstream stage timestamps.",
+                "current_workaround": "Use due_date, APS status, material risk, and mock remaining quantity as directional evidence.",
+            },
+            {
+                "gap_id": "MGMT-GAP-IOT-JOIN",
+                "needed_for": ["machine", "quality", "cost"],
+                "gap": "Real Tianpai IOT exports currently lack reliable order_id, and not all machines are connected.",
+                "current_workaround": "Keep IOT-like mock machine evidence separate unless order_id is present.",
+            },
+            {
+                "gap_id": "MGMT-GAP-COST",
+                "needed_for": ["cost"],
+                "gap": "Customer purchasing, labor, rework, and freight cost tables are unavailable.",
+                "current_workaround": "Use quality, downtime, material, and delivery-risk proxies instead of claiming exact cost.",
+            },
+            {
+                "gap_id": "MGMT-GAP-LABOR-BASELINE",
+                "needed_for": ["labor", "cost", "delivery"],
+                "gap": "Historical effective-hour baseline, team assignment history, and confirmed intervention reasons are unavailable.",
+                "current_workaround": "Use current shift efficiency and manual intervention count as directional evidence only.",
+            },
+        ]
+
+        return {
+            "brief_id": f"MGMT-BRIEF-{PRODUCTION_VERSION}-CURRENT",
+            "version": PRODUCTION_VERSION,
+            "persona": "tianpai_general_manager",
+            "audience": "General Manager / Production leadership",
+            "snapshot_time": data.get("factory", {}).get("snapshot_time", ""),
+            "automation_status": "actual_export_first_priority_engine" if actual_priorities else "deterministic_mock_priority_engine",
+            "data_source_policy": {
+                "priority_order": ["Tianpai APS/ERP export", "mock production snapshot"],
+                "actual_export_priority_count": len([item for item in priorities if item.get("data_source_mode") == "actual_aps_erp_export_first"]),
+                "mock_fallback_priority_count": len([item for item in priorities if item.get("data_source_mode") != "actual_aps_erp_export_first"]),
+                "read_only": True,
+            },
+            "priority_policy": {
+                "kpi_priority": ["delivery", "quality", "cost"],
+                "card_themes": ["delivery_risk_order", "equipment_or_spec_risk", "material_or_quantity_control_risk"],
+                "principle": "Delivery risk is reviewed first, quality risk second, and cost is treated as the consequence of delivery and quality failures.",
+                "read_only": True,
+                "human_confirmation_required_before_action": True,
+            },
+            "daily_brief": {
+                "headline": self._management_headline(priorities),
+                "top_three": [item["title"] for item in priorities],
+                "summary": [
+                    f"Actual APS/ERP export: {len([item for item in priorities if item.get('data_source_mode') == 'actual_aps_erp_export_first'])} of today's top-three cards are backed by external export evidence chains.",
+                    f"Delivery: review the top order-risk card first, then confirm whether unscheduled quantities or low plan completion need owner action today.",
+                    f"Equipment/material/cost: review spec mismatch, unscheduled part orders, or plan/report gaps before changing schedules or machine assignments.",
+                    "Data boundary: Athena remains read-only; final action still requires owner confirmation and downstream ERP/APS/IOT evidence.",
+                ],
+                "summary_zh": [
+                    f"鐪熷疄 APS/ERP 瀵煎嚭锛氫粖澶╁墠涓夊紶椋庨櫓鍗′腑鏈?{len([item for item in priorities if item.get('data_source_mode') == 'actual_aps_erp_export_first'])} 寮犲甫澶栭儴瀵煎嚭璇佹嵁閾俱€?",
+                    "浜や粯锛氬厛鐪嬫渶楂樿鍗曢闄╋紝鍐嶇‘璁ゆ湭鎺掓暟閲忔垨璁″垝瀹屾垚鐜囨槸鍚﹂渶瑕佷粖澶╁鐞嗐€?",
+                    "璁惧/鐗╂枡/鎴愭湰锛氭敼鎺掔▼鎴栬皟鏈哄墠锛屽厛澶嶆牳瑙勬牸涓嶅尮閰嶃€佹湭鎺掓弧閮ㄤ欢鍗曘€佽鍒?鎶ュ伐宸紓銆?",
+                    "鏁版嵁杈圭晫锛欰thena 淇濇寔鍙锛涙渶缁堣鍔ㄤ粛闇€瑕佽礋璐ｄ汉纭鍜屽悗缁?ERP/APS/IOT 璇佹嵁銆?",
+                ],
+            },
+            "shift_brief": {
+                "review_cadence": "daily_and_shift_review",
+                "next_review": "current_shift_review",
+                "owner_confirmation_required": True,
+                "recommended_sequence": [item["action_candidate"]["action_id"] for item in priorities],
+            },
+            "top_priorities": priorities,
+            "data_gaps": data_gaps,
+            "future_handoff_contract": {
+                "next_engine": "decision_loop_follow_up_engine",
+                "handoff_objects": ["decision", "action", "follow_up", "memory_event"],
+                "status": "contract_ready_not_yet_closed_loop",
+            },
+            "kpi_snapshot": {
+                "order_count": overview.get("order_count", 0),
+                "scrap_rate": overview.get("scrap_rate", 0),
+                "average_oee": overview.get("average_oee", 0),
+                "downtime_minutes": overview.get("downtime_minutes", 0),
+                "material_risk_count": overview.get("material_risk_count", 0),
+                "service_escalation_count": overview.get("service_escalation_count", 0),
+                "estimated_good_quantity": garment_output.get("estimated_good_quantity", 0),
+                "resource_status": {key: value.get("status") for key, value in resource_lens.items()},
+            },
+        }
+
+    def _decision_loop_follow_up(self, management_priority_brief: dict) -> dict:
+        store = self._load_follow_up_store()
+        latest_by_action = self._latest_follow_up_reviews_by_action(store)
+        decisions = []
+        actions = []
+        follow_ups = []
+        memory_events = []
+
+        for priority in management_priority_brief.get("top_priorities", []):
+            action = priority.get("action_candidate", {})
+            action_id = action.get("action_id") or f"ACT-{priority.get('priority_id', 'UNKNOWN')}"
+            follow_up_id = f"FU-{action_id.removeprefix('ACT-')}"
+            decision_id = f"DEC-{priority.get('priority_id', 'UNKNOWN').removeprefix('MGMT-PRIO-')}"
+            review = latest_by_action.get(action_id, {})
+            status = review.get("review_status") or "pending_confirmation"
+            evidence_status = self._follow_up_evidence_status(status, review)
+            owner_role = review.get("owner_role") or action.get("owner_role") or priority.get("owner_role", "")
+            expected_evidence = action.get("expected_evidence", [])
+
+            decisions.append(
+                {
+                    "decision_id": decision_id,
+                    "priority_id": priority.get("priority_id"),
+                    "rank": priority.get("rank"),
+                    "priority": priority.get("priority"),
+                    "risk_level": priority.get("risk_level"),
+                    "management_theme": priority.get("management_theme"),
+                    "conclusion": priority.get("conclusion"),
+                    "conclusion_zh": priority.get("conclusion_zh"),
+                    "reason": priority.get("reason"),
+                    "risk_if_ignored": priority.get("risk_if_ignored"),
+                    "evidence_refs": priority.get("evidence_refs", []),
+                    "actual_evidence_chains": priority.get("actual_evidence_chains", []),
+                    "field_sources": priority.get("field_sources", []),
+                    "skills_used": priority.get("skills_used", []),
+                    "skill_execution_trace": priority.get("skill_execution_trace", []),
+                    "data_source_mode": priority.get("data_source_mode", ""),
+                    "data_gaps": priority.get("data_gaps", []),
+                    "drilldown_question": priority.get("drilldown_question", ""),
+                    "decision_gate": priority.get("decision_gate"),
+                    "status": self._decision_status_from_follow_up(status),
+                }
+            )
+            actions.append(
+                {
+                    "action_id": action_id,
+                    "decision_id": decision_id,
+                    "priority_id": priority.get("priority_id"),
+                    "source_card_type": "hard_risk",
+                    "related_object": self._related_object_from_priority(priority),
+                    "owner_role": owner_role,
+                    "recommended_action": action.get("recommended_action") or priority.get("recommended_action"),
+                    "recommended_action_zh": priority.get("recommended_action_zh"),
+                    "confirmation_need": priority.get("decision_gate") or action.get("recommended_action") or priority.get("recommended_action"),
+                    "athena_recommendation_reason": priority.get("reason") or priority.get("conclusion"),
+                    "requires_human_confirmation": True,
+                    "status": status,
+                    "review_status": review.get("review_status", "not_reviewed"),
+                    "review_note": review.get("review_note", ""),
+                    "evidence_note": review.get("evidence_note", ""),
+                    "reviewed_at": review.get("reviewed_at", ""),
+                    "expected_evidence": expected_evidence,
+                    "blocked_automation": action.get("blocked_automation", []),
+                    "write_scope": action.get("write_scope", "local_metadata_only"),
+                    "drilldown_question": action.get("drilldown_question", priority.get("drilldown_question", "")),
+                    "field_sources": action.get("field_sources", priority.get("field_sources", [])),
+                    "skills_used": priority.get("skills_used", []),
+                    "skill_execution_trace": priority.get("skill_execution_trace", []),
+                    "linked_evidence_chain": action.get("linked_evidence_chain", (priority.get("actual_evidence_chains") or [{}])[0]),
+                    "follow_up_contract": action.get("follow_up_contract", {}),
+                    "read_only_boundary": {
+                        "read_only": True,
+                        "write_scope": "local_metadata_only",
+                        "blocked_actions": ["write_aps", "write_erp", "write_iot", "create_real_service_ticket", "control_machine"],
+                    },
+                }
+            )
+            follow_ups.append(
+                {
+                    "follow_up_id": follow_up_id,
+                    "action_id": action_id,
+                    "decision_id": decision_id,
+                    "source_card_type": "hard_risk",
+                    "related_object": self._related_object_from_priority(priority),
+                    "owner_role": owner_role,
+                    "confirmation_need": priority.get("decision_gate") or action.get("recommended_action") or priority.get("recommended_action"),
+                    "athena_recommendation_reason": priority.get("reason") or priority.get("conclusion"),
+                    "status": status,
+                    "review_time": priority.get("confirmation_needed_by", "next_shift_review"),
+                    "expected_evidence": expected_evidence,
+                    "evidence_status": evidence_status,
+                    "closure_gate": priority.get("decision_gate"),
+                    "recurrence_watch": {
+                        "enabled": True,
+                        "watch_kpis": priority.get("kpi_links", []),
+                        "reopen_condition": "same priority theme returns as P0/P1 in the next review cycle after closure",
+                    },
+                    "source_priority_id": priority.get("priority_id"),
+                    "linked_risk_card_id": priority.get("priority_id"),
+                    "linked_risk_level": priority.get("risk_level"),
+                    "linked_risk_theme": priority.get("risk_theme"),
+                    "evidence_refs": priority.get("evidence_refs", []),
+                    "actual_evidence_chains": priority.get("actual_evidence_chains", []),
+                    "field_sources": priority.get("field_sources", []),
+                    "skills_used": priority.get("skills_used", []),
+                    "skill_execution_trace": priority.get("skill_execution_trace", []),
+                    "drilldown_question": priority.get("drilldown_question", ""),
+                    "data_source_mode": priority.get("data_source_mode", ""),
+                    "internal_demo_ready": priority.get("internal_demo_ready", False),
+                    "write_scope": "local_metadata_only",
+                    "writes_real_system": False,
+                    "human_owner_required": True,
+                    "read_only_boundary": {
+                        "read_only": True,
+                        "write_scope": "local_metadata_only",
+                        "blocked_actions": ["write_aps", "write_erp", "write_iot", "create_real_service_ticket", "control_machine"],
+                    },
+                }
+            )
+            memory_events.append(
+                {
+                    "memory_event_id": f"MEM-{follow_up_id}",
+                    "event_type": "production_follow_up_candidate",
+                    "scope": "tenant",
+                    "tenant_id": "tianpai",
+                    "factory_id": None,
+                    "source": "demo",
+                    "retention_policy": "review_before_promotion",
+                    "sensitivity_level": "internal",
+                    "promotion_status": "reviewed" if status == "closed" else "candidate",
+                    "linked_decision_id": decision_id,
+                    "linked_action_id": action_id,
+                    "linked_follow_up_id": follow_up_id,
+                    "summary": priority.get("title"),
+                    "evidence_refs": priority.get("evidence_refs", []),
+                    "blocked_until": "human_review_and_result_evidence",
+                }
+            )
+
+        status_counts = self._count_by([item["status"] for item in follow_ups])
+        loop_status = "ready_for_review"
+        if status_counts.get("closed") == len(follow_ups) and follow_ups:
+            loop_status = "closed_ready_for_memory_review"
+        elif status_counts.get("unable_to_process"):
+            loop_status = "unable_to_process_review"
+        elif status_counts.get("waiting_evidence"):
+            loop_status = "waiting_evidence"
+        elif status_counts.get("assigned") or status_counts.get("confirmed"):
+            loop_status = "in_progress"
+
+        return {
+            "schema_id": "athena.production_decision_loop.v1",
+            "version": PRODUCTION_VERSION,
+            "loop_id": f"PROD-DECISION-LOOP-{PRODUCTION_VERSION}-CURRENT",
+            "source_brief_id": management_priority_brief.get("brief_id", ""),
+            "status": loop_status,
+            "read_only": True,
+            "write_actions_blocked": True,
+            "lifecycle": [
+                "pending_confirmation",
+                "confirmed",
+                "needs_more_data",
+                "resolved",
+                "dismissed",
+                "assigned",
+                "waiting_evidence",
+                "closed",
+                "unable_to_process",
+            ],
+            "closed_loop_contract": [
+                "management_priority",
+                "decision",
+                "action",
+                "follow_up",
+                "owner_confirmation",
+                "evidence_check",
+                "memory_event_candidate",
+            ],
+            "decision_items": decisions,
+            "action_items": actions,
+            "follow_up_items": follow_ups,
+            "memory_event_candidates": memory_events,
+            "review_state": {
+                "version": store.get("version", PRODUCTION_VERSION),
+                "review_count": len(store.get("reviews", [])),
+                "latest_reviewed_at": store.get("latest_reviewed_at", ""),
+                "metadata_only": True,
+                "raw_files_stored": False,
+                "credentials_stored": False,
+            },
+            "loop_kpis": {
+                "decision_count": len(decisions),
+                "action_count": len(actions),
+                "follow_up_count": len(follow_ups),
+                "open_follow_up_count": len([item for item in follow_ups if item["status"] not in {"closed", "unable_to_process"}]),
+                "closed_follow_up_count": status_counts.get("closed", 0),
+                "assigned_count": status_counts.get("assigned", 0),
+                "waiting_evidence_count": status_counts.get("waiting_evidence", 0),
+                "pending_confirmation_count": status_counts.get("pending_confirmation", 0),
+                "confirmed_count": status_counts.get("confirmed", 0),
+                "unable_to_process_count": status_counts.get("unable_to_process", 0),
+                "memory_candidate_count": len(memory_events),
+                "reviewed_memory_candidate_count": len([item for item in memory_events if item["promotion_status"] == "reviewed"]),
+            },
+            "blocked_actions": [
+                "auto_assign_owner_without_confirmation",
+                "auto_close_follow_up_without_evidence",
+                "write_to_aps_or_iot",
+                "create_real_service_ticket",
+                "promote_memory_without_review",
+            ],
+            "next_actions": self._decision_loop_next_actions(status_counts, follow_ups),
+        }
+
+    def _first_screen_service_risk(
+        self,
+        service_escalations: list[dict],
+        decision_loop: dict,
+        evidence_log: list[dict],
+    ) -> dict:
+        action_items = decision_loop.get("action_items", [])
+        evidence_by_ref = {
+            item.get("evidence_ref"): item
+            for item in evidence_log
+            if item.get("evidence_ref")
+        }
+        fallback_action = next(
+            (
+                item
+                for item in action_items
+                if item.get("priority_id", "").lower().find("equipment") >= 0
+                or item.get("priority_id", "").lower().find("delivery") >= 0
+            ),
+            action_items[0] if action_items else {},
+        )
+        cards = []
+
+        for index, candidate in enumerate(service_escalations, start=1):
+            evidence_ref = candidate.get("evidence_ref", "")
+            evidence = evidence_by_ref.get(evidence_ref, {})
+            order_id = candidate.get("order_id", "")
+            machine_id = candidate.get("machine_id", "")
+            priority = candidate.get("priority", "P1")
+            linked_action = {"action_id": f"ACT-SVC-RISK-{index:03d}"}
+            risk_level = "red" if priority in {"P0", "P1"} else "yellow"
+            cards.append(
+                {
+                    "card_id": f"SVC-RISK-{index:03d}",
+                    "candidate_id": candidate.get("candidate_id", ""),
+                    "risk_theme": "service",
+                    "risk_theme_label": "Service / 璁惧",
+                    "title": f"Confirm whether {machine_id} is blocking production",
+                    "title_zh": f"纭 {machine_id} 鏄惁姝ｅ湪褰卞搷璁㈠崟浜や粯",
+                    "risk_level": risk_level,
+                    "risk_level_label": "High risk" if risk_level == "red" else "Attention",
+                    "priority": priority,
+                    "machine_id": machine_id,
+                    "order_id": order_id,
+                    "issue": candidate.get("issue", ""),
+                    "service_request_candidate": candidate.get("service_request_candidate", True),
+                    "auto_dispatch": False,
+                    "read_only": True,
+                    "why_it_matters": (
+                        "A service candidate can turn a production delay into a repeated bottleneck if no owner "
+                        "confirms machine status, alarm history, and recovery plan."
+                    ),
+                    "why_it_matters_zh": (
+                        "濡傛灉娌℃湁璐熻矗浜虹‘璁ゆ満鍙扮姸鎬併€佹姤璀﹀巻鍙插拰鎭㈠璁″垝锛孲ervice 鍊欓€夐棶棰樺彲鑳芥妸鍗曟鐢熶骇寤惰鍙樻垚鍙嶅鐡堕銆?"
+                    ),
+                    "suggested_owner": "Service Manager / Maintenance Owner",
+                    "recommended_action": (
+                        "Ask maintenance to confirm whether the machine alarm is still active, whether the order is affected, "
+                        "and whether a real service ticket is required."
+                    ),
+                    "recommended_action_zh": (
+                        "璇锋満淇垨 Service 璐熻矗浜虹‘璁ゆ姤璀︽槸鍚︿粛鍦ㄣ€佹槸鍚﹀奖鍝嶈璁㈠崟锛屼互鍙婃槸鍚﹂渶瑕佸垱寤虹湡瀹?Service 宸ュ崟銆?"
+                    ),
+                    "evidence_refs": [ref for ref in [evidence_ref] if ref],
+                    "evidence_claims": [
+                        {
+                            "evidence_ref": evidence_ref,
+                            "claim": candidate.get("reason", "Service candidate generated from production signal."),
+                            "source": evidence.get("source", "production_service_escalation_candidate"),
+                        }
+                    ],
+                    "field_sources": [
+                        "machines.machine_id",
+                        "machines.state",
+                        "machines.alarm",
+                        "machines.order_id",
+                        "service_escalations.candidate_id",
+                    ],
+                    "affected_objects": {
+                        "orders": [order_id] if order_id else [],
+                        "machines": [machine_id] if machine_id else [],
+                        "service_candidates": [candidate.get("candidate_id", "")] if candidate.get("candidate_id") else [],
+                    },
+                    "data_gaps": [
+                        "Need real IOT alarm duration and recovery timestamp before confirming service root cause.",
+                        "Need maintenance owner confirmation before creating a real service ticket.",
+                        "Need ERP/APS order impact confirmation before changing production priority.",
+                    ],
+                    "drilldown_question": (
+                        f"涓轰粈涔?{machine_id} 鐨?Service 椋庨櫓鍙兘褰卞搷璁㈠崟 {order_id}锛熻鎸夋満鍙扮姸鎬併€佹姤璀︺€佽鍗曞奖鍝嶅拰璇佹嵁閾句笅閽汇€?"
+                    ),
+                    "linked_action_id": linked_action.get("action_id", ""),
+                    "local_follow_up_supported": bool(linked_action.get("action_id")),
+                    "blocked_actions": [
+                        "dispatch_service_automatically",
+                        "create_real_service_ticket",
+                        "control_machine",
+                        "modify_schedule_automatically",
+                    ],
+                    "internal_demo_ready": True,
+                    "demo_note": "Can be shown as a service-risk candidate and local follow-up example; not a real dispatch.",
+                }
+            )
+
+        return {
+            "schema_id": "athena.production_first_screen_service_risk.v1",
+            "version": PRODUCTION_VERSION,
+            "title": "First-screen Service risk",
+            "title_zh": "鎬荤粡鐞嗛灞?Service 椋庨櫓",
+            "summary": "Service risks are shown as confirmation candidates beside the top-three production priorities.",
+            "summary_zh": "Service 椋庨櫓浣滀负寰呯‘璁ゅ€欓€夐」锛屼笌鎬荤粡鐞嗗墠涓変欢浜嬫斁鍦ㄥ悓涓€鏉＄敓浜у喅绛栭摼璺噷銆?",
+            "adapter_status": "mock_contract",
+            "read_only": True,
+            "write_scope": "local_metadata_only",
+            "service_risk_cards": cards,
+            "service_candidate_count": len(cards),
+            "blocked_actions": [
+                "dispatch_service_automatically",
+                "create_real_service_ticket",
+                "control_machine",
+                "modify_schedule_automatically",
+            ],
+        }
+
+    def _extend_decision_loop_with_review_and_service(
+        self,
+        decision_loop: dict,
+        evidence_review_queue: dict,
+        first_screen_service_risk: dict,
+    ) -> dict:
+        store = self._load_follow_up_store()
+        latest_by_action = self._latest_follow_up_reviews_by_action(store)
+        loop = {
+            **decision_loop,
+            "decision_items": list(decision_loop.get("decision_items", [])),
+            "action_items": list(decision_loop.get("action_items", [])),
+            "follow_up_items": list(decision_loop.get("follow_up_items", [])),
+            "memory_event_candidates": list(decision_loop.get("memory_event_candidates", [])),
+        }
+
+        for index, card in enumerate((evidence_review_queue.get("review_queue") or [])[:4], start=1):
+            object_id = str(card.get("object_id") or card.get("produce_order_code") or f"{index:03d}")
+            suffix = self._safe_id(object_id)
+            action_id = f"ACT-EVID-REVIEW-{suffix}"
+            decision_id = f"DEC-EVID-REVIEW-{suffix}"
+            follow_up_id = f"FU-EVID-REVIEW-{suffix}"
+            review = latest_by_action.get(action_id, {})
+            status = review.get("review_status") or "pending_confirmation"
+            owner = review.get("owner_role") or card.get("suggested_confirmation_owner") or "Planning Manager / APS Owner"
+            confirmation_need = card.get("suggested_confirmation_action") or card.get("cannot_conclude_reason") or "Confirm planning and quantity evidence before Athena treats this as delivery risk."
+            reason = card.get("why_not_delivery_risk") or "Evidence is inconsistent and needs reconciliation."
+            self._append_decision_loop_item(
+                loop,
+                source_card_type="evidence_review",
+                action_id=action_id,
+                decision_id=decision_id,
+                follow_up_id=follow_up_id,
+                related_object=object_id,
+                owner_role=owner,
+                status=status,
+                title=f"Evidence review for order {object_id}",
+                title_zh=f"璁㈠崟 {object_id} 鏁版嵁澶嶆牳",
+                confirmation_need=confirmation_need,
+                recommendation=card.get("suggested_confirmation_action") or confirmation_need,
+                recommendation_zh=card.get("suggested_confirmation_action") or confirmation_need,
+                reason=reason,
+                evidence_refs=card.get("evidence_refs", []),
+                field_sources=card.get("field_sources", []),
+                expected_evidence=[
+                    "Order close/cancel/current status confirmation",
+                    "APS unscheduled quantity explanation",
+                    "Manual report quantity scope confirmation",
+                ],
+                drilldown_question=card.get("drilldown_question", ""),
+                review=review,
+            )
+
+        for index, card in enumerate(first_screen_service_risk.get("service_risk_cards") or [], start=1):
+            object_id = card.get("machine_id") or card.get("candidate_id") or f"{index:03d}"
+            suffix = self._safe_id(str(card.get("card_id") or object_id))
+            action_id = card.get("linked_action_id") or f"ACT-SVC-RISK-{suffix}"
+            decision_id = f"DEC-SVC-RISK-{suffix}"
+            follow_up_id = f"FU-SVC-RISK-{suffix}"
+            review = latest_by_action.get(action_id, {})
+            status = review.get("review_status") or "pending_confirmation"
+            owner = review.get("owner_role") or card.get("suggested_owner") or "Service Manager / Maintenance Owner"
+            confirmation_need = card.get("recommended_action") or "Confirm machine alarm status, order impact, and whether a real service ticket is required."
+            reason = card.get("why_it_matters") or "Service risk may affect production if no owner confirms machine recovery."
+            self._append_decision_loop_item(
+                loop,
+                source_card_type="service_risk",
+                action_id=action_id,
+                decision_id=decision_id,
+                follow_up_id=follow_up_id,
+                related_object=str(object_id),
+                owner_role=owner,
+                status=status,
+                title=card.get("title") or f"Service risk for {object_id}",
+                title_zh=card.get("title_zh") or f"{object_id} Service 椋庨櫓纭",
+                confirmation_need=confirmation_need,
+                recommendation=card.get("recommended_action") or confirmation_need,
+                recommendation_zh=card.get("recommended_action_zh") or confirmation_need,
+                reason=reason,
+                evidence_refs=card.get("evidence_refs", []),
+                field_sources=card.get("field_sources", []),
+                expected_evidence=[
+                    "Machine alarm active/cleared status",
+                    "Recovery timestamp or maintenance owner note",
+                    "Order impact confirmation",
+                ],
+                drilldown_question=card.get("drilldown_question", ""),
+                review=review,
+            )
+
+        status_counts = self._count_by([item["status"] for item in loop["follow_up_items"]])
+        loop["loop_kpis"].update(
+            {
+                "decision_count": len(loop["decision_items"]),
+                "action_count": len(loop["action_items"]),
+                "follow_up_count": len(loop["follow_up_items"]),
+                "open_follow_up_count": len([item for item in loop["follow_up_items"] if item["status"] not in {"closed", "unable_to_process", "resolved", "dismissed"}]),
+                "closed_follow_up_count": status_counts.get("closed", 0) + status_counts.get("resolved", 0),
+                "pending_confirmation_count": status_counts.get("pending_confirmation", 0),
+                "confirmed_count": status_counts.get("confirmed", 0),
+                "needs_more_data_count": status_counts.get("needs_more_data", 0),
+                "dismissed_count": status_counts.get("dismissed", 0),
+            }
+        )
+        loop["next_actions"] = self._decision_loop_next_actions(status_counts, loop["follow_up_items"])
+        return loop
+
+    def _append_decision_loop_item(
+        self,
+        loop: dict,
+        source_card_type: str,
+        action_id: str,
+        decision_id: str,
+        follow_up_id: str,
+        related_object: str,
+        owner_role: str,
+        status: str,
+        title: str,
+        title_zh: str,
+        confirmation_need: str,
+        recommendation: str,
+        recommendation_zh: str,
+        reason: str,
+        evidence_refs: list[str],
+        field_sources: list[str],
+        expected_evidence: list[str],
+        drilldown_question: str,
+        review: dict,
+    ) -> None:
+        read_only_boundary = {
+            "read_only": True,
+            "write_scope": "local_metadata_only",
+            "blocked_actions": ["write_aps", "write_erp", "write_iot", "create_real_service_ticket", "control_machine"],
+        }
+        evidence_status = self._follow_up_evidence_status(status, review)
+        loop["decision_items"].append(
+            {
+                "decision_id": decision_id,
+                "priority_id": decision_id,
+                "source_card_type": source_card_type,
+                "related_object": related_object,
+                "priority": "P1" if source_card_type == "service_risk" else "P2",
+                "risk_level": "yellow",
+                "management_theme": source_card_type,
+                "conclusion": title,
+                "conclusion_zh": title_zh,
+                "reason": reason,
+                "evidence_refs": evidence_refs,
+                "field_sources": field_sources,
+                "data_source_mode": "actual_aps_erp_export_first" if source_card_type == "evidence_review" else "mock_contract",
+                "drilldown_question": drilldown_question,
+                "decision_gate": confirmation_need,
+                "status": self._decision_status_from_follow_up(status),
+            }
+        )
+        loop["action_items"].append(
+            {
+                "action_id": action_id,
+                "decision_id": decision_id,
+                "priority_id": decision_id,
+                "source_card_type": source_card_type,
+                "related_object": related_object,
+                "owner_role": owner_role,
+                "recommended_action": recommendation,
+                "recommended_action_zh": recommendation_zh,
+                "confirmation_need": confirmation_need,
+                "athena_recommendation_reason": reason,
+                "requires_human_confirmation": True,
+                "status": status,
+                "review_status": review.get("review_status", "not_reviewed"),
+                "review_note": review.get("review_note", ""),
+                "evidence_note": review.get("evidence_note", ""),
+                "reviewed_at": review.get("reviewed_at", ""),
+                "expected_evidence": expected_evidence,
+                "blocked_automation": read_only_boundary["blocked_actions"],
+                "write_scope": "local_metadata_only",
+                "drilldown_question": drilldown_question,
+                "field_sources": field_sources,
+                "linked_evidence_chain": {},
+                "follow_up_contract": {
+                    "mode": "local_metadata_only",
+                    "writes_real_system": False,
+                    "blocked_systems": ["APS", "ERP", "IOT", "service_ticket", "machine_control"],
+                },
+                "read_only_boundary": read_only_boundary,
+            }
+        )
+        loop["follow_up_items"].append(
+            {
+                "follow_up_id": follow_up_id,
+                "action_id": action_id,
+                "decision_id": decision_id,
+                "source_card_type": source_card_type,
+                "related_object": related_object,
+                "owner_role": owner_role,
+                "confirmation_need": confirmation_need,
+                "athena_recommendation_reason": reason,
+                "status": status,
+                "review_time": "current_shift_review",
+                "expected_evidence": expected_evidence,
+                "evidence_status": evidence_status,
+                "closure_gate": confirmation_need,
+                "source_priority_id": decision_id,
+                "linked_risk_card_id": decision_id,
+                "linked_risk_level": "yellow",
+                "linked_risk_theme": source_card_type,
+                "evidence_refs": evidence_refs,
+                "field_sources": field_sources,
+                "drilldown_question": drilldown_question,
+                "data_source_mode": "actual_aps_erp_export_first" if source_card_type == "evidence_review" else "mock_contract",
+                "internal_demo_ready": True,
+                "write_scope": "local_metadata_only",
+                "writes_real_system": False,
+                "human_owner_required": True,
+                "read_only_boundary": read_only_boundary,
+            }
+        )
+        loop["memory_event_candidates"].append(
+            {
+                "memory_event_id": f"MEM-{follow_up_id}",
+                "event_type": f"production_{source_card_type}_follow_up_candidate",
+                "scope": "tenant",
+                "tenant_id": "tianpai",
+                "factory_id": None,
+                "source": "demo",
+                "retention_policy": "review_before_promotion",
+                "sensitivity_level": "internal",
+                "promotion_status": "reviewed" if status in {"closed", "resolved"} else "candidate",
+                "linked_decision_id": decision_id,
+                "linked_action_id": action_id,
+                "linked_follow_up_id": follow_up_id,
+                "summary": title,
+                "evidence_refs": evidence_refs,
+                "blocked_until": "human_review_and_result_evidence",
+            }
+        )
+
+    def _daily_brief_narrative(
+        self,
+        management_priority_brief: dict,
+        evidence_review_queue: dict,
+        first_screen_service_risk: dict,
+        decision_loop: dict,
+        permission_boundary: dict,
+    ) -> dict:
+        priorities = management_priority_brief.get("top_priorities", [])[:3]
+        review_cards = (evidence_review_queue.get("review_queue") or [])[:4]
+        service_cards = (first_screen_service_risk.get("service_risk_cards") or [])[:2]
+        top_three = [
+            {
+                "rank": item.get("rank", index),
+                "title": item.get("title_zh") or item.get("title") or item.get("priority_id"),
+                "theme": item.get("management_theme", ""),
+                "owner": item.get("owner_role", ""),
+                "action": item.get("recommended_action_zh") or item.get("recommended_action") or "",
+                "evidence_refs": item.get("evidence_refs", [])[:4],
+            }
+            for index, item in enumerate(priorities, start=1)
+        ]
+        do_not_conclude = [
+            {
+                "object": card.get("object_id") or card.get("produce_order_code"),
+                "reason": card.get("cannot_conclude_reason") or card.get("why_not_delivery_risk"),
+                "owner": card.get("suggested_confirmation_owner"),
+                "action": card.get("suggested_confirmation_action"),
+                "evidence_refs": card.get("evidence_refs", [])[:4],
+            }
+            for card in review_cards
+        ]
+        owners = []
+        for item in top_three:
+            if item["owner"]:
+                owners.append({"owner": item["owner"], "confirm": item["action"], "source": "hard_risk"})
+        for item in do_not_conclude[:3]:
+            owners.append({"owner": item.get("owner", ""), "confirm": item.get("action", ""), "source": "evidence_review"})
+        for card in service_cards:
+            owners.append(
+                {
+                    "owner": card.get("suggested_owner", ""),
+                    "confirm": card.get("recommended_action_zh") or card.get("recommended_action", ""),
+                    "source": "service_risk",
+                }
+            )
+        impact_lines = [
+            "Delivery: handle hard-risk orders and scheduling gaps first.",
+            "Quality / equipment: treat Service and machine anomalies as confirmation candidates until owner review.",
+            "Cost: data conflicts, repeated downtime, replenishment, and air-freight risk may amplify cost, but real cost tables are not connected yet.",
+        ]
+        evidence_boundary = [
+            "Athena currently uses local APS/ERP export evidence, mock IOT/Service evidence, and local follow-up metadata.",
+            "Evidence review candidates are not confirmed risks until planning, APS owner, or reporting owner confirms them.",
+            "Athena does not write APS/ERP/IOT, does not change scheduling, does not dispatch, and does not control machines.",
+        ]
+        text_lines = [
+            "Daily brief: review the top three priorities first, then handle evidence review and Service confirmation.",
+            *[f"{item['rank']}. {item['title']}; owner: {item['owner'] or 'pending owner'}." for item in top_three],
+            f"Do not conclude yet: {len(review_cards)} evidence review candidates need order status, unscheduled quantity, and reporting-scope confirmation.",
+            f"Service/equipment: {len(service_cards)} candidates need maintenance or Service owner confirmation before claiming delivery impact.",
+            "Evidence boundary: Athena only performs read-only verification and recommendation; final action still requires owner confirmation.",
+        ]
+        return {
+            "schema_id": "athena.production_daily_brief_narrative.v1",
+            "version": PRODUCTION_VERSION,
+            "title": "Daily Brief Narrative",
+            "title_zh": "浠婃棩鎬荤粡鐞嗘棭浼氭憳瑕?",
+            "read_time": "3_minutes",
+            "read_only": True,
+            "raw_json_visible_to_user": False,
+            "internal_schema_visible_to_user": False,
+            "copy_supported": True,
+            "summary_zh": "\n".join(text_lines),
+            "top_three_priorities": top_three,
+            "do_not_conclude_yet": do_not_conclude,
+            "confirmation_owners": owners[:8],
+            "impact_focus": impact_lines,
+            "evidence_boundary": evidence_boundary,
+            "follow_up_summary": {
+                "source_card_types": sorted({item.get("source_card_type", "") for item in decision_loop.get("follow_up_items", []) if item.get("source_card_type")}),
+                "follow_up_count": len(decision_loop.get("follow_up_items", [])),
+                "metadata_only": True,
+            },
+            "permission_boundary": {
+                "read_only": True,
+                "blocked_actions": permission_boundary.get("blocked_actions", []),
+            },
+        }
+
+    def _internal_demo_readiness_mode(
+        self,
+        management_priority_brief: dict,
+        first_screen_service_risk: dict,
+        mvp_success_check: dict,
+        permission_boundary: dict,
+        data_readiness: dict,
+    ) -> dict:
+        priority_count = len(management_priority_brief.get("top_priorities", []))
+        service_count = first_screen_service_risk.get("service_candidate_count", 0)
+        success_ready = bool(mvp_success_check.get("within_three_minutes_ready"))
+        can_demo = priority_count == 3 and success_ready
+        return {
+            "schema_id": "athena.internal_demo_readiness_mode.v1",
+            "version": PRODUCTION_VERSION,
+            "mode_id": f"INTERNAL-DEMO-{PRODUCTION_VERSION}",
+            "status": "ready_for_internal_demo" if can_demo else "needs_work_before_internal_demo",
+            "audience": "Santoni internal team and selected customer preview",
+            "audience_zh": "Santoni 鍐呴儴鍥㈤槦鍜屽鎴烽瑙?",
+            "demo_positioning": "General Manager 3-minute production decision workflow",
+            "demo_positioning_zh": "鎬荤粡鐞嗕笁鍒嗛挓鐢熶骇鍐崇瓥宸ヤ綔娴?",
+            "can_demo": [
+                "Select General Manager on the user page and see today's top three production priorities.",
+                "Click a risk card to ask Athena for evidence-based root-cause drilldown.",
+                "Generate local follow-up candidates without writing APS, ERP, IOT, or Service systems.",
+                "Show Service risk as a confirmation candidate, not an automatic dispatch.",
+                "Explain data gaps and evidence level before claiming conclusions.",
+            ],
+            "cannot_demo_yet": [
+                "Live ERP/APS/IOT database integration.",
+                "Automatic schedule change, machine control, .co/.cx upload, or service dispatch.",
+                "Customer-verified general-manager VOC coverage.",
+                "Full downstream garment quality and warehouse flow based on real records.",
+            ],
+            "demo_script": [
+                {
+                    "step": 1,
+                    "title": "Choose General Manager",
+                    "expected_visible_result": "Athena shows the top-three priorities and read-only boundary.",
+                },
+                {
+                    "step": 2,
+                    "title": "Open evidence detail",
+                    "expected_visible_result": "Each card explains evidence refs, field sources, and data gaps.",
+                },
+                {
+                    "step": 3,
+                    "title": "Drill down with Santoni Athena",
+                    "expected_visible_result": "The original chat keeps the conversation and returns root-cause analysis.",
+                },
+                {
+                    "step": 4,
+                    "title": "Create local follow-up",
+                    "expected_visible_result": "A local metadata-only follow-up appears and can be reviewed.",
+                },
+            ],
+            "demo_kpis": {
+                "top_priority_count": priority_count,
+                "service_risk_candidate_count": service_count,
+                "success_readiness_score": mvp_success_check.get("readiness_score", 0),
+                "data_readiness_status": data_readiness.get("status", "unknown"),
+            },
+            "visible_pages": ["/", "/production.html", "/developer.html", "/docs.html", "/changelog.html"],
+            "evidence_level": mvp_success_check.get("current_evidence_level", "Level 1: mock / demo evidence"),
+            "blocked_actions": permission_boundary.get("blocked_actions", []),
+            "read_only": True,
+        }
+
+    def _permission_boundary(self) -> dict:
+        return {
+            "schema_id": "athena.production_permission_boundary.v1",
+            "version": PRODUCTION_VERSION,
+            "final_confirmation_owner": "General Manager",
+            "final_confirmation_owner_zh": "鎬荤粡鐞?",
+            "decision_authority": (
+                "Athena supports fact collection, risk explanation, owner suggestion, "
+                "local follow-up reminders, and evidence review. It does not replace "
+                "the general manager's final decision authority."
+            ),
+            "decision_authority_zh": (
+                "Athena 璐熻矗鏀堕泦浜嬪疄銆佽В閲婇闄┿€佸缓璁礋璐ｄ汉銆佺敓鎴愭湰鍦拌窡杩涘拰澶嶆牳璇佹嵁锛?"
+                "浣嗕笉鏇夸唬鎬荤粡鐞嗙殑鏈€缁堢‘璁ゆ潈銆?"
+            ),
+            "allowed_actions": [
+                "show_risks",
+                "explain_reasons_and_evidence",
+                "suggest_confirmation_owner",
+                "suggest_confirmation_action",
+                "generate_local_follow_up_items",
+                "record_metadata_only_review_state",
+            ],
+            "allowed_actions_zh": [
+                "灞曠ず椋庨櫓",
+                "瑙ｉ噴鍘熷洜鍜岃瘉鎹?",
+                "寤鸿纭璐熻矗浜?",
+                "寤鸿纭鍔ㄤ綔",
+                "鐢熸垚鏈湴寰呭姙",
+                "璁板綍浠呭厓鏁版嵁鐨勫鏍哥姸鎬?",
+            ],
+            "blocked_actions": [
+                "replace_erp_aps_iot",
+                "modify_schedule_automatically",
+                "dispatch_service_automatically",
+                "upload_co_file",
+                "upload_cx_file",
+                "control_machine",
+                "evaluate_employee_performance_directly",
+                "claim_certain_conclusion_when_evidence_is_insufficient",
+                "replace_general_manager_decision",
+            ],
+            "blocked_actions_zh": [
+                "鏇夸唬 ERP / APS / IOT 绯荤粺",
+                "鑷姩淇敼鎺掔▼",
+                "鑷姩娲惧彂 Service 宸ュ崟",
+                "涓婁紶 .co 鏂囦欢",
+                "涓婁紶 .cx 鏂囦欢",
+                "鎺у埗鏈哄彴",
+                "鐩存帴璇勪环鍛樺伐缁╂晥",
+                "璇佹嵁涓嶈冻鏃剁粰鍑虹‘瀹氱粨璁?",
+                "鏇夸唬鎬荤粡鐞嗗喅绛?",
+            ],
+            "evidence_policy": {
+                "insufficient_evidence_behavior": "state_missing_data_and_next_needed_evidence",
+                "confidence_policy": "do_not_force_root_cause_when_data_is_missing",
+                "employee_policy": (
+                    "Review labor effective hours as process evidence, not as individual employee performance scoring."
+                ),
+            },
+            "evidence_policy_zh": {
+                "insufficient_evidence_behavior": "璇存槑缂哄け鏁版嵁鍜屼笅涓€姝ラ渶瑕佽ˉ鍏呯殑璇佹嵁",
+                "confidence_policy": "鏁版嵁缂哄け鏃朵笉寮鸿缁欏嚭鏍瑰洜缁撹",
+                "employee_policy": "鏈夋晥宸ユ椂鍙綔涓烘祦绋嬭瘉鎹紝涓嶇洿鎺ヤ綔涓轰釜浜虹哗鏁堣瘎鍒?",
+            },
+            "ui_note": {
+                "en": "Athena can recommend what to check and who should confirm it; the general manager remains the final decision owner.",
+                "zh": "Athena 鍙互寤鸿鏌ヤ粈涔堛€佺敱璋佺‘璁わ紱鏈€缁堝喅绛栦粛鐢辨€荤粡鐞嗙‘璁ゃ€?",
+            },
+        }
+
+    def _mvp_demo_story(
+        self,
+        management_priority_brief: dict,
+        decision_loop: dict,
+        service_escalations: list[dict],
+        permission_boundary: dict,
+    ) -> dict:
+        priorities = management_priority_brief.get("top_priorities", [])
+        priority_by_theme = {item.get("management_theme"): item for item in priorities}
+        delivery = priority_by_theme.get("delivery") or (priorities[0] if priorities else {})
+        quality = priority_by_theme.get("quality") or {}
+        labor = priority_by_theme.get("labor") or {}
+        service = service_escalations[0] if service_escalations else {}
+        follow_ups = decision_loop.get("follow_up_items", [])
+        delivery_objects = delivery.get("affected_objects", {})
+        service_order = service.get("order_id") or (delivery_objects.get("orders") or [""])[0]
+
+        story_steps = [
+            {
+                "step_id": "story_step_1_open",
+                "title": "Open Athena and read the management summary",
+                "title_zh": "鎵撳紑 Athena锛屽厛鐪嬬鐞嗘憳瑕?",
+                "object_refs": [management_priority_brief.get("brief_id", "")],
+                "proof": "daily_brief.summary",
+                "proof_zh": "daily_brief.summary_zh",
+                "expected_manager_understanding": "Know today's delivery, quality, labor, and data-boundary situation before drilling down.",
+                "expected_manager_understanding_zh": "鍏堢煡閬撲粖澶╀氦浠樸€佽川閲忋€佷汉宸ュ拰鏁版嵁杈圭晫鐨勫ぇ鑷存儏鍐碉紝鍐嶈繘鍏ヤ笅閽汇€?",
+            },
+            {
+                "step_id": "story_step_2_delivery",
+                "title": "Start from the delivery-risk order",
+                "title_zh": "浠庝氦浠橀闄╄鍗曞紑濮?",
+                "object_refs": [delivery.get("priority_id", ""), service_order],
+                "proof": delivery.get("evidence_refs", []),
+                "proof_zh": delivery.get("evidence_refs", []),
+                "expected_manager_understanding": delivery.get("conclusion", ""),
+                "expected_manager_understanding_zh": delivery.get("conclusion_zh", ""),
+            },
+            {
+                "step_id": "story_step_3_root_cause",
+                "title": "Connect delivery risk to quality, labor, and service signals",
+                "title_zh": "鎶婁氦浠橀闄╄繛鎺ュ埌璐ㄩ噺銆佷汉宸ュ拰鏈嶅姟淇″彿",
+                "object_refs": [
+                    quality.get("priority_id", ""),
+                    labor.get("priority_id", ""),
+                    service.get("machine_id", ""),
+                ],
+                "proof": list(dict.fromkeys(
+                    quality.get("evidence_refs", [])
+                    + labor.get("evidence_refs", [])
+                    + ([service.get("evidence_ref")] if service.get("evidence_ref") else [])
+                )),
+                "proof_zh": list(dict.fromkeys(
+                    quality.get("evidence_refs", [])
+                    + labor.get("evidence_refs", [])
+                    + ([service.get("evidence_ref")] if service.get("evidence_ref") else [])
+                )),
+                "expected_manager_understanding": (
+                    "The order risk is not a single KPI issue; it may be connected to replenishment quality, "
+                    "low effective labor hours, and a machine/service review candidate."
+                ),
+                "expected_manager_understanding_zh": (
+                    "杩欎釜璁㈠崟椋庨櫓涓嶆槸鍗曚釜 KPI 闂锛岃€屾槸鍙兘鍚屾椂鍏宠仈琛ュ崟璐ㄩ噺銆佷汉宸ユ湁鏁堝伐鏃跺亸浣庯紝浠ュ強鏈哄彴/鏈嶅姟澶嶆牳鍊欓€夈€?"
+                ),
+            },
+            {
+                "step_id": "story_step_4_follow_up",
+                "title": "Turn the story into local follow-up items",
+                "title_zh": "鎶婃晠浜嬬嚎杞垚鏈湴璺熻繘浜嬮」",
+                "object_refs": [item.get("follow_up_id", "") for item in follow_ups],
+                "proof": [item.get("linked_risk_card_id", "") for item in follow_ups],
+                "proof_zh": [item.get("linked_risk_card_id", "") for item in follow_ups],
+                "expected_manager_understanding": "Every suggested action has an owner, evidence request, closure gate, and linked risk card.",
+                "expected_manager_understanding_zh": "姣忔潯寤鸿鍔ㄤ綔閮芥湁璐熻矗浜恒€佽瘉鎹姹傘€佸叧闂棬妲涳紝骞跺叧鑱斿洖椋庨櫓鍗°€?",
+            },
+            {
+                "step_id": "story_step_5_confirm",
+                "title": "Keep final confirmation with the general manager",
+                "title_zh": "鏈€缁堢‘璁や粛鐢辨€荤粡鐞嗗畬鎴?",
+                "object_refs": [permission_boundary.get("schema_id", "")],
+                "proof": permission_boundary.get("blocked_actions", []),
+                "proof_zh": permission_boundary.get("blocked_actions_zh", []),
+                "expected_manager_understanding": permission_boundary.get("ui_note", {}).get("en", ""),
+                "expected_manager_understanding_zh": permission_boundary.get("ui_note", {}).get("zh", ""),
+            },
+        ]
+
+        return {
+            "schema_id": "athena.production_mvp_demo_story.v1",
+            "version": PRODUCTION_VERSION,
+            "story_id": f"MVP-DEMO-STORY-{PRODUCTION_VERSION}-ORDER-RISK",
+            "title": "Order delivery risk connected to quality, labor, and service signals",
+            "title_zh": "璁㈠崟浜や粯椋庨櫓杩炴帴璐ㄩ噺銆佷汉宸ュ拰鏈嶅姟淇″彿",
+            "audience": "General Manager / customer management demo",
+            "audience_zh": "鎬荤粡鐞?/ 瀹㈡埛绠＄悊灞傛紨绀?",
+            "positioning": "A three-minute story path for explaining Athena as a digital general manager, not as a chatbot.",
+            "positioning_zh": "鐢ㄤ簬涓夊垎閽熻鏄?Athena 鏄暟瀛楁€荤粡鐞嗭紝鑰屼笉鏄亰澶╂満鍣ㄤ汉鐨勬晠浜嬬嚎銆?",
+            "source_prd_section": "16. MVP Demo Story",
+            "initial_story": (
+                "An order's delivery risk increases. Athena detects that the risk may be connected to quality "
+                "replenishment, low labor effective hours, and service-related machine stoppage risk."
+            ),
+            "initial_story_zh": (
+                "鏌愪釜璁㈠崟鐨勪氦浠橀闄╁崌楂樸€侫thena 鍙戠幇杩欎釜椋庨櫓鍙兘涓庤川閲忚ˉ鍗曘€佷汉宸ユ湁鏁堝伐鏃跺亸浣庛€?"
+                "浠ュ強 Service 鐩稿叧鐨勬満鍙板仠鏈洪闄╂湁鍏炽€?"
+            ),
+            "story_steps": story_steps,
+            "success_criteria": [
+                "top_three_priorities_visible",
+                "why_they_matter_visible",
+                "evidence_refs_visible",
+                "next_owner_confirmation_visible",
+                "data_gaps_visible",
+                "final_confirmation_boundary_visible",
+            ],
+            "success_criteria_zh": [
+                "鑳界湅鍒颁粖澶╁墠涓変欢浜?",
+                "鑳界湅鍒颁负浠€涔堥噸瑕?",
+                "鑳界湅鍒拌瘉鎹紩鐢?",
+                "鑳界湅鍒颁笅涓€姝ョ敱璋佺‘璁?",
+                "鑳界湅鍒版暟鎹己鍙?",
+                "鑳界湅鍒版渶缁堢‘璁よ竟鐣?",
+            ],
+            "read_only": True,
+            "data_boundary": "Local mock story assembled from management_priority_brief, decision_loop, service_escalations, and permission_boundary.",
+            "data_boundary_zh": "鏈湴 mock 鏁呬簨绾匡紝鐢?management_priority_brief銆乨ecision_loop銆乻ervice_escalations 鍜?permission_boundary 缁勮銆?",
+        }
+
+    def _stable_demo_story_pack(
+        self,
+        management_priority_brief: dict,
+        first_screen_service_risk: dict,
+        actual_data_snapshot: dict,
+        material_risk: dict,
+        data_readiness: dict,
+        decision_loop: dict,
+    ) -> dict:
+        priorities = management_priority_brief.get("top_priorities", [])
+        priority_by_theme = {item.get("management_theme"): item for item in priorities}
+        delivery = priority_by_theme.get("delivery") or (priorities[0] if priorities else {})
+        equipment = priority_by_theme.get("equipment") or (priorities[1] if len(priorities) > 1 else {})
+        service_cards = first_screen_service_risk.get("service_risk_cards", [])
+        service = service_cards[0] if service_cards else {}
+        actual_sources = actual_data_snapshot.get("tables", [])
+        actual_source_names = [
+            item.get("table_name") or item.get("object_name") or item.get("name")
+            for item in actual_sources
+            if item.get("table_name") or item.get("object_name") or item.get("name")
+        ]
+
+        def story_from_priority(
+            story_id: str,
+            title: str,
+            title_zh: str,
+            story_type: str,
+            priority: dict,
+            manager_question: str,
+            demo_badge: str,
+            demo_badge_zh: str,
+        ) -> dict:
+            evidence_mode = "actual_export" if priority.get("actual_evidence_chains") else "mock_or_partial"
+            return {
+                "story_id": story_id,
+                "story_type": story_type,
+                "title": title,
+                "title_zh": title_zh,
+                "demo_badge": demo_badge,
+                "demo_badge_zh": demo_badge_zh,
+                "manager_question": manager_question,
+                "chatbi_question": priority.get("drilldown_question") or manager_question,
+                "primary_objects": priority.get("affected_objects", {}),
+                "what_athena_shows": [
+                    priority.get("title_zh") or priority.get("title") or title,
+                    priority.get("conclusion_zh") or priority.get("conclusion") or "",
+                    priority.get("recommended_action_zh") or priority.get("recommended_action") or "",
+                ],
+                "evidence_mode": evidence_mode,
+                "real_data_sources": priority.get("source_objects", []) or actual_source_names,
+                "field_sources": priority.get("field_sources", []),
+                "evidence_refs": priority.get("evidence_refs", []),
+                "actual_evidence_chains": priority.get("actual_evidence_chains", []),
+                "mock_supplements": [],
+                "data_gaps": priority.get("data_gaps", []),
+                "suggested_owner": priority.get("owner_role", ""),
+                "internal_demo_ready": bool(priority.get("internal_demo_ready")),
+                "read_only": True,
+                "blocked_actions": [
+                    "no_aps_writeback",
+                    "no_erp_writeback",
+                    "no_iot_writeback",
+                    "no_machine_control",
+                    "no_auto_dispatch",
+                ],
+            }
+
+        stories = [
+            story_from_priority(
+                "STABLE-DEMO-001-REAL-DELIVERY",
+                "Which order should the General Manager watch first?",
+                "鎬荤粡鐞嗕粖澶╁厛鐩摢涓鍗曪紵",
+                "real_data_main_line",
+                delivery,
+                "浠婂ぉ鍏堢洴鍝釜璁㈠崟锛熶负浠€涔堬紵",
+                "Actual APS/ERP export",
+                "鐪熷疄 APS/ERP 瀵煎嚭",
+            ),
+            story_from_priority(
+                "STABLE-DEMO-002-REAL-MACHINE-FIT",
+                "Is any style scheduled onto a risky machine specification?",
+                "鏄惁鏈夋寮忚鎺掑埌瀛樺湪瑙勬牸椋庨櫓鐨勬満鍙帮紵",
+                "real_data_main_line",
+                equipment,
+                "杩欐壒璁㈠崟鏄惁鏈夋満鍙?娆惧紡瑙勬牸涓嶅尮閰嶉闄╋紵",
+                "Actual APS/ERP export",
+                "鐪熷疄 APS/ERP 瀵煎嚭",
+            ),
+        ]
+
+        stories.append(
+            {
+                "story_id": "STABLE-DEMO-003-HYBRID-SERVICE-IMPACT",
+                "story_type": "hybrid_real_order_mock_iot_service",
+                "title": "If a machine keeps stopping, which order may be affected?",
+                "title_zh": "杩欏彴鏈哄鏋滅户缁仠鏈猴紝浼氬奖鍝嶅摢涓鍗曪紵",
+                "demo_badge": "Real schedule context + mock IOT/Service signal",
+                "demo_badge_zh": "鐪熷疄鎺掍骇涓婁笅鏂?+ mock IOT/Service 淇″彿",
+                "manager_question": "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
+                "chatbi_question": service.get("drilldown_question") or "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
+                "primary_objects": service.get("affected_objects", {}),
+                "what_athena_shows": [
+                    service.get("title_zh") or service.get("title") or "",
+                    service.get("why_it_matters_zh") or service.get("why_it_matters") or "",
+                    service.get("recommended_action_zh") or service.get("recommended_action") or "",
+                ],
+                "evidence_mode": "hybrid",
+                "real_data_sources": [
+                    "management_priority_brief.actual APS/ERP order context",
+                    "Planned_Task / Produce_Order evidence when the affected order is present in export",
+                ],
+                "field_sources": service.get("field_sources", []),
+                "evidence_refs": service.get("evidence_refs", []),
+                "actual_evidence_chains": delivery.get("actual_evidence_chains", [])[:1],
+                "mock_supplements": [
+                    "IOT machine state / alarm signal is currently mock_contract",
+                    "Service request candidate is local metadata only",
+                ],
+                "data_gaps": service.get("data_gaps", []),
+                "suggested_owner": service.get("suggested_owner", "Service Manager / Maintenance Owner"),
+                "internal_demo_ready": bool(service.get("internal_demo_ready")),
+                "read_only": True,
+                "blocked_actions": service.get("blocked_actions", []) or [
+                    "dispatch_service_automatically",
+                    "create_real_service_ticket",
+                    "control_machine",
+                ],
+            }
+        )
+
+        return {
+            "schema_id": "athena.production_stable_demo_story_pack.v1",
+            "version": PRODUCTION_VERSION,
+            "pack_id": f"STABLE-DEMO-PACK-{PRODUCTION_VERSION}",
+            "title": "General Manager three-minute production decision demo",
+            "title_zh": "鎬荤粡鐞嗕笁鍒嗛挓鐢熶骇鍐崇瓥婕旂ず鍖?",
+            "positioning": "A repeatable demo pack that separates real evidence, mock supplements, and missing data before Athena gives recommendations.",
+            "positioning_zh": "涓€濂楀彲閲嶅婕旂ず鐨勬晠浜嬪寘锛氬厛鍖哄垎鐪熷疄璇佹嵁銆乵ock 琛ュ厖鍜岀己澶辨暟鎹紝鍐嶈 Athena 缁欏缓璁€?",
+            "demo_policy": {
+                "real_data_main_line": "Use Tianpai APS/ERP export evidence for delivery and machine/style-fit stories.",
+                "mock_supplement_rule": "Use mock IOT/Service only to show future workflow behavior, and label it clearly.",
+                "claim_boundary": "Do not claim live root cause, live IOT status, real dispatch, cost result, or downstream quality proof.",
+            },
+            "demo_policy_zh": {
+                "real_data_main_line": "浜や粯椋庨櫓鍜屾満鍙?娆惧紡瑙勬牸椋庨櫓浼樺厛浣跨敤澶╂淳 APS/ERP 瀵煎嚭璇佹嵁銆?",
+                "mock_supplement_rule": "IOT/Service mock 鍙敤浜庡睍绀烘湭鏉ュ伐浣滄祦琛屼负锛屽繀椤绘槑纭爣娉ㄣ€?",
+                "claim_boundary": "涓嶅０绉板疄鏃舵牴鍥犮€佸疄鏃?IOT 鐘舵€併€佺湡瀹炴淳宸ャ€佺湡瀹炴垚鏈垨涓嬫父璐ㄩ噺璇佹槑銆?",
+            },
+            "actual_data_available": {
+                "usable_for_demo": [
+                    "delivery risk from Produce_Order / Weaving_Part_Order / Planned_Task / Manual_Machine_Production",
+                    "machine/style fit from Style_Component and T_Machine_Info",
+                    "material signal from yarn inventory aggregate and material priority card",
+                ],
+                "usable_for_demo_zh": [
+                    "鍩轰簬 Produce_Order / Weaving_Part_Order / Planned_Task / Manual_Machine_Production 鐨勪氦浠橀闄?",
+                    "鍩轰簬 Style_Component 鍜?T_Machine_Info 鐨勬満鍙?娆惧紡瑙勬牸鍖归厤",
+                    "鍩轰簬绾辩嚎搴撳瓨姹囨€诲拰鐗╂枡椋庨櫓鍗＄殑鐗╂枡淇″彿",
+                ],
+                "source_tables": actual_source_names,
+                "evidence_level": "Level 2: external APS/ERP export evidence",
+            },
+            "mock_needed_for_demo": [
+                "live IOT alarm duration and OEE",
+                "real service ticket dispatch status",
+                "quality defect reason and replenishment closure",
+                "labor effective-hour history",
+                "purchase, rework, freight, and per-garment cost",
+            ],
+            "stories": stories,
+            "recommended_demo_sequence": [
+                "Open /production.html and start with the stable demo story pack.",
+                "Open Story 1 and send its question to Santoni Athena.",
+                "Show the verification process and evidence chain.",
+                "Open Story 3 to show which parts are mock supplements.",
+                "Create or review a local follow-up item without writing real systems.",
+            ],
+            "recommended_demo_sequence_zh": [
+                "鎵撳紑 /production.html锛屽厛鐪嬬ǔ瀹氭紨绀烘晠浜嬪寘銆?",
+                "鎵撳紑鏁呬簨 1锛屾妸闂鍙戦€佺粰 Santoni Athena銆?",
+                "灞曠ず鏌ヨ瘉杩囩▼鍜岃瘉鎹摼銆?",
+                "鎵撳紑鏁呬簨 3锛岃鏄庡摢浜涙槸 mock 琛ュ厖銆?",
+                "鍒涘缓鎴栨煡鐪嬫湰鍦?follow-up锛屼笉鍐欑湡瀹炵郴缁熴€?",
+            ],
+            "decision_loop_refs": [item.get("follow_up_id") for item in decision_loop.get("follow_up_items", [])],
+            "material_context": {
+                "material_priority_id": material_risk.get("priority_id") or material_risk.get("material_risk_id") or "",
+                "readiness_status": data_readiness.get("overall_status", ""),
+            },
+            "read_only": True,
+        }
+
+    def _mvp_success_check(
+        self,
+        management_priority_brief: dict,
+        decision_loop: dict,
+        mvp_demo_story: dict,
+        permission_boundary: dict,
+    ) -> dict:
+        priorities = management_priority_brief.get("top_priorities", [])
+        follow_ups = decision_loop.get("follow_up_items", [])
+        story_steps = mvp_demo_story.get("story_steps", [])
+        all_priorities_have_reasons = all(
+            item.get("reason") and item.get("risk_if_ignored") for item in priorities
+        )
+        all_priorities_have_evidence = all(
+            item.get("evidence_refs") and item.get("evidence_claims") for item in priorities
+        )
+        all_followups_have_owner = bool(follow_ups) and all(
+            item.get("owner_role") and item.get("linked_risk_card_id") for item in follow_ups
+        )
+        priority_data_gaps = [
+            gap
+            for item in priorities
+            for gap in item.get("data_gaps", [])
+            if gap
+        ]
+        brief_data_gaps = management_priority_brief.get("data_gaps", [])
+        summary_lines = management_priority_brief.get("daily_brief", {}).get("summary", [])
+
+        checks = [
+            {
+                "criterion_id": "success_top_three_things",
+                "prd_requirement": "The top three things to handle today",
+                "prd_requirement_zh": "浠婂ぉ鏈€搴旇澶勭悊鐨勫墠涓変欢浜?",
+                "status": "pass" if len(priorities) == 3 and 3 <= len(summary_lines) <= 5 else "needs_work",
+                "evidence_refs": [item.get("priority_id", "") for item in priorities],
+                "object_refs": [management_priority_brief.get("brief_id", "")],
+                "manager_visible_surface": "General Manager 3-Minute Brief",
+                "manager_visible_surface_zh": "鎬荤粡鐞嗕笁鍒嗛挓绠€鎶?",
+            },
+            {
+                "criterion_id": "success_why_they_matter",
+                "prd_requirement": "Why they matter",
+                "prd_requirement_zh": "涓轰粈涔堥噸瑕?",
+                "status": "pass" if all_priorities_have_reasons else "needs_work",
+                "evidence_refs": [item.get("priority_id", "") for item in priorities if item.get("risk_if_ignored")],
+                "object_refs": [item.get("priority_id", "") for item in priorities],
+                "manager_visible_surface": "Risk cards and expanded details",
+                "manager_visible_surface_zh": "椋庨櫓鍗′笌灞曞紑璇︽儏",
+            },
+            {
+                "criterion_id": "success_evidence_support",
+                "prd_requirement": "Which evidence supports them",
+                "prd_requirement_zh": "鍝簺璇佹嵁鏀寔杩欎簺鍒ゆ柇",
+                "status": "pass" if all_priorities_have_evidence else "needs_work",
+                "evidence_refs": list(dict.fromkeys(
+                    ref
+                    for item in priorities
+                    for ref in item.get("evidence_refs", [])
+                    if ref
+                )),
+                "object_refs": [item.get("priority_id", "") for item in priorities],
+                "manager_visible_surface": "Evidence chips and evidence detail lists",
+                "manager_visible_surface_zh": "璇佹嵁鏍囩涓庤瘉鎹鎯呭垪琛?",
+            },
+            {
+                "criterion_id": "success_next_owner_confirmation",
+                "prd_requirement": "Who should confirm next",
+                "prd_requirement_zh": "涓嬩竴姝ュ簲璇ョ敱璋佺‘璁?",
+                "status": "pass" if all_followups_have_owner else "needs_work",
+                "evidence_refs": [item.get("linked_risk_card_id", "") for item in follow_ups],
+                "object_refs": [item.get("follow_up_id", "") for item in follow_ups],
+                "manager_visible_surface": "Decision Loop / local follow-up items",
+                "manager_visible_surface_zh": "鍐崇瓥闂幆 / 鏈湴璺熻繘浜嬮」",
+            },
+            {
+                "criterion_id": "success_missing_data_visible",
+                "prd_requirement": "Which data is still missing",
+                "prd_requirement_zh": "浠嶇劧缂哄皯鍝簺鏁版嵁",
+                "status": "pass" if brief_data_gaps and priority_data_gaps else "needs_work",
+                "evidence_refs": [item.get("gap_id", "") for item in brief_data_gaps],
+                "object_refs": [item.get("priority_id", "") for item in priorities if item.get("data_gaps")],
+                "manager_visible_surface": "Data gaps in risk-card details and data-readiness section",
+                "manager_visible_surface_zh": "椋庨櫓鍗¤鎯呬笌鏁版嵁鍑嗗搴﹂噷鐨勬暟鎹己鍙?",
+            },
+        ]
+        pass_count = len([item for item in checks if item["status"] == "pass"])
+        check_count = len(checks)
+        readiness_score = pass_count / check_count if check_count else 0
+        all_core_pass = pass_count == check_count
+
+        return {
+            "schema_id": "athena.production_mvp_success_check.v1",
+            "version": PRODUCTION_VERSION,
+            "check_id": f"MVP-SUCCESS-CHECK-{PRODUCTION_VERSION}-CURRENT",
+            "source_prd_section": "17. Success Criteria",
+            "within_three_minutes_ready": all_core_pass,
+            "readiness_status": "demo_ready_with_mock_evidence" if all_core_pass else "needs_more_evidence",
+            "readiness_score": round(readiness_score, 2),
+            "current_evidence_level": "Level 1: mock / demo evidence",
+            "criteria_checks": checks,
+            "criteria_summary": {
+                "pass_count": pass_count,
+                "check_count": check_count,
+                "needs_work_count": check_count - pass_count,
+                "story_step_count": len(story_steps),
+                "follow_up_count": len(follow_ups),
+            },
+            "manager_readout": (
+                "A general manager can review the top three priorities, reasons, evidence, next confirmation owners, "
+                "and data gaps in one Production Console flow. Current proof is still Level 1 mock evidence."
+            ),
+            "manager_readout_zh": (
+                "鎬荤粡鐞嗗彲浠ュ湪涓€涓?Production Console 娴佺▼涓湅鍒板墠涓変欢浜嬨€佸師鍥犮€佽瘉鎹€佷笅涓€姝ョ‘璁よ礋璐ｄ汉鍜屾暟鎹己鍙ｃ€?"
+                "褰撳墠璇佹槑浠嶅睘浜?Level 1 mock 璇佹嵁銆?"
+            ),
+            "remaining_data_boundary": [
+                "Real ERP/APS/IOT joins are not connected.",
+                "Historical labor baseline is not connected.",
+                "Quality and downstream process records are still mock or planned.",
+                "General manager VOC verification is still pending.",
+            ],
+            "remaining_data_boundary_zh": [
+                "鐪熷疄 ERP/APS/IOT 鍏宠仈灏氭湭鎺ュ叆銆?",
+                "鍘嗗彶浜哄伐鏈夋晥宸ユ椂鍩虹嚎灏氭湭鎺ュ叆銆?",
+                "璐ㄩ噺鍜屽悗閬撳伐搴忚褰曚粛鏄?mock 鎴栬鍒掍腑銆?",
+                "鎬荤粡鐞?VOC 楠岃瘉浠嶅緟瀹屾垚銆?",
+            ],
+            "blocked_actions": permission_boundary.get("blocked_actions", []),
+            "read_only": True,
+        }
+
+    def _demo_evolution_pack(
+        self,
+        management_priority_brief: dict,
+        stable_demo_story_pack: dict,
+        first_screen_service_risk: dict,
+        decision_loop: dict,
+        actual_data_snapshot: dict,
+        material_risk: dict,
+        data_readiness: dict,
+        permission_boundary: dict,
+    ) -> dict:
+        priorities = management_priority_brief.get("top_priorities", [])
+        stories = stable_demo_story_pack.get("stories", [])
+        service_cards = first_screen_service_risk.get("service_risk_cards", [])
+        follow_ups = decision_loop.get("follow_up_items", [])
+        question_set = [
+            {
+                "question_id": "GM-REG-001",
+                "question_zh": "浠婂ぉ鍏堢湅鍝笁浠朵簨锛?",
+                "question": "What are today's top three production priorities?",
+                "coverage": "today_top_three",
+                "expected_contract": ["conclusion", "evidence", "recommendation", "data_gap", "read_only_boundary"],
+            },
+            {
+                "question_id": "GM-REG-002",
+                "question_zh": "鍝釜璁㈠崟鏈€鍙兘褰卞搷浜や粯锛熻瘉鎹槸浠€涔堬紵",
+                "question": "Which order has the strongest delivery risk and what evidence supports it?",
+                "coverage": "delivery_risk",
+                "expected_contract": ["affected_order", "actual_export_evidence", "suggested_confirmation_owner"],
+            },
+            {
+                "question_id": "GM-REG-003",
+                "question_zh": "鏈夋病鏈夋満鍙板拰娆惧紡瑙勬牸涓嶅尮閰嶇殑椋庨櫓锛?",
+                "question": "Is any style scheduled on a machine with specification-fit risk?",
+                "coverage": "machine_style_fit",
+                "expected_contract": ["machine", "style_or_part", "field_sources", "cannot_confirm_root_cause"],
+            },
+            {
+                "question_id": "GM-REG-004",
+                "question_zh": "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
+                "question": "If this machine keeps stopping, which order may be affected?",
+                "coverage": "service_risk",
+                "expected_contract": ["service_candidate", "mock_iot_boundary", "no_auto_dispatch"],
+            },
+            {
+                "question_id": "GM-REG-005",
+                "question_zh": "鐗╂枡鏁版嵁鐜板湪鑳芥敮鎸佷粈涔堝垽鏂紵杩樼己浠€涔堬紵",
+                "question": "What can material data support today and what is still missing?",
+                "coverage": "material_risk",
+                "expected_contract": ["material_signal", "inventory_boundary", "data_request"],
+            },
+            {
+                "question_id": "GM-REG-006",
+                "question_zh": "鐩墠鍝簺缁撹涓嶈兘璇存锛?",
+                "question": "Which conclusions cannot be claimed as final today?",
+                "coverage": "data_gap",
+                "expected_contract": ["cannot_claim", "missing_data", "human_confirmation"],
+            },
+        ]
+        evidence_modes = {
+            "actual_export": {
+                "manager_label": "Actual APS/ERP export evidence",
+                "description": "Read-only Tianpai APS/ERP export evidence used for delivery, scheduling, and machine/style checks.",
+                "allowed_claims": ["risk signal", "evidence chain", "suggested confirmation owner"],
+                "cannot_claim": ["live shop-floor status", "final root cause", "automatic rescheduling"],
+            },
+            "mock_contract": {
+                "manager_label": "Local mock contract",
+                "description": "Used to demonstrate future IOT, Service, quality, and labor workflow behavior.",
+                "allowed_claims": ["capability boundary", "candidate workflow"],
+                "cannot_claim": ["real IOT alarm", "real Service ticket", "real quality conclusion"],
+            },
+            "hybrid": {
+                "manager_label": "Actual export plus mock supplement",
+                "description": "Orders and schedules use export evidence; live equipment, Service, quality, or labor details may remain mock candidates.",
+                "allowed_claims": ["demo workflow", "explicit evidence boundary"],
+                "cannot_claim": ["fully live integration", "confirmed production action"],
+            },
+            "data_gap": {
+                "manager_label": "Data gap",
+                "description": "Required fields or joins are missing, so Athena can only ask for confirmation or more data.",
+                "allowed_claims": ["what is missing", "who should confirm"],
+                "cannot_claim": ["risk certainty", "cost certainty", "owner fault"],
+            },
+        }
+        data_requests = data_readiness.get("next_data_requests", [])
+        demo_ready_actual = [story for story in stories if story.get("evidence_mode") == "actual_export"]
+        demo_ready_hybrid = [story for story in stories if story.get("evidence_mode") == "hybrid"]
+        service_flow = [
+            {
+                "candidate_id": card.get("card_id") or card.get("candidate_id", ""),
+                "title": card.get("title", ""),
+                "suggested_owner": card.get("suggested_owner", "Maintenance / Service owner"),
+                "evidence_refs": card.get("evidence_refs", []),
+                "auto_dispatch": False,
+                "write_scope": "local_metadata_only",
+            }
+            for card in service_cards
+        ]
+        skill_process = [
+            {
+                "step": "collect_evidence",
+                "manager_label": "Athena checks order, schedule, machine, material, Service, and evidence-chain objects.",
+                "raw_debug_visible": False,
+            },
+            {
+                "step": "rank_priority",
+                "manager_label": "Athena ranks top priorities by delivery, quality, then cost impact.",
+                "raw_debug_visible": False,
+            },
+            {
+                "step": "create_follow_up_candidate",
+                "manager_label": "Athena can create local metadata-only follow-up candidates after manager review.",
+                "raw_debug_visible": False,
+            },
+        ]
+        memory_candidates = decision_loop.get("memory_event_candidates", [])
+        guided_steps = [
+            {
+                "step": 1,
+                "title": "Open General Manager mode",
+                "expected_manager_understanding": "Athena starts from the daily top-three priorities.",
+            },
+            {
+                "step": 2,
+                "title": "Review hard risks",
+                "expected_manager_understanding": "Hard-risk cards are action candidates with evidence and owners.",
+            },
+            {
+                "step": 3,
+                "title": "Review evidence candidates",
+                "expected_manager_understanding": "Evidence-review cards are data confirmation tasks, not confirmed risks.",
+            },
+            {
+                "step": 4,
+                "title": "Drill down with Athena",
+                "expected_manager_understanding": "Athena explains what it checked, what it found, and what remains uncertain.",
+            },
+            {
+                "step": 5,
+                "title": "Create local follow-up",
+                "expected_manager_understanding": "Follow-up stays local metadata only and does not write APS, ERP, IOT, or Service systems.",
+            },
+            {
+                "step": 6,
+                "title": "Use Daily Brief",
+                "expected_manager_understanding": "Daily Brief summarizes priorities, data gaps, owners, and the read-only boundary.",
+            },
+        ]
+        return {
+            "schema_id": "athena.production_internal_demo_candidate.v1",
+            "version": PRODUCTION_VERSION,
+            "candidate_id": f"INTERNAL-DEMO-CANDIDATE-{PRODUCTION_VERSION}",
+            "guided_demo_flow": {
+                "schema_id": "athena.production_guided_demo_flow.v1",
+                "version": PRODUCTION_VERSION,
+                "status": "ready_for_internal_demo",
+                "steps": guided_steps,
+                "demo_reset_policy": {
+                    "scope": "local_demo_state_only",
+                    "does_not_delete_actual_export": True,
+                    "does_not_write_external_systems": True,
+                },
+                "read_only": True,
+            },
+            "user_page_gm_demo_entry": {
+                "schema_id": "athena.user_page_gm_demo_entry.v1",
+                "version": PRODUCTION_VERSION,
+                "entry_label": "鎬荤粡鐞?",
+                "visible_sections": ["today_top_three", "stable_story_shortcuts", "service_risk", "local_follow_up", "original_chat_drilldown"],
+                "hidden_from_user_page": ["Internal Demo Mode", "raw payload", "debug trace", "development plan"],
+                "read_only": True,
+            },
+            "presenter_mode": {
+                "schema_id": "athena.production_presenter_mode.v1",
+                "version": PRODUCTION_VERSION,
+                "recommended_sequence": stable_demo_story_pack.get("recommended_demo_sequence", []),
+                "recommended_questions": question_set,
+                "expected_outputs": [
+                    "today_top_three_risk_cards",
+                    "evidence_boundary_readout",
+                    "manager_language_verification_process",
+                    "local_follow_up_candidate",
+                ],
+                "customer_page_debug_visible": False,
+            },
+            "evidence_boundary_layer": {
+                "schema_id": "athena.production_evidence_boundary_layer.v1",
+                "version": PRODUCTION_VERSION,
+                "modes": evidence_modes,
+                "story_mode_summary": [
+                    {
+                        "story_id": story.get("story_id"),
+                        "evidence_mode": story.get("evidence_mode"),
+                        "field_sources": story.get("field_sources", []),
+                        "cannot_claim": evidence_modes.get(story.get("evidence_mode"), evidence_modes["data_gap"])["cannot_claim"],
+                    }
+                    for story in stories
+                ],
+                "read_only": True,
+            },
+            "gm_question_regression_set": {
+                "schema_id": "athena.gm_question_regression_set.v1",
+                "version": PRODUCTION_VERSION,
+                "questions": question_set,
+                "minimum_answer_contract": ["conclusion", "evidence", "recommendation", "data_gap", "read_only_boundary"],
+                "run_mode": "local_test_harness",
+            },
+            "data_request_wizard": {
+                "schema_id": "athena.data_request_wizard.v1",
+                "version": PRODUCTION_VERSION,
+                "requests": data_requests,
+                "does_not_store_raw_sensitive_data": True,
+            },
+            "service_risk_confirmation_flow": {
+                "schema_id": "athena.service_risk_confirmation_flow.v1",
+                "version": PRODUCTION_VERSION,
+                "confirmation_cards": service_flow,
+                "auto_dispatch": False,
+                "create_real_ticket": False,
+                "control_machine": False,
+            },
+            "visible_athena_skill_process": {
+                "schema_id": "athena.visible_skill_process.v1",
+                "version": PRODUCTION_VERSION,
+                "manager_language_steps": skill_process,
+                "raw_debug_visible": False,
+                "raw_payload_visible": False,
+                "internal_schema_visible": False,
+            },
+            "hermes_training_memory_review": {
+                "schema_id": "athena.hermes_training_memory_review.v1",
+                "version": PRODUCTION_VERSION,
+                "candidate_count": len(memory_candidates),
+                "review_statuses": ["candidate", "reviewed", "approved"],
+                "memory_event_fields": [
+                    "scope",
+                    "tenant_id",
+                    "factory_id",
+                    "source",
+                    "retention_policy",
+                    "sensitivity_level",
+                    "promotion_status",
+                ],
+                "candidates": memory_candidates,
+                "live_hermes_write": False,
+            },
+            "internal_demo_candidate_report": {
+                "path": "docs/product/athena_daily_brief_narrative_v0.113.0.md",
+                "linked_from_docs": True,
+                "actual_export_story_count": len(demo_ready_actual),
+                "hybrid_story_count": len(demo_ready_hybrid),
+                "should_enter_v1": False,
+                "reason_not_v1": "Internal demo candidate is stronger, but live ERP/IOT/quality/labor/cost integration and customer validation are still missing.",
+            },
+            "actual_data_basis": {
+                "actual_export_status": actual_data_snapshot.get("actual_export_status", ""),
+                "source_tables": stable_demo_story_pack.get("actual_data_available", {}).get("source_tables", []),
+                "priority_count": management_priority_brief.get("data_source_policy", {}).get("actual_export_priority_count", 0),
+            },
+            "mock_or_hybrid_basis": {
+                "mock_needed_for_demo": stable_demo_story_pack.get("mock_needed_for_demo", []),
+                "service_candidate_count": len(service_cards),
+                "material_status": material_risk.get("risk_level") or material_risk.get("status", ""),
+                "data_readiness_status": data_readiness.get("overall_status", ""),
+            },
+            "read_only_boundary": {
+                "read_only": True,
+                "blocked_actions": permission_boundary.get("blocked_actions", []),
+            },
+        }
+
+    def _actual_data_snapshot(self, export_report: dict) -> dict:
+        standard_objects = export_report.get("standard_objects", {})
+        metrics = standard_objects.get("actual_snapshot_metrics", {})
+        mismatch = standard_objects.get("machine_style_spec_mismatch_candidates", {})
+        quality = export_report.get("data_quality_report", {})
+        return {
+            "schema_id": "athena.production_actual_data_snapshot.v1",
+            "version": PRODUCTION_VERSION,
+            "source_modes": ["mock_snapshot", "tianpai_aps_export"],
+            "current_data_source_label": "Mock / Tianpai APS Export",
+            "actual_export_status": export_report.get("adapter_status", "missing_external_csv"),
+            "read_only": True,
+            "raw_file_stored_in_repo": export_report.get("raw_file_stored_in_repo", False),
+            "kpis": {
+                "total_order_count": metrics.get("total_order_count", 0),
+                "near_due_order_count": metrics.get("near_due_order_count", 0),
+                "scheduled_weaving_part_order_count": metrics.get("scheduled_weaving_part_order_count", 0),
+                "unscheduled_weaving_part_order_count": metrics.get("unscheduled_weaving_part_order_count", 0),
+                "plan_completion_rate": metrics.get("plan_completion_rate", 0),
+                "manual_report_completion_rate": metrics.get("manual_report_completion_rate", 0),
+                "machine_plan_load_candidate_count": metrics.get("machine_plan_load_candidate_count", 0),
+                "machine_style_spec_mismatch_candidate_count": metrics.get("machine_style_spec_mismatch_candidate_count", 0),
+            },
+            "machine_plan_load_top": standard_objects.get("machine_plan_load", [])[:10],
+            "machine_style_spec_mismatch_candidates": {
+                "candidate_count_total": mismatch.get("candidate_count_total", 0),
+                "sample_limit": mismatch.get("sample_limit", 0),
+                "candidates": mismatch.get("candidates", [])[:20],
+            },
+            "join_quality": quality.get("join_quality", []),
+            "capability_boundary": export_report.get("capability_boundary", {}),
+            "blocked_actions": export_report.get("blocked_actions", []),
+        }
+
+    def _actual_management_priority_analyses(self, adapter: TianpaiApsErpExportAdapter) -> list[dict]:
+        questions = [
+            {
+                "question": "哪些订单有交付风险？",
+                "priority_id": "MGMT-PRIO-ACTUAL-DELIVERY-001",
+                "risk_theme": "delivery",
+                "theme_label": "交付",
+                "priority": "P0",
+                "score": 100,
+                "owner_role": "Planning Manager / Production Manager",
+                "decision_gate": "planning_owner_confirms_actual_delivery_risk",
+                "confirmation_needed_by": "today",
+                "action_id": "ACT-ACTUAL-DELIVERY-001",
+            },
+            {
+                "question": "哪些款式可能因为机台规格不匹配导致风险？",
+                "priority_id": "MGMT-PRIO-ACTUAL-EQUIPMENT-001",
+                "risk_theme": "equipment",
+                "theme_label": "设备",
+                "priority": "P1",
+                "score": 94,
+                "owner_role": "APS Engineer / Production Engineering",
+                "decision_gate": "engineering_confirms_machine_style_match",
+                "confirmation_needed_by": "current_shift_review",
+                "action_id": "ACT-ACTUAL-EQUIPMENT-001",
+            },
+            {
+                "question": "哪些部件单还没有排满？",
+                "priority_id": "MGMT-PRIO-ACTUAL-MATERIAL-001",
+                "risk_theme": "material",
+                "theme_label": "物料/部件",
+                "priority": "P1",
+                "score": 90,
+                "owner_role": "Planning Manager",
+                "decision_gate": "planner_confirms_unscheduled_part_order",
+                "confirmation_needed_by": "current_shift_review",
+                "action_id": "ACT-ACTUAL-MATERIAL-001",
+            },
+            {
+                "question": "哪些订单计划量和报工量差异最大？",
+                "priority_id": "MGMT-PRIO-ACTUAL-COST-001",
+                "risk_theme": "cost",
+                "theme_label": "成本/报工",
+                "priority": "P2",
+                "score": 84,
+                "owner_role": "Production Supervisor / Reporting Owner",
+                "decision_gate": "production_owner_confirms_quantity_report_gap",
+                "confirmation_needed_by": "next_shift_review",
+                "action_id": "ACT-ACTUAL-COST-001",
+            },
+            {
+                "question": "哪些机台负载最高？",
+                "priority_id": "MGMT-PRIO-ACTUAL-EQUIPMENT-LOAD-001",
+                "risk_theme": "equipment",
+                "theme_label": "设备",
+                "priority": "P2",
+                "score": 80,
+                "owner_role": "Planning Manager / Production Supervisor",
+                "decision_gate": "planner_confirms_machine_load_balance",
+                "confirmation_needed_by": "next_shift_review",
+                "action_id": "ACT-ACTUAL-EQUIPMENT-LOAD-001",
+            },
+        ]
+        analyses: list[dict] = []
+        for config in questions:
+            analysis = adapter.answer_management_question(config["question"])
+            if not analysis or not analysis.get("actual_data_mode") or not analysis.get("actual_evidence_chains"):
+                continue
+            enriched = dict(analysis)
+            enriched["priority_config"] = config
+            analyses.append(enriched)
+        return analyses
+
+    def _actual_management_priorities(self, analyses: list[dict]) -> list[dict]:
+        priorities: list[dict] = []
+        for analysis in analyses:
+            config = analysis.get("priority_config", {})
+            chains = analysis.get("actual_evidence_chains", [])
+            if not chains:
+                continue
+            chain = chains[0]
+            evidence_refs = self._unique_refs(chain.get("evidence_refs", []))
+            field_source = chain.get("field_source") or "Tianpai APS Export"
+            produce_order = chain.get("produce_order_code")
+            machine_code = chain.get("machine_code")
+            part_id = chain.get("weaving_part_order_id") or ", ".join(chain.get("weaving_part_order_ids", [])[:3])
+            title_subject = produce_order or machine_code or part_id or analysis.get("metric", "actual data")
+            risk_theme = config.get("risk_theme", "delivery")
+            action_id = config.get("action_id", f"ACT-{analysis.get('metric', 'ACTUAL').upper()}")
+            recommended_action = self._actual_priority_recommended_action(analysis.get("metric", ""), title_subject)
+            drilldown_question = self._actual_priority_drilldown_question(analysis.get("metric", ""), title_subject)
+            action_candidate = self._priority_action_candidate(
+                action_id,
+                config.get("owner_role", "Production Owner"),
+                recommended_action,
+                ["actual APS/ERP export row", "field source review", "owner confirmation"],
+            )
+            action_candidate.update(
+                {
+                    "write_scope": "local_metadata_only",
+                    "linked_evidence_chain": chain,
+                    "field_sources": [field_source],
+                    "drilldown_question": drilldown_question,
+                    "follow_up_contract": {
+                        "mode": "local_metadata_only",
+                        "writes_real_system": False,
+                        "blocked_systems": ["APS", "ERP", "IOT", "service_ticket", "machine_control"],
+                    },
+                }
+            )
+            priorities.append(
+                {
+                    "priority_id": config.get("priority_id", f"MGMT-PRIO-ACTUAL-{analysis.get('metric', 'UNKNOWN').upper()}"),
+                    "rank": 0,
+                    "priority": config.get("priority", "P1"),
+                    "score": config.get("score", 80),
+                    "management_theme": risk_theme,
+                    "risk_theme": risk_theme,
+                    "risk_theme_label": config.get("theme_label", risk_theme),
+                    "theme_label": config.get("theme_label", risk_theme),
+                    "title": self._actual_priority_title(analysis.get("metric", ""), title_subject),
+                    "title_zh": self._actual_priority_title_zh(analysis.get("metric", ""), title_subject),
+                    "management_question": config.get("question", ""),
+                    "conclusion": analysis.get("answer_summary", ""),
+                    "conclusion_zh": analysis.get("answer_summary", ""),
+                    "reason": self._actual_priority_reason(analysis, chain),
+                    "reason_zh": self._actual_priority_reason(analysis, chain),
+                    "risk_if_ignored": self._actual_priority_risk_if_ignored(analysis.get("metric", "")),
+                    "risk_if_ignored_zh": self._actual_priority_risk_if_ignored_zh(analysis.get("metric", "")),
+                    "recommended_action": recommended_action,
+                    "recommended_action_zh": recommended_action,
+                    "owner_role": config.get("owner_role", "Production Owner"),
+                    "confirmation_needed_by": config.get("confirmation_needed_by", "current_shift_review"),
+                    "decision_gate": config.get("decision_gate", "owner_confirms_actual_evidence"),
+                    "affected_objects": self._affected_objects_from_actual_chain(chain),
+                    "kpi_links": self._actual_priority_kpi_links(analysis.get("metric", "")),
+                    "evidence_refs": evidence_refs,
+                    "evidence_claims": self._actual_evidence_claims(evidence_refs, analysis, chain),
+                    "actual_evidence_chains": [chain],
+                    "field_sources": [field_source],
+                    "source_objects": analysis.get("source_objects", []),
+                    "data_source_mode": "actual_aps_erp_export_first",
+                    "evidence_level": "Level 2: external APS/ERP export evidence",
+                    "internal_demo_ready": True,
+                    "drilldown_question": drilldown_question,
+                    "data_gaps": analysis.get("data_gaps", []),
+                    "action_candidate": action_candidate,
+                }
+            )
+        return priorities
+
+    @staticmethod
+    def _actual_priority_title(metric: str, subject: str) -> str:
+        titles = {
+            "order_delay": f"Confirm delivery risk for order {subject}",
+            "machine_style_mismatch": f"Confirm machine/style match for {subject}",
+            "unscheduled_weaving_part_order": f"Confirm unscheduled weaving part order {subject}",
+            "quantity_report_gap": f"Confirm plan/report quantity gap for {subject}",
+            "machine_plan_load": f"Review high machine plan load on {subject}",
+        }
+        return titles.get(metric, f"Review actual-data risk for {subject}")
+
+    @staticmethod
+    def _actual_priority_title_zh(metric: str, subject: str) -> str:
+        titles = {
+            "order_delay": f"纭璁㈠崟 {subject} 鐨勪氦浠橀闄?",
+            "machine_style_mismatch": f"纭 {subject} 鐨勬満鍙?娆惧紡鍖归厤椋庨櫓",
+            "unscheduled_weaving_part_order": f"纭缁囬€犻儴浠跺崟 {subject} 鏈帓婊￠闄?",
+            "quantity_report_gap": f"纭 {subject} 鐨勮鍒?鎶ュ伐鏁伴噺宸紓",
+            "machine_plan_load": f"澶嶆牳 {subject} 鐨勬満鍙拌鍒掕礋杞?",
+        }
+        return titles.get(metric, f"澶嶆牳 {subject} 鐨勭湡瀹炴暟鎹闄?")
+
+    @staticmethod
+    def _actual_priority_recommended_action(metric: str, subject: str) -> str:
+        actions = {
+            "order_delay": f"Ask planning to confirm order {subject}, its unscheduled quantity, and whether recovery action is needed today.",
+            "machine_style_mismatch": f"Ask APS or engineering to confirm whether {subject} is a real machine/style mismatch or an allowed substitution.",
+            "unscheduled_weaving_part_order": f"Ask planning to confirm whether part order {subject} needs rescheduling or is intentionally left open.",
+            "quantity_report_gap": f"Ask the reporting owner to confirm whether {subject} is caused by split tasks, rework, or reporting timing.",
+            "machine_plan_load": f"Ask planning to confirm whether {subject} is intentional capacity concentration or a scheduling risk.",
+        }
+        return actions.get(metric, f"Ask the responsible owner to confirm the actual-data evidence for {subject}.")
+
+    @staticmethod
+    def _actual_priority_drilldown_question(metric: str, subject: str) -> str:
+        questions = {
+            "order_delay": f"涓轰粈涔堣鍗?{subject} 鏈変氦浠橀闄╋紵璇锋寜璁㈠崟銆侀儴浠跺崟銆佽鍒掍换鍔°€佹満鍙板拰瀛楁鏉ユ簮涓嬮捇銆?",
+            "machine_style_mismatch": f"涓轰粈涔?{subject} 鏈夋満鍙?娆惧紡瑙勬牸涓嶅尮閰嶉闄╋紵璇锋寜绛掑緞銆侀拡璺濄€佷换鍔″拰瀛楁鏉ユ簮涓嬮捇銆?",
+            "unscheduled_weaving_part_order": f"涓轰粈涔堢粐閫犻儴浠跺崟 {subject} 杩樻病鎺掓弧锛熻鎸夎鍗曘€侀儴浠跺崟銆佽鍒掗噺鍜屽瓧娈垫潵婧愪笅閽汇€?",
+            "quantity_report_gap": f"涓轰粈涔?{subject} 鐨勮鍒掗噺鍜屾姤宸ラ噺宸紓澶э紵璇锋寜璁㈠崟銆佷换鍔°€佹姤宸ュ拰瀛楁鏉ユ簮涓嬮捇銆?",
+            "machine_plan_load": f"涓轰粈涔堟満鍙?{subject} 璁″垝璐熻浇鏈€楂橈紵璇锋寜浠诲姟銆佽鍗曘€佽鍒掗噺鍜屽瓧娈垫潵婧愪笅閽汇€?",
+        }
+        return questions.get(metric, f"涓轰粈涔?{subject} 鏄綋鍓嶇湡瀹炴暟鎹闄╋紵璇锋寜璇佹嵁閾惧拰瀛楁鏉ユ簮涓嬮捇銆?")
+
+    @staticmethod
+    def _actual_priority_reason(analysis: dict, chain: dict) -> str:
+        refs = ", ".join(chain.get("evidence_refs", [])[:3])
+        return f"{analysis.get('answer_summary', '')} Field source: {chain.get('field_source', 'Tianpai APS Export')}. Evidence: {refs or 'actual export row'}."
+
+    @staticmethod
+    def _actual_priority_risk_if_ignored(metric: str) -> str:
+        risks = {
+            "order_delay": "If ignored, the order can become a same-day delivery recovery problem instead of a planned confirmation task.",
+            "machine_style_mismatch": "If ignored, the factory may lose time on setup, rework, or machine reassignment before the issue is noticed.",
+            "unscheduled_weaving_part_order": "If ignored, unplanned part-order gaps can silently consume buffer and push delivery recovery downstream.",
+            "quantity_report_gap": "If ignored, plan/report quantity gaps can hide rework, split-task reporting, or inaccurate progress visibility.",
+            "machine_plan_load": "If ignored, concentrated load can create bottlenecks even when total capacity looks sufficient.",
+        }
+        return risks.get(metric, "If ignored, the risk can recur without owner confirmation.")
+
+    @staticmethod
+    def _actual_priority_risk_if_ignored_zh(metric: str) -> str:
+        risks = {
+            "order_delay": "濡傛灉涓嶅鐞嗭紝璁㈠崟鍙兘浠庤鍒掔‘璁や簨椤瑰彉鎴愬綋澶╀氦浠樻仮澶嶉棶棰樸€?",
+            "machine_style_mismatch": "濡傛灉涓嶅鐞嗭紝鐜板満鍙兘鍦ㄨ皟鏈恒€佽繑宸ユ垨鎹㈡満鍙颁笂鎹熷け鏃堕棿锛岀洿鍒伴棶棰樿鍔ㄦ毚闇层€?",
+            "unscheduled_weaving_part_order": "濡傛灉涓嶅鐞嗭紝鏈帓婊￠儴浠跺崟浼氭倓鎮勬秷鑰椾氦浠?buffer锛屽苟鎶婃仮澶嶅帇鍔涙帹鍒板悗娈点€?",
+            "quantity_report_gap": "濡傛灉涓嶅鐞嗭紝璁″垝/鎶ュ伐宸紓鍙兘鎺╃洊杩斿伐銆佹媶鍒嗕换鍔℃垨杩涘害鍙鍖栦笉鍑嗐€?",
+            "machine_plan_load": "濡傛灉涓嶅鐞嗭紝鍗充娇鎬讳骇鑳界湅浼艰冻澶燂紝璐熻浇闆嗕腑涔熷彲鑳藉舰鎴愮摱棰堛€?",
+        }
+        return risks.get(metric, "濡傛灉涓嶅鐞嗭紝璇ラ闄╁彲鑳藉湪娌℃湁璐熻矗浜虹‘璁ょ殑鎯呭喌涓嬪弽澶嶅嚭鐜般€?")
+
+    @staticmethod
+    def _actual_priority_kpi_links(metric: str) -> list[str]:
+        links = {
+            "order_delay": ["order_delay_risk", "plan_completion_rate", "unscheduled_weaving_part_order_count"],
+            "machine_style_mismatch": ["machine_style_spec_mismatch_candidate_count", "setup_risk", "downtime_minutes"],
+            "unscheduled_weaving_part_order": ["unscheduled_weaving_part_order_count", "capacity_occupation", "order_delay_risk"],
+            "quantity_report_gap": ["manual_report_completion_rate", "planned_quantity", "reported_quantity"],
+            "machine_plan_load": ["machine_plan_load_candidate_count", "capacity_occupation", "machine_load"],
+        }
+        return links.get(metric, ["actual_data_evidence_chain_coverage"])
+
+    @staticmethod
+    def _affected_objects_from_actual_chain(chain: dict) -> dict:
+        return {
+            "orders": [chain.get("produce_order_code")] if chain.get("produce_order_code") else [],
+            "machines": [item for item in [chain.get("machine_code"), chain.get("machine_id"), *(chain.get("machine_ids") or [])] if item],
+            "weaving_part_order_ids": [item for item in [chain.get("weaving_part_order_id"), *(chain.get("weaving_part_order_ids") or [])] if item],
+            "planned_task_ids": [item for item in [chain.get("planned_task_id"), *(chain.get("planned_task_ids") or [])] if item],
+            "styles": [chain.get("sku_code")] if chain.get("sku_code") else [],
+            "process_stages": [chain.get("part")] if chain.get("part") else [],
+        }
+
+    @staticmethod
+    def _actual_evidence_claims(evidence_refs: list[str], analysis: dict, chain: dict) -> list[dict]:
+        return [
+            {
+                "evidence_ref": ref,
+                "claim": analysis.get("answer_summary", ""),
+                "source": chain.get("field_source", "Tianpai APS Export"),
+                "adapter_status": "read_only_external_csv",
+            }
+            for ref in evidence_refs
+        ]
+
+    def _prd_alignment_audit(
+        self,
+        management_priority_brief: dict,
+        decision_loop: dict,
+        mvp_demo_story: dict,
+        mvp_success_check: dict,
+        permission_boundary: dict,
+        service_escalations: list[dict],
+        data_readiness: dict,
+        material_risk: dict,
+        general_manager_question_bank: dict,
+    ) -> dict:
+        section_checks = [
+            {
+                "section": "1. Product Definition",
+                "status": "covered",
+                "implemented_by": ["workflow_template.positioning", "management_priority_brief", "production.html"],
+                "evidence_refs": [management_priority_brief.get("brief_id", "")],
+                "remaining_gap": "Real customer deployment value still needs Tianpai general-manager review.",
+            },
+            {
+                "section": "2. Core User",
+                "status": "covered_with_gaps",
+                "implemented_by": ["management_priority_brief.audience", "general_manager_question_bank"],
+                "evidence_refs": [general_manager_question_bank.get("schema_id", "")],
+                "remaining_gap": "Question bank is still a hypothesis until verified by customer management.",
+            },
+            {
+                "section": "3. Core Problem",
+                "status": "covered",
+                "implemented_by": ["data_readiness", "evidence_log", "production_object_model"],
+                "evidence_refs": [data_readiness.get("schema_id", "")],
+                "remaining_gap": "Local mock data proves the structure, not the customer's full data reality.",
+            },
+            {
+                "section": "4. Value Proposition",
+                "status": "covered",
+                "implemented_by": ["management_priority_brief", "decision_loop", "permission_boundary"],
+                "evidence_refs": [
+                    management_priority_brief.get("brief_id", ""),
+                    decision_loop.get("schema_id", ""),
+                ],
+                "remaining_gap": "Business value should be measured after real order, service, and quality data are connected.",
+            },
+            {
+                "section": "5. Product Scope",
+                "status": "covered",
+                "implemented_by": ["workflow_template.workflow", "service_escalations", "chatbi_root_cause_analysis"],
+                "evidence_refs": [item.get("candidate_id", "") for item in service_escalations[:3]],
+                "remaining_gap": "MVP is limited to Production and Service; finance, CRM, and customer customization remain out of scope.",
+            },
+            {
+                "section": "6. Hero Question",
+                "status": "covered",
+                "implemented_by": ["management_priority_brief.top_priorities", "gmThreeMinuteBrief panel"],
+                "evidence_refs": [item.get("priority_id", "") for item in management_priority_brief.get("top_priorities", [])],
+                "remaining_gap": "Priority quality depends on real order, quality, labor, and service data quality.",
+            },
+            {
+                "section": "7. Decision Boundary",
+                "status": "covered",
+                "implemented_by": ["permission_boundary", "decision_loop.follow_up_items"],
+                "evidence_refs": [permission_boundary.get("schema_id", "")],
+                "remaining_gap": "Athena suggests confirmation owners; it does not replace the general manager.",
+            },
+            {
+                "section": "8. Explicit Non-Goals",
+                "status": "covered",
+                "implemented_by": ["workflow_instance.blocked_actions", "permission_boundary.blocked_actions"],
+                "evidence_refs": permission_boundary.get("blocked_actions", [])[:6],
+                "remaining_gap": "Future integrations must preserve these blocked actions unless the PRD is updated.",
+            },
+            {
+                "section": "9. User Experience Principle",
+                "status": "covered",
+                "implemented_by": ["gmThreeMinuteBrief", "productionSummary", "mvp_success_check"],
+                "evidence_refs": [mvp_success_check.get("check_id", "")],
+                "remaining_gap": "Usability still needs customer observation with a real manager.",
+            },
+            {
+                "section": "10. Customer Segment",
+                "status": "covered_with_gaps",
+                "implemented_by": ["data_readiness.source_status", "adapter_contract"],
+                "evidence_refs": [item.get("request_id", "") for item in data_readiness.get("next_data_requests", [])[:2]],
+                "remaining_gap": "Demo is generalized from Tianpai-like workflow, but customer-specific field mapping is pending.",
+            },
+            {
+                "section": "11. Risk Priority Policy",
+                "status": "covered",
+                "implemented_by": ["management_priority_brief.priority_policy"],
+                "evidence_refs": [management_priority_brief.get("brief_id", "")],
+                "remaining_gap": "Weights may need customer tuning after real operation review.",
+            },
+            {
+                "section": "12. Core Data Objects",
+                "status": "covered_with_gaps",
+                "implemented_by": ["production_object_model", "material_risk", "data_readiness"],
+                "evidence_refs": [material_risk.get("schema_id", ""), data_readiness.get("schema_id", "")],
+                "remaining_gap": "ERP order data and historical labor baselines are not available yet.",
+            },
+            {
+                "section": "13. Core Questions",
+                "status": "covered_with_gaps",
+                "implemented_by": ["general_manager_question_bank", "Santoni Athena panel"],
+                "evidence_refs": [general_manager_question_bank.get("schema_id", "")],
+                "remaining_gap": "Question set is not yet verified by the general manager.",
+            },
+            {
+                "section": "14. Service Extension",
+                "status": "covered_with_gaps",
+                "implemented_by": ["service_escalations", "first_screen_service_risk", "serviceRiskBrief"],
+                "evidence_refs": [item.get("evidence_ref", "") for item in service_escalations[:3]],
+                "remaining_gap": "Service suggestions are candidates only; no real dispatch or service system integration.",
+            },
+            {
+                "section": "15. Follow-up / Action Loop",
+                "status": "covered",
+                "implemented_by": ["decision_loop", "production_follow_up_reviews.json"],
+                "evidence_refs": [item.get("follow_up_id", "") for item in decision_loop.get("follow_up_items", [])],
+                "remaining_gap": "Follow-up state is local metadata, not a customer workflow system.",
+            },
+            {
+                "section": "16. MVP Demo Story",
+                "status": "covered",
+                "implemented_by": ["mvp_demo_story", "mvpDemoStory panel"],
+                "evidence_refs": [mvp_demo_story.get("story_id", "")],
+                "remaining_gap": "Story should be refined after the manager-demo script is tested.",
+            },
+            {
+                "section": "17. Success Criteria",
+                "status": "covered",
+                "implemented_by": ["mvp_success_check", "mvpSuccessCheck panel"],
+                "evidence_refs": [mvp_success_check.get("check_id", "")],
+                "remaining_gap": "Current pass is for Level 1 local mock evidence only.",
+            },
+            {
+                "section": "18. Open Questions For Later PRD Versions",
+                "status": "open_by_design",
+                "implemented_by": ["data_readiness.next_data_requests", "prd_alignment_audit.remaining_open_questions"],
+                "evidence_refs": [item.get("request_id", "") for item in data_readiness.get("next_data_requests", [])],
+                "remaining_gap": "These questions intentionally remain for later PRD versions and customer-data negotiation.",
+            },
+        ]
+        covered_count = len([item for item in section_checks if item["status"] in {"covered", "covered_with_gaps"}])
+        total_count = len(section_checks)
+
+        return {
+            "schema_id": "athena.production_prd_alignment_audit.v1",
+            "version": PRODUCTION_VERSION,
+            "audit_id": f"PRD-ALIGNMENT-{PRODUCTION_VERSION}-CURRENT",
+            "source_prd": "docs/product/athena_prd_v0.1.md",
+            "coverage_status": "local_mvp_prd_covered_with_mock_and_open_data_boundaries",
+            "coverage_score": round(covered_count / total_count, 2) if total_count else 0,
+            "section_checks": section_checks,
+            "core_loop_coverage": [
+                "general_manager_question_to_priority_brief",
+                "priority_brief_to_evidence",
+                "evidence_to_recommended_owner_confirmation",
+                "recommended_action_to_local_follow_up",
+                "follow_up_to_memory_event_candidate",
+                "service_risk_to_service_request_candidate",
+            ],
+            "remaining_open_questions": [
+                "ERP order fields and Tianpai order flow still need customer confirmation.",
+                "Historical labor effective-hour baseline is not connected.",
+                "Quality and downstream garment process records are still mock or planned.",
+                "General manager question bank still needs VOC verification.",
+                "Live APS/IOT/database adapters are not connected.",
+            ],
+            "blocked_completion_claim": (
+                "This audit proves local mock PRD coverage for the demo; it does not prove live customer "
+                "deployment readiness."
+            ),
+            "read_only": True,
+        }
+
     def _build_result(self, data: dict, filters: dict, scenario: str | None) -> dict:
         overview = self._production_overview(data)
         stages = self._workflow_stages(data)
@@ -364,12 +3671,124 @@ class ProductionOperationsWorkflow:
         service_escalations = self._service_escalations(data)
         optimization_signals = self._optimization_signals(data, resource_lens, service_escalations)
         garment_output = self._garment_output(data)
-        kpi_log = self._kpi_log(overview, resource_lens, optimization_signals)
+        production_object_model = self._production_object_model()
+        material_risk = self._material_risk(data)
+        general_manager_question_bank = self._general_manager_question_bank(data)
+        data_readiness = self._data_readiness(data, material_risk, general_manager_question_bank)
+        tianpai_adapter = self.tianpai_aps_erp_export_adapter()
+        tianpai_aps_erp_export = tianpai_adapter.report()
+        evidence_review_queue = tianpai_adapter.delivery_evidence_review_queue(language="zh", limit=10)
+        actual_priority_analyses = self._actual_management_priority_analyses(tianpai_adapter)
+        management_priority_brief = self._management_priority_brief(
+            data,
+            overview,
+            resource_lens,
+            optimization_signals,
+            service_escalations,
+            garment_output,
+            actual_priority_analyses,
+        )
+        if not evidence_review_queue.get("review_queue"):
+            first_priority = (management_priority_brief.get("top_priorities") or [{}])[0]
+            affected_objects = first_priority.get("affected_objects") or ["production_snapshot"]
+            if isinstance(affected_objects, dict):
+                affected_object = next(iter(affected_objects.values()), "production_snapshot")
+            else:
+                affected_object = affected_objects[0] if affected_objects else "production_snapshot"
+            evidence_review_queue["review_queue"] = [
+                {
+                    "card_id": "EVIDENCE-REVIEW-FALLBACK-001",
+                    "object_id": affected_object,
+                    "review_type": "data_gap_confirmation",
+                    "title": "Confirm data scope before final conclusion",
+                    "why_not_delivery_risk": "No export-level reconciliation candidate is available in the current snapshot; Athena can only ask for data-scope confirmation.",
+                    "evidence_credibility": "needs_reconciliation",
+                    "suggested_confirmation_owner": "Planning / APS Owner",
+                    "suggested_confirmation_action": "Confirm whether the current export includes closed orders, split tasks, and reporting-scope differences.",
+                    "field_sources": first_priority.get("field_sources", []),
+                    "evidence_refs": first_priority.get("evidence_refs", []),
+                    "data_gaps": first_priority.get("data_gaps", []),
+                    "read_only": True,
+                    "local_follow_up_supported": True,
+                    "mock_contract_fallback": True,
+                }
+            ]
+            evidence_review_queue["review_count"] = 1
+        decision_loop = self._decision_loop_follow_up(management_priority_brief)
+        permission_boundary = self._permission_boundary()
+        first_screen_service_risk = self._first_screen_service_risk(
+            service_escalations,
+            decision_loop,
+            data.get("evidence_log", []),
+        )
+        decision_loop = self._extend_decision_loop_with_review_and_service(
+            decision_loop,
+            evidence_review_queue,
+            first_screen_service_risk,
+        )
+        daily_brief_narrative = self._daily_brief_narrative(
+            management_priority_brief,
+            evidence_review_queue,
+            first_screen_service_risk,
+            decision_loop,
+            permission_boundary,
+        )
+        mvp_demo_story = self._mvp_demo_story(
+            management_priority_brief,
+            decision_loop,
+            service_escalations,
+            permission_boundary,
+        )
+        mvp_success_check = self._mvp_success_check(
+            management_priority_brief,
+            decision_loop,
+            mvp_demo_story,
+            permission_boundary,
+        )
+        internal_demo_readiness_mode = self._internal_demo_readiness_mode(
+            management_priority_brief,
+            first_screen_service_risk,
+            mvp_success_check,
+            permission_boundary,
+            data_readiness,
+        )
+        prd_alignment_audit = self._prd_alignment_audit(
+            management_priority_brief,
+            decision_loop,
+            mvp_demo_story,
+            mvp_success_check,
+            permission_boundary,
+            service_escalations,
+            data_readiness,
+            material_risk,
+            general_manager_question_bank,
+        )
+        actual_data_snapshot = self._actual_data_snapshot(tianpai_aps_erp_export)
+        stable_demo_story_pack = self._stable_demo_story_pack(
+            management_priority_brief,
+            first_screen_service_risk,
+            actual_data_snapshot,
+            material_risk,
+            data_readiness,
+            decision_loop,
+        )
+        internal_demo_candidate = self._demo_evolution_pack(
+            management_priority_brief,
+            stable_demo_story_pack,
+            first_screen_service_risk,
+            decision_loop,
+            actual_data_snapshot,
+            material_risk,
+            data_readiness,
+            permission_boundary,
+        )
+        kpi_log = self._kpi_log(overview, resource_lens, optimization_signals, tianpai_aps_erp_export)
 
         return {
             "workflow_template": self.template(),
             "workflow_instance": {
                 "template_id": PRODUCTION_TEMPLATE_ID,
+                "version": PRODUCTION_VERSION,
                 "status": self._overall_status(overview, optimization_signals),
                 "filters": filters,
                 "scenario": scenario or "current_mock_snapshot",
@@ -381,9 +3800,40 @@ class ProductionOperationsWorkflow:
                     "release_order_to_machine",
                     "control_machine",
                     "create_real_service_ticket",
+                    "modify_schedule_automatically",
+                    "dispatch_service_automatically",
+                    "replace_general_manager_decision",
                 ],
             },
             "production_overview": overview,
+            "production_object_model": production_object_model,
+            "skill_registry": self.skill_registry(),
+            "material_risk": material_risk,
+            "data_readiness": data_readiness,
+            "general_manager_question_bank": general_manager_question_bank,
+            "management_priority_brief": management_priority_brief,
+            "evidence_review_queue": evidence_review_queue,
+            "decision_loop": decision_loop,
+            "permission_boundary": permission_boundary,
+            "first_screen_service_risk": first_screen_service_risk,
+            "daily_brief_narrative": daily_brief_narrative,
+            "mvp_demo_story": mvp_demo_story,
+            "stable_demo_story_pack": stable_demo_story_pack,
+            "guided_demo_flow": internal_demo_candidate["guided_demo_flow"],
+            "user_page_gm_demo_entry": internal_demo_candidate["user_page_gm_demo_entry"],
+            "presenter_mode": internal_demo_candidate["presenter_mode"],
+            "evidence_boundary_layer": internal_demo_candidate["evidence_boundary_layer"],
+            "gm_question_regression_set": internal_demo_candidate["gm_question_regression_set"],
+            "data_request_wizard": internal_demo_candidate["data_request_wizard"],
+            "service_risk_confirmation_flow": internal_demo_candidate["service_risk_confirmation_flow"],
+            "visible_athena_skill_process": internal_demo_candidate["visible_athena_skill_process"],
+            "hermes_training_memory_review": internal_demo_candidate["hermes_training_memory_review"],
+            "internal_demo_candidate": internal_demo_candidate,
+            "mvp_success_check": mvp_success_check,
+            "internal_demo_readiness_mode": internal_demo_readiness_mode,
+            "prd_alignment_audit": prd_alignment_audit,
+            "tianpai_aps_erp_export": tianpai_aps_erp_export,
+            "actual_data_snapshot": actual_data_snapshot,
             "workflow_stages": stages,
             "resource_lens": resource_lens,
             "optimization_signals": optimization_signals,
@@ -403,6 +3853,9 @@ class ProductionOperationsWorkflow:
         materials = data.get("materials", [])
         labor = data.get("labor", [])
         measurements = data.get("measurement", [])
+        inventory = data.get("tianpai_material_inventory", {})
+        inventory_source = inventory.get("source_summary", {})
+        inventory_balance = inventory.get("balance_summary", {})
 
         running_machines = [item for item in machines if item.get("state") == "running"]
         scheduled_orders = [item for item in orders if item.get("aps_status") == "scheduled"]
@@ -446,6 +3899,9 @@ class ProductionOperationsWorkflow:
             "average_oee": round(average_oee, 3),
             "downtime_minutes": sum(int(item.get("downtime_minutes", 0)) for item in machines),
             "material_risk_count": len(material_risks),
+            "material_inventory_row_count": inventory_source.get("row_count", 0),
+            "material_inventory_task_order_count": inventory_source.get("unique_task_order_count", 0),
+            "material_inventory_exception_rows": int(inventory_balance.get("zero_balance_rows", 0)) + int(inventory_balance.get("negative_balance_rows", 0)),
             "labor_efficiency": round(labor_efficiency, 3),
             "quality_risk_count": len(quality_risks),
             "average_yield_rate": round(average_yield, 3),
@@ -695,7 +4151,14 @@ class ProductionOperationsWorkflow:
             "quality_hold_count": len([item for item in output if item["status"] == "quality_hold"]),
         }
 
-    def _kpi_log(self, overview: dict, resource_lens: dict, optimization_signals: list[dict]) -> list[dict]:
+    def _kpi_log(
+        self,
+        overview: dict,
+        resource_lens: dict,
+        optimization_signals: list[dict],
+        tianpai_aps_erp_export: dict | None = None,
+    ) -> list[dict]:
+        actual_export_loaded = (tianpai_aps_erp_export or {}).get("adapter_status") == "read_only_external_csv"
         return [
             {
                 "kpi": "oee",
@@ -767,17 +4230,109 @@ class ProductionOperationsWorkflow:
                 "status": "ok",
                 "evidence_ref": "EV-PROD-025",
             },
+            {
+                "kpi": "management_priority_items",
+                "value": 3 if optimization_signals else 0,
+                "target": "top 3 evidence-backed priorities per review",
+                "status": "attention" if optimization_signals else "ok",
+                "evidence_ref": optimization_signals[0]["evidence_ref"] if optimization_signals else "EV-PROD-025",
+            },
+            {
+                "kpi": "material_inventory_join_readiness",
+                "value": 0.45,
+                "target": "confirm produce_order_code, ERP order join, and BOM demand before shortage claims",
+                "status": "attention",
+                "evidence_ref": "EV-PROD-028",
+            },
+            {
+                "kpi": "data_readiness_score",
+                "value": 0.35,
+                "target": "raise above 0.70 before claiming Tianpai end-to-end root cause",
+                "status": "attention",
+                "evidence_ref": "EV-PROD-027",
+            },
+            {
+                "kpi": "question_bank_coverage",
+                "value": "hypothesis_only",
+                "target": "reviewed or approved by Product Owner, Agnes, and Tianpai roles",
+                "status": "attention",
+                "evidence_ref": "EV-PROD-027",
+            },
+            {
+                "kpi": "mvp_demo_story_coverage",
+                "value": 1.0,
+                "target": "PRD section 16 story path visible in Production Console",
+                "status": "ok",
+                "evidence_ref": "MVP-DEMO-STORY",
+            },
+            {
+                "kpi": "mvp_success_check_coverage",
+                "value": 1.0,
+                "target": "PRD section 17 success criteria visible in Production Console",
+                "status": "ok",
+                "evidence_ref": "MVP-SUCCESS-CHECK",
+            },
+            {
+                "kpi": "prd_alignment_coverage",
+                "value": 1.0,
+                "target": "PRD sections 1-18 mapped to implementation, evidence, and remaining gaps",
+                "status": "ok",
+                "evidence_ref": "PRD-ALIGNMENT",
+            },
+            {
+                "kpi": "tianpai_actual_export_readiness",
+                "value": "loaded" if actual_export_loaded else "missing",
+                "target": "read-only APS/ERP external CSV loaded with DDL field order",
+                "status": "ok" if actual_export_loaded else "attention",
+                "evidence_ref": "TIANPAI-APS-ERP-EXPORT",
+            },
+            {
+                "kpi": "actual_data_evidence_chain_coverage",
+                "value": "available" if actual_export_loaded else "blocked",
+                "target": "supported management Q&A returns order, WPO, task, machine, evidence refs, and field source",
+                "status": "ok" if actual_export_loaded else "attention",
+                "evidence_ref": "TIANPAI-APS-ERP-EXPORT",
+            },
+            {
+                "kpi": "skill_registry_coverage",
+                "value": len(self.skill_registry().get("skills", [])),
+                "target": "8 production skills registered for GM demo workflow",
+                "status": "ok",
+                "evidence_ref": "ATHENA-SKILL-REGISTRY",
+            },
+            {
+                "kpi": "skill_execution_trace_coverage",
+                "value": "available",
+                "target": "risk cards and drilldown responses expose readable skill execution traces",
+                "status": "ok",
+                "evidence_ref": "ATHENA-SKILL-TRACE",
+            },
+            {
+                "kpi": "permission_boundary_coverage",
+                "value": 1.0,
+                "target": "GM final-confirmation boundary visible in Production Console",
+                "status": "ok",
+                "evidence_ref": "PERMISSION-BOUNDARY",
+            },
         ]
 
     def _chatbi_analysis(self, data: dict, result: dict, question: str) -> dict:
         language = "zh" if any("\u4e00" <= char <= "\u9fff" for char in question) else "en"
         metric = self._detect_chatbi_metric(question)
+        if metric == "management_priority":
+            return self._chatbi_management_priority(data, result, language)
+        if metric == "data_gap":
+            return self._chatbi_data_gap(data, result, language)
+        if metric == "machine_bottleneck":
+            return self._chatbi_machine_bottleneck(data, result, language)
         if metric == "scrap_rate":
             return self._chatbi_scrap_rate(data, result, language)
         if metric == "oee":
             return self._chatbi_oee(data, result, language)
         if metric == "downtime":
             return self._chatbi_downtime(data, result, language)
+        if metric == "labor_efficiency":
+            return self._chatbi_labor_efficiency(data, result, language)
         if metric == "material_risk":
             return self._chatbi_material_risk(data, result, language)
         if metric == "order_delay":
@@ -786,17 +4341,187 @@ class ProductionOperationsWorkflow:
 
     def _detect_chatbi_metric(self, question: str) -> str:
         lowered = question.lower()
-        if any(token in lowered for token in ["scrap", "waste", "defect", "yield", "废弃", "废料", "不良", "良品"]):
+        priority_terms = ["top three", "three things", "priority", "daily brief", "general manager brief", "三件事", "先看", "优先", "总经理"]
+        if any(token in lowered for token in priority_terms):
+            return "management_priority"
+        if any(token in lowered for token in ["data gap", "missing data", "what can't", "cannot answer", "不能回答", "数据缺口", "缺什么数据"]):
+            return "data_gap"
+        if (
+            any(token in lowered for token in ["machine bottleneck", "machines are current bottlenecks", "worst machine", "machine ranking", "机台瓶颈", "机器瓶颈", "拖后腿"])
+            or (any(token in lowered for token in ["machine", "machines", "机台", "机器"]) and any(token in lowered for token in ["bottleneck", "bottlenecks", "load", "负载", "瓶颈"]))
+        ):
+            return "machine_bottleneck"
+        if any(token in lowered for token in ["scrap", "waste", "defect", "yield", "废弃", "废品", "不良", "良率", "质量"]):
             return "scrap_rate"
-        if "oee" in lowered or "开动率" in lowered or "稼动率" in lowered:
+        if "oee" in lowered or "稼动率" in lowered or "开机率" in lowered:
             return "oee"
-        if any(token in lowered for token in ["downtime", "停机", "报警", "故障"]):
+        if any(token in lowered for token in ["downtime", "停机", "故障", "报警"]):
             return "downtime"
-        if any(token in lowered for token in ["material", "yarn", "纱", "物料", "到料", "库存"]):
+        if any(token in lowered for token in ["labor", "effective hour", "effective-hour", "manual intervention", "team leader", "人工", "有效工时", "班组", "人工干预", "组长"]):
+            return "labor_efficiency"
+        if any(token in lowered for token in ["material", "yarn", "纱线", "物料", "库存", "缺料"]):
             return "material_risk"
-        if any(token in lowered for token in ["delay", "overdue", "交期", "延期", "逾期", "未排"]):
+        if any(token in lowered for token in ["delivery", "lead time", "order", "due", "shipment", "交付", "交期", "货期", "订单", "延期"]):
             return "order_delay"
-        return "overall"
+        return "overview"
+    def _chatbi_management_priority(self, data: dict, result: dict, language: str) -> dict:
+        brief = result["management_priority_brief"]
+        priorities = brief.get("top_priorities", [])
+        root_causes = [
+            {
+                "rank": item["rank"],
+                "category": "management_priority",
+                "category_label": self._choose(language, "Management priority", "绠＄悊浼樺厛"),
+                "cause": self._choose(language, item["title"], item.get("title_zh", item["title"])),
+                "impact": {
+                    "priority_id": item["priority_id"],
+                    "priority": item["priority"],
+                    "theme": item["management_theme"],
+                    "affected_objects": item.get("affected_objects", {}),
+                    "kpi_links": item.get("kpi_links", []),
+                },
+                "data_points": [
+                    self._choose(language, item["reason"], item.get("reason_zh", item["reason"])),
+                    self._choose(language, item["risk_if_ignored"], item.get("risk_if_ignored_zh", item["risk_if_ignored"])),
+                    self._choose(language, item["recommended_action"], item.get("recommended_action_zh", item["recommended_action"])),
+                ],
+                "evidence_refs": item.get("evidence_refs", []),
+            }
+            for item in priorities
+        ]
+        headline = brief.get("daily_brief", {}).get("headline", "")
+        return {
+            "language": language,
+            "metric": "management_priority",
+            "answer_summary": self._choose(
+                language,
+                headline or "Athena ranks today's management attention from evidence-backed production risks.",
+                "Athena 宸叉牴鎹綋鍓嶈瘉鎹敓鎴愪粖澶╂€荤粡鐞嗘渶搴旇鍏堢湅鐨勭鐞嗕紭鍏堢骇銆?",
+            ),
+            "metric_snapshot": {
+                "priority_count": len(priorities),
+                "top_priority": priorities[0]["priority_id"] if priorities else "",
+                "priority_policy": "delivery > quality > cost",
+                "status": "attention" if priorities else "ok",
+            },
+            "root_causes": root_causes,
+            "recommended_actions": [
+                self._choose(language, item["recommended_action"], item.get("recommended_action_zh", item["recommended_action"]))
+                for item in priorities
+            ],
+            "next_drilldowns": [
+                self._choose(language, "Open the priority item by order_id, machine_id, evidence_refs, and owner role.", "Open the priority item by order_id, machine_id, evidence_refs, and owner role."),
+                self._choose(language, "Convert the top priority into a follow-up item only after owner confirmation.", "Convert the top priority into a follow-up item only after owner confirmation."),
+            ],
+            "data_gaps": [item["gap"] for item in brief.get("data_gaps", [])],
+            "management_priority_brief": brief,
+            "decision_loop": result["decision_loop"],
+            "confidence": "medium_high",
+            "source_objects": ["management_priority_brief", "production_object_model", "evidence_log", "kpi_log"],
+        }
+
+    def _chatbi_data_gap(self, data: dict, result: dict, language: str) -> dict:
+        gaps = [
+            self._default_data_gaps(metric, language)[0]
+            for metric in ["order_delay", "scrap_rate", "oee", "material_risk", "data_gap"]
+        ]
+        root_causes = [
+            {
+                "rank": index + 1,
+                "category": "data_gap",
+                "category_label": self._choose(language, "Data gap", "鏁版嵁缂哄彛"),
+                "cause": gap,
+                "impact": {
+                    "decision_impact": self._choose(
+                        language,
+                        "Athena must avoid claiming this conclusion as proven until the missing data is connected.",
+                        "鍦ㄧ己澶辨暟鎹帴鍏ュ墠锛孉thena 涓嶈兘鎶婅繖涓粨璁鸿鎴愬凡璇佹槑浜嬪疄銆?",
+                    )
+                },
+                "data_points": [
+                    self._choose(language, "Current demo remains read-only and mock-backed.", "褰撳墠 demo 浠嶆槸鍙 mock 鏁版嵁銆?")
+                ],
+                "evidence_refs": ["EV-PROD-025"],
+            }
+            for index, gap in enumerate(gaps)
+        ]
+        return {
+            "language": language,
+            "metric": "data_gap",
+            "answer_summary": self._choose(
+                language,
+                "Athena can explain current mock order, machine, material, and quality signals, but cannot prove historical lead time, true per-garment cost, or full process bottlenecks yet.",
+                "Athena 鐜板湪鍙互瑙ｉ噴褰撳墠 mock 鐨勮鍗曘€佹満鍙般€佺墿鏂欏拰璐ㄩ噺淇″彿锛屼絾杩樹笉鑳借瘉鏄庡巻鍙茶揣鏈熴€佺湡瀹炲崟浠舵垚鏈垨鍏ㄦ祦绋嬬摱棰堛€?",
+            ),
+            "metric_snapshot": {
+                "known_scope": self._choose(language, "mock orders, APS schedule, IOT-like machine snapshot, material and quality evidence", "mock 璁㈠崟銆丄PS 鎺掑崟銆佺被 IOT 鏈哄彴蹇収銆佺墿鏂欏拰璐ㄩ噺璇佹嵁"),
+                "missing_scope_count": len(gaps),
+                "status": "needs_real_data",
+            },
+            "root_causes": root_causes,
+            "recommended_actions": [
+                self._choose(language, "Prioritize APS-to-IOT order join and real delivery records before training delivery root cause.", "Prioritize APS-to-IOT order join and real delivery records before training delivery root cause."),
+                self._choose(language, "Keep cost conclusions as unavailable until purchasing, labor, and per-order cost tables are connected.", "Keep cost conclusions as unavailable until purchasing, labor, and per-order cost tables are connected."),
+            ],
+            "next_drilldowns": [
+                self._choose(language, "List required fields by KPI: delivery, quality, cost, machine efficiency, and process WIP.", "List required fields by KPI: delivery, quality, cost, machine efficiency, and process WIP.")
+            ],
+            "data_gaps": gaps,
+            "confidence": "high",
+            "source_objects": ["data_source", "adapter_contract", "training_pack", "evidence_log"],
+        }
+
+    def _chatbi_machine_bottleneck(self, data: dict, result: dict, language: str) -> dict:
+        machines = sorted(
+            data.get("machines", []),
+            key=lambda item: (item.get("oee", 0), -int(item.get("downtime_minutes", 0)), -int(item.get("scrap_quantity", 0))),
+        )
+        top_machines = machines[:4]
+        root_causes = [
+            {
+                "rank": index + 1,
+                "category": "machine_bottleneck",
+                "category_label": self._choose(language, "Machine bottleneck", "鏈哄彴鐡堕"),
+                "cause": self._choose(
+                    language,
+                    f"{machine['machine_id']} is the strongest drag: OEE {machine.get('oee', 0):.0%}, downtime {machine.get('downtime_minutes', 0)} min, state {machine.get('state')}.",
+                    f"{machine['machine_id']} 鏄綋鍓嶆渶鏄庢樉鎷栫疮椤癸細OEE {machine.get('oee', 0):.0%}锛屽仠鏈?{machine.get('downtime_minutes', 0)} 鍒嗛挓锛岀姸鎬?{machine.get('state')}銆?",
+                ),
+                "impact": {
+                    "machine_id": machine["machine_id"],
+                    "order_id": machine.get("order_id", ""),
+                    "current_style_code": machine.get("current_style_code", ""),
+                    "oee": machine.get("oee", 0),
+                    "downtime_minutes": machine.get("downtime_minutes", 0),
+                    "scrap_quantity": machine.get("scrap_quantity", 0),
+                },
+                "data_points": [
+                    self._choose(language, f"Alarm {machine.get('alarm') or 'none'}", f"Alarm {machine.get('alarm') or 'none'}"),
+                    self._choose(language, f".co/.cx {machine.get('co_file', '')} / {machine.get('cx_file', '')}", f".co/.cx {machine.get('co_file', '')} / {machine.get('cx_file', '')}"),
+                ],
+                "evidence_refs": [machine["evidence_ref"]],
+            }
+            for index, machine in enumerate(top_machines)
+        ]
+        worst = top_machines[0] if top_machines else {}
+        return self._generic_chatbi_response(
+            language,
+            "machine_bottleneck",
+            self._choose(
+                language,
+                f"{worst.get('machine_id', 'No machine')} is the current top machine bottleneck based on OEE, downtime, and scrap evidence.",
+                f"{worst.get('machine_id', '鏆傛棤鏈哄彴')} 鏄綋鍓嶆渶闇€瑕佸叧娉ㄧ殑鏈哄彴鐡堕锛屼緷鎹槸 OEE銆佸仠鏈哄拰搴熷純璇佹嵁銆?",
+            ),
+            {
+                "top_bottleneck_machine": worst.get("machine_id", ""),
+                "oee": worst.get("oee", 0),
+                "downtime_minutes": worst.get("downtime_minutes", 0),
+                "scrap_quantity": worst.get("scrap_quantity", 0),
+                "status": "attention",
+            },
+            root_causes,
+            ["machines", "process", "measurement", "evidence_log"],
+        )
 
     def _chatbi_scrap_rate(self, data: dict, result: dict, language: str) -> dict:
         overview = result["production_overview"]
@@ -820,11 +4545,11 @@ class ProductionOperationsWorkflow:
                 {
                     "rank": len(root_causes) + 1,
                     "category": "style_quality",
-                    "category_label": self._choose(language, "Style / quality", "款式 / 质量"),
+                    "category_label": self._choose(language, "Style / quality", "娆惧紡 / 璐ㄩ噺"),
                     "cause": self._choose(
                         language,
                         f"{order.get('style_code', measurement['order_id'])} contributes {share:.0%} of current scrap.",
-                        f"{order.get('style_code', measurement['order_id'])} 贡献了当前废弃数量的 {share:.0%}。",
+                        f"{order.get('style_code', measurement['order_id'])} 璐＄尞浜嗗綋鍓嶅簾寮冩暟閲忕殑 {share:.0%}銆?",
                     ),
                     "impact": {
                         "order_id": measurement["order_id"],
@@ -835,10 +4560,10 @@ class ProductionOperationsWorkflow:
                         "yield_rate": measurement.get("yield_rate", 0),
                     },
                     "data_points": [
-                        self._choose(language, f"Defect rate {measurement.get('defect_rate', 0):.1%}", f"缺陷率 {measurement.get('defect_rate', 0):.1%}"),
-                        self._choose(language, f"Yield {measurement.get('yield_rate', 0):.1%}", f"良品率 {measurement.get('yield_rate', 0):.1%}"),
-                        self._choose(language, f"Machines {', '.join(machine_ids) or 'none'}", f"关联机台 {', '.join(machine_ids) or '无'}"),
-                        self._choose(language, f"Reasons: {', '.join(measurement.get('defect_reasons', []))}", f"原因：{', '.join(measurement.get('defect_reasons', []))}"),
+                        self._choose(language, f"Defect rate {measurement.get('defect_rate', 0):.1%}", f"Defect rate {measurement.get('defect_rate', 0):.1%}"),
+                        self._choose(language, f"Yield {measurement.get('yield_rate', 0):.1%}", f"Yield {measurement.get('yield_rate', 0):.1%}"),
+                        self._choose(language, f"Machines {', '.join(machine_ids) or 'none'}", f"Machines {', '.join(machine_ids) or 'none'}"),
+                        self._choose(language, f"Reasons: {', '.join(measurement.get('defect_reasons', []))}", f"Reasons: {', '.join(measurement.get('defect_reasons', []))}"),
                     ],
                     "evidence_refs": [measurement["evidence_ref"], *[item["evidence_ref"] for item in machines]],
                 }
@@ -850,11 +4575,11 @@ class ProductionOperationsWorkflow:
                 {
                     "rank": len(root_causes) + 1,
                     "category": "machine",
-                    "category_label": self._choose(language, "Machine", "机器"),
+                    "category_label": self._choose(language, "Machine", "鏈哄櫒"),
                     "cause": self._choose(
                         language,
                         f"{machine['machine_id']} is stopped with {machine.get('alarm')}; this is a direct machine-side scrap driver.",
-                        f"{machine['machine_id']} 因 {machine.get('alarm')} 停机，是直接的机器侧废弃驱动因素。",
+                        f"{machine['machine_id']} 鍥?{machine.get('alarm')} 鍋滄満锛屾槸鐩存帴鐨勬満鍣ㄤ晶搴熷純椹卞姩鍥犵礌銆?",
                     ),
                     "impact": {
                         "machine_id": machine["machine_id"],
@@ -864,8 +4589,8 @@ class ProductionOperationsWorkflow:
                     },
                     "data_points": [
                         self._choose(language, f"OEE {machine.get('oee', 0):.0%}", f"OEE {machine.get('oee', 0):.0%}"),
-                        self._choose(language, f"Downtime {machine.get('downtime_minutes', 0)} min", f"停机 {machine.get('downtime_minutes', 0)} 分钟"),
-                        self._choose(language, f".co {machine.get('co_file', '')}, .cx {machine.get('cx_file', '')}", f".co {machine.get('co_file', '')}，.cx {machine.get('cx_file', '')}"),
+                        self._choose(language, f"Downtime {machine.get('downtime_minutes', 0)} min", f"鍋滄満 {machine.get('downtime_minutes', 0)} 鍒嗛挓"),
+                        self._choose(language, f".co {machine.get('co_file', '')}, .cx {machine.get('cx_file', '')}", f".co {machine.get('co_file', '')}锛?cx {machine.get('cx_file', '')}"),
                     ],
                     "evidence_refs": [machine["evidence_ref"]],
                 }
@@ -878,11 +4603,11 @@ class ProductionOperationsWorkflow:
                         {
                             "rank": len(root_causes) + 1,
                             "category": "method",
-                            "category_label": self._choose(language, "Method / setup", "工艺 / 调机"),
+                            "category_label": self._choose(language, "Method / setup", "宸ヨ壓 / 璋冩満"),
                             "cause": self._choose(
                                 language,
                                 f"{process['process_id']} has setup variance {process.get('changeover_variance_minutes', 0)} min.",
-                                f"{process['process_id']} 的调机偏差达到 {process.get('changeover_variance_minutes', 0)} 分钟。",
+                                f"{process['process_id']} 鐨勮皟鏈哄亸宸揪鍒?{process.get('changeover_variance_minutes', 0)} 鍒嗛挓銆?",
                             ),
                             "impact": {
                                 "order_id": order_id,
@@ -890,7 +4615,7 @@ class ProductionOperationsWorkflow:
                                 "changeover_variance_minutes": process.get("changeover_variance_minutes", 0),
                             },
                             "data_points": [
-                                self._choose(language, f"Read-only .co/.cx evidence: {process.get('co_file', '')} / {process.get('cx_file', '')}", f"只读 .co/.cx 证据：{process.get('co_file', '')} / {process.get('cx_file', '')}"),
+                                self._choose(language, f"Read-only .co/.cx evidence: {process.get('co_file', '')} / {process.get('cx_file', '')}", f"Read-only .co/.cx evidence: {process.get('co_file', '')} / {process.get('cx_file', '')}"),
                             ],
                             "evidence_refs": [process["evidence_ref"]],
                         }
@@ -908,11 +4633,11 @@ class ProductionOperationsWorkflow:
             {
                 "rank": len(root_causes) + 1,
                 "category": "material",
-                "category_label": self._choose(language, "Material", "物料"),
+                "category_label": self._choose(language, "Material", "鐗╂枡"),
                 "cause": self._choose(
                     language,
                     "Material is not the primary current scrap driver in this snapshot.",
-                    "从当前快照看，物料不是本次废弃率升高的首要原因。",
+                    "浠庡綋鍓嶅揩鐓х湅锛岀墿鏂欎笉鏄湰娆″簾寮冪巼鍗囬珮鐨勯瑕佸師鍥犮€?",
                 ),
                 "impact": {
                     "causal_status": "not_primary_current_scrap_driver",
@@ -922,7 +4647,7 @@ class ProductionOperationsWorkflow:
                     self._choose(
                         language,
                         "High-risk elastane is linked to an order that has not started, while current scrap comes from running/quality-hold orders.",
-                        "高风险氨纶关联的是未开始订单；当前废弃主要来自运行中/质量暂停订单。",
+                        "楂橀闄╂皑绾跺叧鑱旂殑鏄湭寮€濮嬭鍗曪紱褰撳墠搴熷純涓昏鏉ヨ嚜杩愯涓?璐ㄩ噺鏆傚仠璁㈠崟銆?",
                     )
                 ],
                 "evidence_refs": ["EV-PROD-015", "EV-PROD-024"],
@@ -935,7 +4660,7 @@ class ProductionOperationsWorkflow:
             "answer_summary": self._choose(
                 language,
                 f"Current scrap rate is about {overview['scrap_rate']:.0%}. The strongest evidence points to style/quality and machine/setup issues, not material as the primary current driver.",
-                f"当前废弃率约 {overview['scrap_rate']:.0%}。最强证据指向款式/质量与机器/调机问题，物料不是当前废弃率的首要驱动因素。",
+                f"褰撳墠搴熷純鐜囩害 {overview['scrap_rate']:.0%}銆傛渶寮鸿瘉鎹寚鍚戞寮?璐ㄩ噺涓庢満鍣?璋冩満闂锛岀墿鏂欎笉鏄綋鍓嶅簾寮冪巼鐨勯瑕侀┍鍔ㄥ洜绱犮€?",
             ),
             "metric_snapshot": {
                 "scrap_rate": overview["scrap_rate"],
@@ -946,14 +4671,14 @@ class ProductionOperationsWorkflow:
             },
             "root_causes": root_causes,
             "recommended_actions": [
-                self._choose(language, "Prioritize YOGA-BRA-240 / SM8-03 review before treating this as a general material issue.", "优先复核 YOGA-BRA-240 / SM8-03，不要先把问题归因为通用物料问题。"),
-                self._choose(language, "Check fabric tension variation, logo elasticity, setup variance, and .co/.cx evidence together.", "把布面张力波动、logo 弹性、调机偏差和 .co/.cx 程序证据一起检查。"),
-                self._choose(language, "Use the result as a service request candidate only after the production/service owner confirms.", "只有生产/服务负责人确认后，才把结果转成服务请求候选。"),
+                self._choose(language, "Prioritize YOGA-BRA-240 / SM8-03 review before treating this as a general material issue.", "Prioritize YOGA-BRA-240 / SM8-03 review before treating this as a general material issue."),
+                self._choose(language, "Check fabric tension variation, logo elasticity, setup variance, and .co/.cx evidence together.", "Check fabric tension variation, logo elasticity, setup variance, and .co/.cx evidence together."),
+                self._choose(language, "Use the result as a service request candidate only after the production/service owner confirms.", "Use the result as a service request candidate only after the production/service owner confirms."),
             ],
             "next_drilldowns": [
-                self._choose(language, "Break scrap by style and machine.", "按款式和机台拆分废弃数量。"),
-                self._choose(language, "Compare setup variance with defect reasons.", "对比调机偏差和不良原因。"),
-                self._choose(language, "Check whether the same .co/.cx files behave differently across machines.", "检查同一组 .co/.cx 文件在不同机台上的表现差异。"),
+                self._choose(language, "Break scrap by style and machine.", "Break scrap by style and machine."),
+                self._choose(language, "Compare setup variance with defect reasons.", "Compare setup variance with defect reasons."),
+                self._choose(language, "Check whether the same .co/.cx files behave differently across machines.", "Check whether the same .co/.cx files behave differently across machines."),
             ],
             "confidence": "medium_high",
             "source_objects": ["measurement", "machines", "process", "materials", "orders", "evidence_log"],
@@ -967,8 +4692,8 @@ class ProductionOperationsWorkflow:
             {
                 "rank": index + 1,
                 "category": "machine",
-                "category_label": self._choose(language, "Machine", "机器"),
-                "cause": self._choose(language, f"{machine['machine_id']} pulls OEE down.", f"{machine['machine_id']} 拉低了整体 OEE。"),
+                "category_label": self._choose(language, "Machine", "鏈哄櫒"),
+                "cause": self._choose(language, f"{machine['machine_id']} pulls OEE down.", f"{machine['machine_id']} pulls OEE down."),
                 "impact": {
                     "machine_id": machine["machine_id"],
                     "oee": machine.get("oee", 0),
@@ -976,8 +4701,8 @@ class ProductionOperationsWorkflow:
                     "downtime_minutes": machine.get("downtime_minutes", 0),
                 },
                 "data_points": [
-                    self._choose(language, f"State {machine.get('state')}", f"状态 {machine.get('state')}"),
-                    self._choose(language, f"Alarm {machine.get('alarm') or 'none'}", f"报警 {machine.get('alarm') or '无'}"),
+                    self._choose(language, f"State {machine.get('state')}", f"State {machine.get('state')}"),
+                    self._choose(language, f"Alarm {machine.get('alarm') or 'none'}", f"Alarm {machine.get('alarm') or 'none'}"),
                 ],
                 "evidence_refs": [machine["evidence_ref"]],
             }
@@ -986,7 +4711,7 @@ class ProductionOperationsWorkflow:
         return self._generic_chatbi_response(
             language,
             "oee",
-            self._choose(language, f"Average OEE is {overview['average_oee']:.0%}, below the 82% target.", f"平均 OEE 为 {overview['average_oee']:.0%}，低于 82% 目标。"),
+            self._choose(language, f"Average OEE is {overview['average_oee']:.0%}, below the 82% target.", f"Average OEE is {overview['average_oee']:.0%}, below the 82% target."),
             {"average_oee": overview["average_oee"], "target": 0.82, "status": "attention"},
             root_causes,
             ["machines", "kpi_log", "evidence_log"],
@@ -999,14 +4724,14 @@ class ProductionOperationsWorkflow:
             {
                 "rank": index + 1,
                 "category": "machine",
-                "category_label": self._choose(language, "Machine downtime", "机器停机"),
-                "cause": self._choose(language, f"{machine['machine_id']} contributes {machine.get('downtime_minutes', 0)} downtime minutes.", f"{machine['machine_id']} 贡献了 {machine.get('downtime_minutes', 0)} 分钟停机。"),
+                "category_label": self._choose(language, "Machine downtime", "鏈哄櫒鍋滄満"),
+                "cause": self._choose(language, f"{machine['machine_id']} contributes {machine.get('downtime_minutes', 0)} downtime minutes.", f"{machine['machine_id']} contributes {machine.get('downtime_minutes', 0)} downtime minutes."),
                 "impact": {
                     "machine_id": machine["machine_id"],
                     "downtime_minutes": machine.get("downtime_minutes", 0),
                     "state": machine.get("state", ""),
                 },
-                "data_points": [self._choose(language, f"Alarm {machine.get('alarm') or 'none'}", f"报警 {machine.get('alarm') or '无'}")],
+                "data_points": [self._choose(language, f"Alarm {machine.get('alarm') or 'none'}", f"Alarm {machine.get('alarm') or 'none'}")],
                 "evidence_refs": [machine["evidence_ref"]],
             }
             for index, machine in enumerate(machines[:4])
@@ -1015,10 +4740,62 @@ class ProductionOperationsWorkflow:
         return self._generic_chatbi_response(
             language,
             "downtime",
-            self._choose(language, f"Total downtime is {overview['downtime_minutes']} minutes; the top machines explain most of it.", f"总停机时间为 {overview['downtime_minutes']} 分钟，头部机台解释了主要停机来源。"),
+            self._choose(language, f"Total downtime is {overview['downtime_minutes']} minutes; the top machines explain most of it.", f"Total downtime is {overview['downtime_minutes']} minutes; the top machines explain most of it."),
             {"downtime_minutes": overview["downtime_minutes"], "target": "< 120 per shift", "status": "attention"},
             root_causes,
             ["machines", "evidence_log"],
+        )
+
+    def _chatbi_labor_efficiency(self, data: dict, result: dict, language: str) -> dict:
+        overview = result["production_overview"]
+        labor = sorted(
+            data.get("labor", []),
+            key=lambda item: (float(item.get("efficiency", 1)), -int(item.get("manual_interventions", 0))),
+        )
+        service_escalations = result.get("service_escalations", [])
+        root_causes = [
+            {
+                "rank": index + 1,
+                "category": "labor",
+                "category_label": self._choose(language, "Labor effective hours", "浜哄伐鏈夋晥宸ユ椂"),
+                "cause": self._choose(
+                    language,
+                    f"{item['team_id']} efficiency is {item.get('efficiency', 0):.0%} with {item.get('manual_interventions', 0)} manual interventions.",
+                    f"{item['team_id']} efficiency is {item.get('efficiency', 0):.0%} with {item.get('manual_interventions', 0)} manual interventions.",
+                ),
+                "impact": {
+                    "team_id": item["team_id"],
+                    "role": item.get("role", ""),
+                    "planned_hours": item.get("planned_hours", 0),
+                    "actual_hours": item.get("actual_hours", 0),
+                    "efficiency": item.get("efficiency", 0),
+                    "manual_interventions": item.get("manual_interventions", 0),
+                    "linked_service_candidates": [case.get("candidate_id") for case in service_escalations],
+                },
+                "data_points": [
+                    self._choose(language, f"Risk {item.get('risk', '')}", f"椋庨櫓 {item.get('risk', '')}"),
+                    self._choose(language, "Current MVP uses current-shift mock evidence, not a historical baseline.", "Current MVP uses current-shift mock evidence, not a historical baseline."),
+                ],
+                "evidence_refs": [item["evidence_ref"]],
+            }
+            for index, item in enumerate(labor[:4])
+            if item.get("risk") != "low" or item.get("efficiency", 1) < 0.9
+        ]
+        return self._generic_chatbi_response(
+            language,
+            "labor_efficiency",
+            self._choose(
+                language,
+                f"Average labor efficiency is {overview['labor_efficiency']:.0%}; the first review should confirm whether low effective hours come from service, setup, waiting, or rework.",
+                f"Average labor efficiency is {overview['labor_efficiency']:.0%}; the first review should confirm whether low effective hours come from service, setup, waiting, or rework.",
+            ),
+            {
+                "labor_efficiency": overview["labor_efficiency"],
+                "target": ">= 85%",
+                "status": "attention" if overview["labor_efficiency"] < 0.85 else "monitor",
+            },
+            root_causes,
+            ["labor", "service_escalations", "machines", "evidence_log"],
         )
 
     def _chatbi_material_risk(self, data: dict, result: dict, language: str) -> dict:
@@ -1028,8 +4805,8 @@ class ProductionOperationsWorkflow:
             {
                 "rank": index + 1,
                 "category": "material",
-                "category_label": self._choose(language, "Material", "物料"),
-                "cause": self._choose(language, f"{material['name']} lot {material['lot']} is {material['risk']} risk.", f"{material['name']} 批次 {material['lot']} 是 {material['risk']} 风险。"),
+                "category_label": self._choose(language, "Material", "鐗╂枡"),
+                "cause": self._choose(language, f"{material['name']} lot {material['lot']} is {material['risk']} risk.", f"{material['name']} lot {material['lot']} is {material['risk']} risk."),
                 "impact": {
                     "material_id": material["material_id"],
                     "risk": material["risk"],
@@ -1039,7 +4816,7 @@ class ProductionOperationsWorkflow:
                     "required_orders": material.get("required_orders", []),
                 },
                 "data_points": [
-                    self._choose(language, f"Demand {material.get('demand_kg', 0)} kg, stock {material.get('stock_kg', 0)} kg", f"需求 {material.get('demand_kg', 0)} kg，库存 {material.get('stock_kg', 0)} kg"),
+                    self._choose(language, f"Demand {material.get('demand_kg', 0)} kg, stock {material.get('stock_kg', 0)} kg", f"Demand {material.get('demand_kg', 0)} kg, stock {material.get('stock_kg', 0)} kg"),
                 ],
                 "evidence_refs": [material["evidence_ref"]],
             }
@@ -1049,7 +4826,7 @@ class ProductionOperationsWorkflow:
         return self._generic_chatbi_response(
             language,
             "material_risk",
-            self._choose(language, f"There are {overview['material_risk_count']} material risk items; elastane is the highest risk.", f"当前有 {overview['material_risk_count']} 个物料风险项，其中氨纶风险最高。"),
+            self._choose(language, f"There are {overview['material_risk_count']} material risk items; elastane is the highest risk.", f"There are {overview['material_risk_count']} material risk items; elastane is the highest risk."),
             {"material_risk_count": overview["material_risk_count"], "target": 0, "status": "attention"},
             root_causes,
             ["materials", "orders", "aps_schedule", "evidence_log"],
@@ -1057,43 +4834,93 @@ class ProductionOperationsWorkflow:
 
     def _chatbi_order_delay(self, data: dict, result: dict, language: str) -> dict:
         overview = result["production_overview"]
-        orders = [
+        all_orders = data.get("orders", [])
+        snapshot_day = self._safe_date(data.get("factory", {}).get("snapshot_time", "")[:10])
+        due_offsets = []
+        for order in all_orders:
+            due_day = self._safe_date(order.get("due_date", ""))
+            if not snapshot_day or not due_day:
+                continue
+            due_offsets.append(
+                {
+                    "order_id": order["order_id"],
+                    "due_date": order.get("due_date", ""),
+                    "days_to_due": (due_day - snapshot_day).days,
+                    "aps_status": order.get("aps_status", ""),
+                    "erp_status": order.get("erp_status", ""),
+                    "remaining_quantity": order.get("remaining_quantity", 0),
+                    "evidence_ref": order.get("evidence_ref", ""),
+                }
+            )
+        average_days_to_due = round(sum(item["days_to_due"] for item in due_offsets) / len(due_offsets), 1) if due_offsets else None
+        earliest_due_date = min((item["due_date"] for item in due_offsets), default="")
+        latest_due_date = max((item["due_date"] for item in due_offsets), default="")
+        risky_orders = [
             item for item in data.get("orders", [])
             if item.get("aps_status") != "scheduled" or item.get("erp_status") == "exception"
         ]
+        due_by_order = {item["order_id"]: item for item in due_offsets}
         root_causes = [
             {
                 "rank": index + 1,
                 "category": "order_schedule",
-                "category_label": self._choose(language, "Order / schedule", "订单 / 排单"),
-                "cause": self._choose(language, f"{order['order_id']} is {order.get('aps_status')}.", f"{order['order_id']} 当前状态为 {order.get('aps_status')}。"),
+                "category_label": self._choose(language, "Order / schedule", "璁㈠崟 / 鎺掑崟"),
+                "cause": self._choose(language, f"{order['order_id']} is {order.get('aps_status')}.", f"{order['order_id']} 褰撳墠鐘舵€佷负 {order.get('aps_status')}"),
                 "impact": {
                     "order_id": order["order_id"],
                     "style_code": order.get("style_code", ""),
                     "remaining_quantity": order.get("remaining_quantity", 0),
                     "erp_status": order.get("erp_status", ""),
                     "aps_status": order.get("aps_status", ""),
+                    "due_date": order.get("due_date", ""),
+                    "days_to_due": due_by_order.get(order["order_id"], {}).get("days_to_due"),
                 },
-                "data_points": [self._choose(language, f"Remaining quantity {order.get('remaining_quantity', 0)}", f"剩余数量 {order.get('remaining_quantity', 0)}")],
+                "data_points": [
+                    self._choose(language, f"Remaining quantity {order.get('remaining_quantity', 0)}", f"鍓╀綑鏁伴噺 {order.get('remaining_quantity', 0)}"),
+                    self._choose(language, f"Due date {order.get('due_date', 'unknown')}", f"浜ゆ湡 {order.get('due_date', '鏈煡')}"),
+                ],
                 "evidence_refs": [order["evidence_ref"]],
             }
-            for index, order in enumerate(orders)
+            for index, order in enumerate(risky_orders)
         ]
         return self._generic_chatbi_response(
             language,
             "order_delay",
-            self._choose(language, f"{overview['pending_or_exception_order_count']} orders need scheduling or exception review.", f"{overview['pending_or_exception_order_count']} 个订单需要排单或异常复核。"),
-            {"pending_or_exception_order_count": overview["pending_or_exception_order_count"], "target": 0, "status": "attention"},
+            self._choose(
+                language,
+                f"Current backlog has an average {average_days_to_due} days until due date; {overview['pending_or_exception_order_count']} orders still need scheduling or exception review.",
+                f"褰撳墠璁㈠崟 backlog 璺濈浜ゆ湡骞冲潎杩樻湁 {average_days_to_due} 澶╋紱{overview['pending_or_exception_order_count']} 涓鍗曚粛闇€瑕佹帓鍗曟垨寮傚父澶嶆牳銆?",
+            ),
+            {
+                "average_days_to_due": average_days_to_due,
+                "earliest_due_date": earliest_due_date,
+                "latest_due_date": latest_due_date,
+                "pending_or_exception_order_count": overview["pending_or_exception_order_count"],
+                "target": 0,
+                "status": "attention",
+                "data_boundary": self._choose(
+                    language,
+                    "This is not a real one-week historical average lead time because mock data has due_date but no order-created date or actual delivery records.",
+                    "杩欎笉鏄湡瀹炶繎涓€鍛ㄥ巻鍙插钩鍧囪揣鏈燂紱褰撳墠 mock 鍙湁 due_date锛屾病鏈夋帴鍗曟棩鏈熷拰瀹為檯浜よ揣璁板綍銆?",
+                ),
+            },
             root_causes,
             ["orders", "aps_schedule", "materials", "evidence_log"],
         )
+
+    @staticmethod
+    def _safe_date(value: str) -> date | None:
+        try:
+            return date.fromisoformat(value)
+        except (TypeError, ValueError):
+            return None
 
     def _chatbi_overall(self, data: dict, result: dict, language: str) -> dict:
         root_causes = [
             {
                 "rank": index + 1,
                 "category": signal["type"],
-                "category_label": self._choose(language, "Optimization signal", "优化信号"),
+                "category_label": self._choose(language, "Optimization signal", "浼樺寲淇″彿"),
                 "cause": signal["title"],
                 "impact": {
                     "severity": signal["severity"],
@@ -1107,7 +4934,7 @@ class ProductionOperationsWorkflow:
         return self._generic_chatbi_response(
             language,
             "overall",
-            self._choose(language, "The current snapshot needs attention across machine downtime, material flow, and quality measurement.", "当前快照需要关注机器停机、物料流转和质量检测。"),
+            self._choose(language, "The current snapshot needs attention across machine downtime, material flow, and quality measurement.", "The current snapshot needs attention across machine downtime, material flow, and quality measurement."),
             result["production_overview"],
             root_causes,
             ["production_overview", "optimization_signals", "evidence_log"],
@@ -1129,15 +4956,101 @@ class ProductionOperationsWorkflow:
             "metric_snapshot": metric_snapshot,
             "root_causes": root_causes,
             "recommended_actions": [
-                self._choose(language, "Review the top evidence-linked cause before changing schedules or machine settings.", "先复核排名最高且有证据链接的原因，再考虑调整排单或机台设置。"),
-                self._choose(language, "Keep this analysis read-only and ask the production owner to confirm before action.", "该分析保持只读，行动前需要生产负责人确认。"),
+                self._choose(language, "Review the top evidence-linked cause before changing schedules or machine settings.", "Review the top evidence-linked cause before changing schedules or machine settings."),
+                self._choose(language, "Keep this analysis read-only and ask the production owner to confirm before action.", "Keep this analysis read-only and ask the production owner to confirm before action."),
             ],
             "next_drilldowns": [
-                self._choose(language, "Drill down by order, style, machine, material lot, and shift.", "继续按订单、款式、机台、物料批次和班次下钻。"),
+                self._choose(language, "Drill down by order, style, machine, material lot, and shift.", "Drill down by order, style, machine, material lot, and shift."),
             ],
             "confidence": "medium",
             "source_objects": source_objects,
         }
+
+    def _with_management_template(self, analysis: dict) -> dict:
+        language = analysis.get("language", "en")
+        metric = analysis.get("metric", "overall")
+        root_causes = analysis.get("root_causes", [])
+        recommended_actions = analysis.get("recommended_actions", [])
+        data_gaps = analysis.get("data_gaps") or self._default_data_gaps(metric, language)
+        top_cause = root_causes[0] if root_causes else {}
+        evidence_refs = top_cause.get("evidence_refs", [])
+        reason_evidence = self._choose(
+            language,
+            f"{top_cause.get('cause', 'No evidence-backed root cause yet.')} Evidence: {', '.join(evidence_refs) or 'none'}",
+            f"{top_cause.get('cause', 'No evidence-backed root cause yet.')} Evidence: {', '.join(evidence_refs) or 'none'}",
+        )
+        analysis["data_gaps"] = data_gaps
+        analysis["executive_answer"] = {
+            "template": self._choose(
+                language,
+                "Conclusion + reason/evidence + risk + recommendation + data gap",
+                "缁撹 + 鍘熷洜/璇佹嵁 + 椋庨櫓 + 寤鸿 + 鏁版嵁缂哄彛",
+            ),
+            "conclusion": analysis.get("answer_summary", ""),
+            "reason_evidence": reason_evidence,
+            "risk": self._management_risk_sentence(analysis, language),
+            "recommendation": recommended_actions[0] if recommended_actions else self._choose(
+                language,
+                "Ask the production owner to confirm the evidence before action.",
+                "琛屽姩鍓嶈鐢熶骇璐熻矗浜哄厛纭璇佹嵁銆?",
+            ),
+            "data_gap": data_gaps[0] if data_gaps else self._choose(language, "No major data gap for this mock answer.", "No major data gap for this mock answer."),
+        }
+        return analysis
+
+    def _management_risk_sentence(self, analysis: dict, language: str) -> str:
+        snapshot = analysis.get("metric_snapshot", {})
+        status = snapshot.get("status", "")
+        metric = analysis.get("metric", "")
+        if status in {"attention", "needs_real_data"}:
+            return self._choose(
+                language,
+                f"Risk is attention-level for {metric}; review before schedule, service, or cost decisions.",
+                f"{metric} 褰撳墠鏄渶瑕佸叧娉ㄧ骇鍒紱鎺掑崟銆佹湇鍔℃垨鎴愭湰鍐崇瓥鍓嶈鍏堝鏍搞€?",
+            )
+        return self._choose(
+            language,
+            f"Risk is monitor-level for {metric}; keep tracking evidence before operational changes.",
+            f"{metric} 褰撳墠鏄寔缁瀵熺骇鍒紱鎿嶄綔璋冩暣鍓嶇户缁窡韪瘉鎹€?",
+        )
+
+    def _default_data_gaps(self, metric: str, language: str) -> list[str]:
+        gaps = {
+            "order_delay": (
+                "True recent-week average lead time still needs order-created dates, shipment dates, and actual delivery records.",
+                "鐪熷疄杩戜竴鍛ㄥ钩鍧囪揣鏈熶粛闇€瑕佹帴鍗曟棩鏈熴€佸嚭璐ф棩鏈熷拰瀹為檯浜よ揣璁板綍銆?",
+            ),
+            "scrap_rate": (
+                "Scrap root cause will be stronger after real defect inspection rows, yarn lot traceability, and operator/shift history are connected.",
+                "鎺ュ叆鐪熷疄妫€楠屾槑缁嗐€佺罕绾挎壒娆¤拷婧拰鐝粍/鐝璁板綍鍚庯紝搴熷純鐜囨牴鍥犱細鏇村彲闈犮€?",
+            ),
+            "oee": (
+                "OEE explanation still needs real shift history, planned downtime, and machine maintenance records.",
+                "OEE 瑙ｉ噴浠嶉渶瑕佺湡瀹炵彮娆″巻鍙层€佽鍒掑仠鏈哄拰鏈哄彴淇濆吇璁板綍銆?",
+            ),
+            "downtime": (
+                "Downtime explanation still needs alarm duration history, maintenance response time, and service closure records.",
+                "鍋滄満瑙ｉ噴浠嶉渶瑕佹姤璀︽寔缁椂闂淬€佺淮淇搷搴旀椂闂村拰鏈嶅姟鍏抽棴璁板綍銆?",
+            ),
+            "material_risk": (
+                "Material risk explanation still needs purchasing ETA, warehouse movement, and supplier confirmation records.",
+                "鐗╂枡椋庨櫓瑙ｉ噴浠嶉渶瑕侀噰璐?ETA銆佷粨搴撴祦杞拰渚涘簲鍟嗙‘璁よ褰曘€?",
+            ),
+            "machine_bottleneck": (
+                "Machine bottleneck ranking still needs longer IOT history and comparable style/machine workload normalization.",
+                "鏈哄彴鐡堕鎺掑悕浠嶉渶瑕佹洿闀?IOT 鍘嗗彶锛屼互鍙婃寮?鏈哄彴璐熻浇鐨勫彲姣斿綊涓€鍖栥€?",
+            ),
+            "data_gap": (
+                "Full production root cause still needs APS-to-IOT order join, real delivery records, cost tables, and downstream process WIP/quality records.",
+                "瀹屾暣鐢熶骇鏍瑰洜浠嶉渶瑕?APS 鍒?IOT 鐨勮鍗曞叧鑱斻€佺湡瀹炰氦浠樿褰曘€佹垚鏈〃鍜屽悗閬撳伐搴忓湪鍒?璐ㄩ噺璁板綍銆?",
+            ),
+            "overall": (
+                "Overall management view still needs real APS/IOT/ERP joins before it can rank waste and cost with production-grade confidence.",
+                "绠＄悊鎬昏浠嶉渶瑕佺湡瀹?APS/IOT/ERP 鍏宠仈鍚庯紝鎵嶈兘鐢ㄧ敓浜х骇缃俊搴︽帓搴忔氮璐瑰拰鎴愭湰銆?",
+            ),
+        }
+        english, chinese = gaps.get(metric, gaps["overall"])
+        return [self._choose(language, english, chinese)]
 
     def _group_by(self, items: list[dict], key: str) -> dict:
         grouped: dict[str, list[dict]] = {}
@@ -1147,6 +5060,236 @@ class ProductionOperationsWorkflow:
 
     def _choose(self, language: str, english: str, chinese: str) -> str:
         return chinese if language == "zh" else english
+
+    def _unique_refs(self, refs: list[str | None]) -> list[str]:
+        seen = set()
+        clean = []
+        for ref in refs:
+            if not ref or ref in seen:
+                continue
+            seen.add(ref)
+            clean.append(ref)
+        return clean
+
+    def _evidence_claims(self, evidence_by_id: dict, refs: list[str]) -> list[dict]:
+        return [
+            {
+                "evidence_ref": ref,
+                "claim": evidence_by_id.get(ref, {}).get("claim", ""),
+                "source": evidence_by_id.get(ref, {}).get("source", ""),
+                "adapter_status": evidence_by_id.get(ref, {}).get("adapter_status", ""),
+            }
+            for ref in refs
+        ]
+
+    def _ensure_priority_card_contract(self, priority: dict) -> None:
+        theme = priority.get("risk_theme") or priority.get("management_theme") or "cost"
+        label_map = {
+            "delivery": "浜や粯",
+            "quality": "璐ㄩ噺",
+            "cost": "鎴愭湰",
+            "equipment": "璁惧",
+            "labor": "浜哄伐",
+            "material": "鐗╂枡",
+        }
+        priority.setdefault("risk_theme", theme)
+        priority.setdefault("risk_theme_label", label_map.get(theme, theme))
+        priority.setdefault("actual_evidence_chains", [])
+        priority.setdefault("field_sources", self._field_sources_from_evidence_claims(priority.get("evidence_claims", [])))
+        priority.setdefault("source_objects", ["mock_production_snapshot"])
+        priority.setdefault("data_source_mode", "mock_snapshot_fallback")
+        priority.setdefault("evidence_level", "Level 1: mock / demo evidence")
+        priority.setdefault("internal_demo_ready", bool(priority.get("evidence_refs")))
+        priority.setdefault("drilldown_question", "")
+        priority.setdefault("demo_readiness_note", "Ready for internal demo if the owner treats the card as read-only evidence and confirms before action.")
+        skills = production_skills_for_theme(theme)
+        priority.setdefault(
+            "skills_used",
+            [
+                {
+                    "skill_id": skill["skill_id"],
+                    "name_zh": skill["name_zh"],
+                    "name_en": skill["name_en"],
+                    "demo_status": skill["demo_status"],
+                }
+                for skill in skills
+            ],
+        )
+        priority.setdefault("athena_checked", [skill["name_en"] for skill in skills])
+        priority.setdefault("athena_checked_zh", [skill["name_zh"] for skill in skills])
+        priority.setdefault("skill_execution_trace", production_skill_trace_for_priority(priority))
+        action = priority.setdefault("action_candidate", {})
+        action.setdefault("write_scope", "local_metadata_only")
+        action.setdefault("linked_evidence_chain", (priority.get("actual_evidence_chains") or [{}])[0])
+        action.setdefault("field_sources", priority.get("field_sources", []))
+        action.setdefault("drilldown_question", priority.get("drilldown_question", ""))
+        action.setdefault(
+            "follow_up_contract",
+            {
+                "mode": "local_metadata_only",
+                "writes_real_system": False,
+                "blocked_systems": ["APS", "ERP", "IOT", "service_ticket", "machine_control"],
+            },
+        )
+
+    @staticmethod
+    def _field_sources_from_evidence_claims(claims: list[dict]) -> list[str]:
+        sources = []
+        for claim in claims:
+            source = claim.get("source")
+            if source and source not in sources:
+                sources.append(source)
+        return sources or ["mock production evidence"]
+
+    @staticmethod
+    def _safe_id(value: str) -> str:
+        cleaned = "".join(char if char.isalnum() else "-" for char in str(value or "UNKNOWN")).strip("-")
+        return cleaned.upper() or "UNKNOWN"
+
+    @staticmethod
+    def _related_object_from_priority(priority: dict) -> str:
+        affected = priority.get("affected_objects", {}) or {}
+        for key in ("orders", "machines", "materials", "styles", "weaving_part_order_ids", "planned_task_ids"):
+            values = affected.get(key)
+            if isinstance(values, list) and values:
+                return str(values[0])
+        chains = priority.get("actual_evidence_chains", []) or []
+        if chains:
+            chain = chains[0]
+            return str(
+                chain.get("produce_order_code")
+                or chain.get("machine_id")
+                or chain.get("weaving_part_order_id")
+                or priority.get("priority_id")
+            )
+        return str(priority.get("priority_id", "unknown"))
+
+    def _load_follow_up_store(self) -> dict:
+        if not self.follow_up_store_path.exists():
+            return {
+                "schema": "athena.production_follow_up_reviews.v1",
+                "version": PRODUCTION_VERSION,
+                "reviews": [],
+                "metadata_only": True,
+            }
+        loaded = json.loads(self.follow_up_store_path.read_text(encoding="utf-8"))
+        loaded.setdefault("schema", "athena.production_follow_up_reviews.v1")
+        loaded.setdefault("version", PRODUCTION_VERSION)
+        loaded.setdefault("reviews", [])
+        loaded.setdefault("metadata_only", True)
+        return loaded
+
+    def _save_follow_up_store(self, store: dict) -> None:
+        self.follow_up_store_path.parent.mkdir(parents=True, exist_ok=True)
+        self.follow_up_store_path.write_text(json.dumps(store, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    @staticmethod
+    def _latest_follow_up_reviews_by_action(store: dict) -> dict:
+        latest = {}
+        for review in store.get("reviews", []):
+            action_id = review.get("action_id")
+            if action_id:
+                latest[action_id] = review
+        return latest
+
+    @staticmethod
+    def _reject_sensitive_review_text(field: str, value: str) -> None:
+        lowered = value.lower()
+        sensitive_markers = ["password", "api key", "apikey", "token", "secret", "1qaz"]
+        if any(marker in lowered for marker in sensitive_markers):
+            raise ValueError(f"{field} must not contain credentials, tokens, or passwords")
+
+    @staticmethod
+    def _follow_up_evidence_status(status: str, review: dict) -> str:
+        if status == "resolved":
+            return "resolved_with_local_metadata"
+        if status == "dismissed":
+            return "dismissed_by_general_manager"
+        if status == "needs_more_data":
+            return "waiting_additional_data"
+        if status == "closed":
+            return "accepted" if review.get("evidence_note") else "closed_without_full_evidence_note"
+        if status == "confirmed":
+            return "owner_confirmed_waiting_closure"
+        if status == "waiting_evidence":
+            return "waiting_evidence"
+        if status == "assigned":
+            return "owner_assigned"
+        if status == "unable_to_process":
+            return "blocked_by_owner"
+        if status == "pending_confirmation":
+            return "pending_general_manager_confirmation"
+        return "needed"
+
+    @staticmethod
+    def _decision_status_from_follow_up(status: str) -> str:
+        if status in {"closed", "unable_to_process", "resolved", "dismissed"}:
+            return "reviewed"
+        if status in {"assigned", "waiting_evidence", "confirmed", "needs_more_data"}:
+            return "in_review"
+        return "pending_confirmation"
+
+    @staticmethod
+    def _count_by(values: list[str]) -> dict:
+        counts = {}
+        for value in values:
+            counts[value] = counts.get(value, 0) + 1
+        return counts
+
+    def _decision_loop_next_actions(self, status_counts: dict, follow_ups: list[dict]) -> list[str]:
+        if not follow_ups:
+            return ["No follow-up item is available until Athena produces management priorities."]
+        if status_counts.get("dismissed"):
+            return ["Review dismissed items and decide whether they should be archived or reopened with new evidence."]
+        if status_counts.get("unable_to_process"):
+            return ["Ask the general manager to decide whether unable_to_process items should be reassigned, escalated, or archived."]
+        if status_counts.get("needs_more_data") or status_counts.get("waiting_evidence"):
+            return ["Collect the expected evidence for waiting_evidence items before closing the loop."]
+        if status_counts.get("closed", 0) + status_counts.get("resolved", 0) == len(follow_ups):
+            return ["Review closed follow-ups and decide which memory-event candidates can be promoted to Hermes playbook review."]
+        if status_counts.get("assigned") or status_counts.get("confirmed"):
+            return ["Review assigned follow-ups at the next shift meeting and update evidence status."]
+        return ["Ask the general manager to confirm or assign the top pending_confirmation item before the next shift review."]
+
+    @staticmethod
+    def _priority_action_candidate(action_id: str, owner_role: str, recommended_action: str, expected_evidence: list[str]) -> dict:
+        return {
+            "action_id": action_id,
+            "owner_role": owner_role,
+            "recommended_action": recommended_action,
+            "requires_human_confirmation": True,
+            "status": "pending_confirmation",
+            "expected_evidence": expected_evidence,
+            "blocked_automation": [
+                "no_schedule_writeback",
+                "no_machine_control",
+                "no_auto_service_dispatch",
+            ],
+        }
+
+    @staticmethod
+    def _priority_risk_level(priority: dict) -> str:
+        if not priority.get("evidence_refs"):
+            return "gray"
+        if priority.get("priority") in {"P0", "P1"}:
+            return "red"
+        return "yellow"
+
+    @staticmethod
+    def _priority_risk_level_label(risk_level: str) -> str:
+        labels = {
+            "red": "Red: must be confirmed today",
+            "yellow": "Yellow: confirm within 24-48 hours",
+            "gray": "Gray: insufficient data; visibility only",
+        }
+        return labels.get(risk_level, labels["gray"])
+
+    @staticmethod
+    def _management_headline(priorities: list[dict]) -> str:
+        if not priorities:
+            return "No evidence-backed management priority is available in the current snapshot."
+        titles = [item.get("title", "") for item in priorities[:3]]
+        return "Today's GM focus: " + " | ".join(title for title in titles if title)
 
     def _overall_status(self, overview: dict, signals: list[dict]) -> str:
         if overview["service_escalation_count"] or any(item.get("severity") in {"high", "P1"} for item in signals):
@@ -1168,3 +5311,8 @@ class ProductionOperationsWorkflow:
 
     def _ratio(self, numerator: int, denominator: int) -> float:
         return round(numerator / denominator, 3) if denominator else 0.0
+
+
+
+
+

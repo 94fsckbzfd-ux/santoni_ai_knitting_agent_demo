@@ -21,7 +21,7 @@ def load_project_env() -> None:
             continue
 
         key, value = clean.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
 
 class LLMClient:

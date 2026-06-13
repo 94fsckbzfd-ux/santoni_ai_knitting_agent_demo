@@ -1,0 +1,699 @@
+{
+  "schema_version": "tianpai_training_pack.v0.1",
+  "project_version_context": "v0.113.0",
+  "created_at": "2026-06-08",
+  "tenant_id": "tianpai",
+  "factory_id": null,
+  "purpose": "Structure fragmented Tianpai VOC and IOT export data into an Athena/Hermes training pack for production-manager use cases.",
+  "source_files": [
+    {
+      "source_id": "SRC-TPI-VOC-AGNES-001",
+      "type": "user_feedback",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/Agnes VOC Tianpai 1.png",
+      "description": "Agnes VOC screenshot: delivery is the general manager's primary concern; quality is second; cost reporting and system capability limitations are discussed."
+    },
+    {
+      "source_id": "SRC-TPI-VOC-AGNES-002",
+      "type": "user_feedback",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/Agnes VOC Tianpai 2.png",
+      "description": "Agnes VOC screenshot: purchasing and labor cost reports exist but are difficult and probably per-order; system implementation capability is limited."
+    },
+    {
+      "source_id": "SRC-TPI-VOC-AGNES-003",
+      "type": "user_feedback",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/Agnes VOC Tianpai 3.png",
+      "description": "Agnes VOC screenshot: late delivery may cause sea-to-air shipment conversion; air freight cost impact and labor assumptions are discussed."
+    },
+    {
+      "source_id": "SRC-TPI-IOT-OUTPUT-001",
+      "type": "IOT export",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/浜ч噺缁熻.xlsx",
+      "rows": 2118,
+      "description": "Tianpai IOT production output statistics from Melos."
+    },
+    {
+      "source_id": "SRC-TPI-IOT-SCRAP-001",
+      "type": "IOT export",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/搴熷搧缁熻.xlsx",
+      "rows": 5217,
+      "description": "Tianpai IOT converted scrap statistics from Melos."
+    },
+    {
+      "source_id": "SRC-TPI-IOT-FAULT-001",
+      "type": "IOT export",
+      "path": "C:/Users/rem_i/OneDrive - Santoni (Shanghai) Knitting Machinery Co., Ltd/鏂囨。/Product/AI Knitting Agent/Athena Training/鏁呴殰鍒嗘瀽.xlsx",
+      "rows": 11389,
+      "description": "Tianpai IOT fault analysis statistics from Melos."
+    },
+    {
+      "source_id": "SRC-TPI-APS-WORKFLOW-001",
+      "type": "APS export",
+      "path": "conversation_fragment:2026-06-08-aps-scheduling-workflow-row",
+      "description": "Earlier APS-side Tianpai workflow fragment describing desired onsite workflow material; later refined by SRC-TPI-ONSITE-WORKFLOW-001."
+    },
+    {
+      "source_id": "SRC-TPI-APS-PLANNED-TASK-001",
+      "type": "APS export",
+      "path": "local attachment filename: _select_pt_wpo_po_delivery_time_FROM_aps_Planned_Task_pt_left_JO_202606081025.csv",
+      "rows": 127,
+      "stored_in_repo": false,
+      "field_summary": [
+        "yarn_code（纱线编码）",
+        "yarn_name（纱线名称）",
+        "batch（批次）",
+        "supplier_code（供应商代码）",
+        "color（颜色）",
+        "stock_quantity（库存数量）",
+        "available_quantity（可用数量）",
+        "reserved_quantity（占用数量）",
+        "package_unit（包装单位）",
+        "create_time（创建时间）",
+        "modified_time（修改时间）"
+      ],
+      "description": "Metadata-only assessment of an APS Planned Task delivery-time export. It can support APS schedule and delivery-time training, while raw CSV content remains outside the repo."
+    },
+    {
+      "source_id": "SRC-TPI-ONSITE-WORKFLOW-001",
+      "type": "meeting",
+      "path": "conversation_fragment:2026-06-08-tianpai-actual-onsite-workflow",
+      "description": "Confirmed Tianpai actual workflow: after order intake, order is entered into ERP; ERP splits work such as weaving and sewing; APS only schedules the Tianpai weaving part; IOT currently does not participate in the production flow."
+    },
+    {
+      "source_id": "SRC-TPI-MATERIAL-INVENTORY-001",
+      "type": "material inventory",
+      "path": "local attachment filename: 绾辩嚎搴撳瓨鏁版嵁.xlsx",
+      "rows": 8146,
+      "stored_in_repo": false,
+      "aggregate_stored_in": "src/mock_data/production_operations.mock.json:tianpai_material_inventory",
+      "field_summary": [
+        "yarn_code（纱线编码）",
+        "yarn_name（纱线名称）",
+        "batch（批次）",
+        "supplier_code（供应商代码）",
+        "color（颜色）",
+        "stock_quantity（库存数量）",
+        "available_quantity（可用数量）",
+        "reserved_quantity（占用数量）",
+        "package_unit（包装单位）",
+        "create_time（创建时间）",
+        "modified_time（修改时间）"
+      ],
+      "description": "Metadata-only aggregate assessment of the Tianpai yarn inventory export. It supports material-risk and data-readiness training, while raw Excel rows remain outside the repo."
+    }
+  ],
+  "data_context": {
+    "site": "Tianpai",
+    "data_window_note": "The IOT exports appear to cover recent Tianpai machine data, with production-output records spanning 2026-05-12 to 2026-06-24 and scrap/fault records concentrated around 2026-06-01 to 2026-06-05.",
+    "connectivity_limit": "Tianpai has not connected all machines to the network yet.",
+    "order_traceability_limit": "Machine-side IOT records currently do not contain usable order information; order_id is missing in the production output export.",
+    "aps_workflow_fragment_note": "The refined Tianpai workflow clarifies that ERP splits the order after intake, APS only handles weaving scheduling, and IOT currently does not participate in the production workflow.",
+    "aps_planned_task_attachment_note": "The APS Planned Task delivery-time CSV attachment has 127 rows and fields for produce_order_code, machine, style, quantity, plan/actual/estimate timing, status, and delivery_time. It is registered as metadata-only evidence and still needs a confirmed APS-to-IOT join rule.",
+    "material_inventory_note": "The Tianpai yarn inventory export has 8146 rows, 128 yarn codes, 392 batches, 67 suppliers, and production task balance fields. It can train material-risk structure and data-readiness behavior, but negative balances, BOM demand, supplier-code mapping, and ERP/APS join rules need owner confirmation.",
+    "training_scope_allowed": [
+      "machine-level production monitoring",
+      "style-level scrap ranking",
+      "shift/machine downtime review",
+      "fault-code ranking",
+      "management VOC training",
+      "order-mainline workflow understanding",
+      "ERP work-split and APS weaving-scheduling boundary training",
+      "APS schedule and delivery-time field coverage review",
+      "material inventory structure and yarn-balance readiness review",
+      "Tianpai actual onsite process-stage training",
+      "data-gap explanation training"
+    ],
+    "training_scope_blocked_until_more_data": [
+      "full order-to-garment workflow analysis by order_id",
+      "delivery prediction from APS to IOT because IOT currently does not participate in Tianpai production flow",
+      "full APS-to-IOT order-level root cause until the produce_order_code/order_id join rule is confirmed",
+      "order-level material shortage claims until ERP/APS produce_order_code and BOM yarn-demand joins are confirmed",
+      "downstream dyeing, inspection, cutting, sewing, packing, storage, and container-loading optimization without stage-level records",
+      "per-garment real-time cost calculation",
+      "material/labor root-cause analysis",
+      "tenant-specific production optimization with all machines included"
+    ]
+  },
+  "normalized_field_map": {
+    "production_output": {
+      "machine_id": "machine_id (鏈哄彴鍙?",
+      "serial": "serial (鏈哄櫒搴忓垪鍙?",
+      "model": "model (鏈哄櫒鍨嬪彿)",
+      "order_id": "order_id (璁㈠崟鍙?",
+      "style_id": "style_id (娆惧紡鍙?",
+      "shift": "shift (鐝)",
+      "shift_start": "shift_start (鐝寮€濮嬫椂闂?",
+      "cycle_seconds": "cycle_seconds (鐞嗚鐢熶骇鍛ㄦ湡/绉?",
+      "actual_output": "actual_output (瀹為檯浜ч噺/浠?",
+      "theoretical_output": "theoretical_output (鐞嗚浜ч噺/浠?",
+      "scrap_quantity": "scrap_quantity (搴熷純鏁伴噺)",
+      "defect_quantity": "defect_quantity (涓嶈壇鍝佹暟閲?",
+      "production_time_seconds": "production_time_seconds (瀹為檯鐢熶骇鏃堕棿)",
+      "downtime_seconds": "downtime_seconds (瀹為檯鍋滄満鏃堕棿)",
+      "record_time": "record_time (璁板綍鏃堕棿)"
+    },
+    "scrap_statistics": {
+      "machine_id": "machine_id (鏈哄彴鍙?",
+      "serial": "serial (搴忓垪鍙?",
+      "model": "model (鏈哄櫒鍨嬪彿)",
+      "shift": "shift (鐝)",
+      "shift_start": "shift_start (鐝寮€濮嬫椂闂?",
+      "style_id": "style_id (娆惧紡鍙?",
+      "completed_turns": "completed_turns (瀹屾垚杞暟)",
+      "target_turns": "target_turns (鐩爣杞暟)",
+      "converted_scrap": "converted_scrap (鎶樼畻搴熷搧浠舵暟)",
+      "record_time": "record_time (璁板綍鏃堕棿)"
+    },
+    "fault_analysis": {
+      "machine_id": "machine_id (鏈哄彴鍙?",
+      "serial": "serial (搴忓垪鍙?",
+      "shift": "shift (鐝)",
+      "shift_start": "shift_start (鐝寮€濮嬫椂闂?",
+      "style_id": "style_id (娆惧紡鍙?",
+      "fault_code": "fault_code (鏁呴殰浠ｇ爜)",
+      "fault_description": "fault_description (鏁呴殰鎻忚堪)",
+      "fault_start": "fault_start (鏁呴殰寮€濮嬫椂闂?",
+      "fault_end": "fault_end (鏁呴殰缁撴潫鏃堕棿)",
+      "fault_duration_seconds": "fault_duration_seconds (鏁呴殰鏃堕暱)"
+    },
+    "material_inventory": {
+      "production_task_order": "produce_order_code (鐢熶骇浠诲姟鍗?",
+      "yarn_code": "yarn_code (鐗╂枡缂栫爜)",
+      "yarn_name": "yarn_name (鐗╂枡鍚嶇О)",
+      "color": "color (棰滆壊)",
+      "batch": "batch (鎵规鍙?",
+      "twist": "twist (鎹诲悜 S/Z)",
+      "supplier_code_or_name": "supplier_code_or_name (鐗╂枡渚涘簲鍟?",
+      "unit": "unit (鍗曚綅)",
+      "opening_qty": "opening_qty (鏈熷垵鏁?",
+      "in_qty": "in_qty (杞叆鏁?",
+      "adjustment_qty": "adjustment_qty (鎹熺泭鏁?",
+      "out_qty": "out_qty (杞嚭鏁?",
+      "balance_qty": "balance_qty (缁撳瓨鏁?"
+    }
+  },
+  "data_quality_findings": [
+    {
+      "finding_id": "DQ-TPI-001",
+      "severity": "high",
+      "summary": "Production output order_id missing rate is 100%.",
+      "impact": "Athena cannot currently join Tianpai IOT production records back to APS/ERP orders.",
+      "recommended_action": "Request APS export for the same date window and define an order-machine-style-shift join rule or add order information to IOT records.",
+      "evidence_refs": ["SRC-TPI-IOT-OUTPUT-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-002",
+      "severity": "high",
+      "summary": "Machine serial fields are missing in current production output records.",
+      "impact": "Machine identity is currently based on machine_id only; serial-level maintenance traceability is weak.",
+      "recommended_action": "Request a machine master table with machine_id, serial number, model, location, needle/gauge, and online status.",
+      "evidence_refs": ["SRC-TPI-IOT-OUTPUT-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-003",
+      "severity": "medium",
+      "summary": "All production output rows show TOP2S model, but not all machines are connected.",
+      "impact": "Management KPIs may under-represent the full Tianpai factory.",
+      "recommended_action": "Mark current dataset as partial machine coverage and request connected-machine coverage ratio.",
+      "evidence_refs": ["SRC-TPI-IOT-OUTPUT-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-004",
+      "severity": "medium",
+      "summary": "Quality fields in production output show defect quantity as zero or missing, while scrap is available separately.",
+      "impact": "Athena should avoid treating defect rate as complete quality data.",
+      "recommended_action": "Use scrap_statistics for waste ranking and request additional quality inspection output for defect reasons.",
+      "evidence_refs": ["SRC-TPI-IOT-OUTPUT-001", "SRC-TPI-IOT-SCRAP-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-005",
+      "severity": "medium",
+      "summary": "The APS workflow fragment is now complemented by a metadata-only APS Planned Task delivery-time export.",
+      "impact": "Athena can review APS schedule and delivery-time fields through produce_order_code, machine, style, quantity, plan/actual/estimate timing, status, and delivery_time, but cannot claim full APS-to-IOT order root cause until the join rule is confirmed.",
+      "recommended_action": "Confirm whether produce_order_code is the canonical order/work-order key, define the APS-to-IOT join rule, and review sensitivity before parsing the attachment into structured local training objects.",
+      "evidence_refs": ["SRC-TPI-APS-WORKFLOW-001", "SRC-TPI-APS-PLANNED-TASK-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-006",
+      "severity": "high",
+      "summary": "IOT currently does not participate in Tianpai's actual production flow.",
+      "impact": "Athena must not model IOT as a live Tianpai workflow execution node. Current IOT exports can support machine-data training, but not a live order-flow control or execution loop.",
+      "recommended_action": "Separate Tianpai actual workflow training from generic Production Console mock flow. Treat APS as weaving scheduling only and request stage-level records for downstream production steps.",
+      "evidence_refs": ["SRC-TPI-ONSITE-WORKFLOW-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-007",
+      "severity": "medium",
+      "summary": "APS only schedules the weaving portion of Tianpai production.",
+      "impact": "APS data alone cannot explain delays from pre-treatment, storage, dyeing, inspection, replenishment orders, cutting, sewing, packing, storage, or container loading.",
+      "recommended_action": "Request workflow-stage timestamps, quantities, WIP status, hold/rework reasons, and owner systems for every downstream stage after weaving.",
+      "evidence_refs": ["SRC-TPI-ONSITE-WORKFLOW-001"]
+    },
+    {
+      "finding_id": "DQ-TPI-008",
+      "severity": "high",
+      "summary": "Tianpai yarn inventory has task-order balance evidence, but ERP/APS/BOM joins and negative-balance interpretation are not confirmed.",
+      "impact": "Athena can train material-risk structure and data-readiness behavior, but cannot prove order-level yarn shortage, delivery impact, or material-caused quality root cause yet.",
+      "recommended_action": "Confirm whether 鐢熶骇浠诲姟鍗?equals APS/ERP produce_order_code, explain zero/negative balance rules, and request BOM yarn demand plus quality-to-yarn-batch joins.",
+      "evidence_refs": ["SRC-TPI-MATERIAL-INVENTORY-001"]
+    }
+  ],
+  "voc_insights": [
+    {
+      "insight_id": "VOC-TPI-001",
+      "priority": "P0",
+      "theme": "delivery",
+      "summary": "For Tianpai's general manager, delivery date is the primary concern.",
+      "business_interpretation": "Athena should prioritize delivery-risk monitoring and explain how machine output, downtime, material, labor, and quality issues affect delivery.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-001"]
+    },
+    {
+      "insight_id": "VOC-TPI-002",
+      "priority": "P1",
+      "theme": "quality",
+      "summary": "Quality is important, but Agnes believes main quality issues come more from sewing and dyeing; knitting basic quality is already handled.",
+      "business_interpretation": "Athena should not over-focus on abstract knitting quality unless it can link IOT scrap/fault data to delivery or downstream quality risk.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-001"]
+    },
+    {
+      "insight_id": "VOC-TPI-003",
+      "priority": "P1",
+      "theme": "cost",
+      "summary": "If possible, Tianpai would value real-time average material and labor cost, but current reports may be post-order and difficult to produce.",
+      "business_interpretation": "Athena should present per-garment cost as a future capability requiring purchasing, labor, and order data, not as current IOT-supported output.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-002", "SRC-TPI-VOC-AGNES-003"]
+    },
+    {
+      "insight_id": "VOC-TPI-004",
+      "priority": "P0",
+      "theme": "delivery_cost_consequence",
+      "summary": "If sea shipment delivery risk increases, Tianpai may switch to air freight. Sea freight to the US may take about 45 days; air freight may arrive in about 7 days.",
+      "business_interpretation": "Athena should translate delivery delay into potential logistics-cost and lead-time consequences when enough order/shipping data exists.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-003"]
+    },
+    {
+      "insight_id": "VOC-TPI-005",
+      "priority": "P1",
+      "theme": "roi_labor",
+      "summary": "Machine count and labor are not easy to reduce immediately; off-season forced rest days may be possible. For rough ROI, temporary cutting/sewing labor can be assumed around 300 RMB/day.",
+      "business_interpretation": "Athena ROI logic should be conservative and should not claim direct headcount reduction from machine-data monitoring.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-003"]
+    },
+    {
+      "insight_id": "VOC-TPI-006",
+      "priority": "P0",
+      "theme": "system_adoption_limit",
+      "summary": "Tianpai may not have enough capability to put many systems online; development and maintenance capability is limited.",
+      "business_interpretation": "Athena should minimize workflow burden and avoid requiring full-system digitalization before showing value.",
+      "evidence_refs": ["SRC-TPI-VOC-AGNES-002"]
+    }
+  ],
+  "aps_workflow_insights": [
+    {
+      "insight_id": "WF-TPI-001",
+      "priority": "P0",
+      "theme": "order_mainline_workflow",
+      "summary": "Tianpai onsite flow should be understood as order intake -> ERP work split -> APS weaving scheduling -> physical production stages -> container loading.",
+      "workflow_stages": [
+        "order_intake",
+        "ERP_order_entry",
+        "ERP_work_split",
+        "APS_weaving_scheduling",
+        "yarn_picking",
+        "weaving_greige",
+        "pre_treatment",
+        "storage_before_dyeing",
+        "dyeing_scheduling",
+        "dyeing",
+        "inspection_replenishment_if_failed",
+        "cutting",
+        "sewing",
+        "packing_1",
+        "needle_and_metal_detection",
+        "packing_2",
+        "finished_goods_storage",
+        "container_loading"
+      ],
+      "system_boundaries": {
+        "ERP": "Order entry, total order quantity, split deliveries, and work split such as weaving and sewing.",
+        "APS": "Only responsible for scheduling Tianpai's weaving portion.",
+        "IOT": "Currently not involved in Tianpai's actual production workflow."
+      },
+      "accepted_source_formats": ["Word", "Excel", "Markdown"],
+      "business_interpretation": "Athena should use this as the actual Tianpai workflow spine, while keeping order_id as the eventual unique data key and avoiding IOT-as-live-workflow assumptions.",
+      "evidence_refs": ["SRC-TPI-APS-WORKFLOW-001", "SRC-TPI-ONSITE-WORKFLOW-001"]
+    }
+  ],
+  "iot_aggregate_summary": {
+    "production_output": {
+      "rows": 2118,
+      "machine_count": 123,
+      "style_count": 224,
+      "model_distribution": {
+        "TOP2S": 2118
+      },
+      "record_time_min": "2026-05-12 05:35:35",
+      "record_time_max": "2026-06-24 10:38:21",
+      "actual_output_total": 69492,
+      "theoretical_output_total": 131196,
+      "scrap_quantity_total": 10599,
+      "defect_quantity_total": 0,
+      "production_time_seconds_total": 18820917,
+      "downtime_seconds_total": 30960473,
+      "order_id_missing_rate": 1.0,
+      "serial_missing_rate": 1.0
+    },
+    "scrap_statistics": {
+      "rows": 5217,
+      "machine_count": 79,
+      "style_count": 172,
+      "record_time_min": "2026-06-01 00:00:39",
+      "record_time_max": "2026-06-05 17:31:24",
+      "converted_scrap_total": 3355.19
+    },
+    "fault_analysis": {
+      "rows": 11389,
+      "machine_count": 119,
+      "style_count": 199,
+      "fault_code_count": 229,
+      "fault_start_min": "2026-06-01 00:00:00",
+      "fault_end_max": "2026-06-05 16:59:40",
+      "fault_duration_seconds_total": 2793663
+    }
+  },
+  "ranked_iot_findings": {
+    "top_machines_by_output": [
+      {"machine_id": "7C-E03", "actual_output": 1957, "theoretical_output": 2477, "scrap_quantity": 73, "downtime_hours": 23.9, "style_count": 3},
+      {"machine_id": "7C-L03", "actual_output": 1708, "theoretical_output": 2218, "scrap_quantity": 120, "downtime_hours": 46.75, "style_count": 2},
+      {"machine_id": "7C-V05", "actual_output": 1635, "theoretical_output": 1807, "scrap_quantity": 109, "downtime_hours": 7.46, "style_count": 4},
+      {"machine_id": "7C-D05", "actual_output": 1622, "theoretical_output": 1957, "scrap_quantity": 102, "downtime_hours": 19.98, "style_count": 6},
+      {"machine_id": "7C-B05", "actual_output": 1534, "theoretical_output": 2152, "scrap_quantity": 214, "downtime_hours": 26.12, "style_count": 4}
+    ],
+    "top_machines_by_downtime": [
+      {"machine_id": "7C-L04", "actual_output": 0, "theoretical_output": 7446, "downtime_hours": 533.11, "style_count": 2},
+      {"machine_id": "7C-J06", "actual_output": 1163, "theoretical_output": 8449, "downtime_hours": 530.38, "style_count": 5},
+      {"machine_id": "7C-K03", "actual_output": 953, "theoretical_output": 4683, "downtime_hours": 465.19, "style_count": 4},
+      {"machine_id": "7C-C04", "actual_output": 0, "theoretical_output": 6210, "downtime_hours": 400.27, "style_count": 2},
+      {"machine_id": "7C-K01", "actual_output": 0, "theoretical_output": 0, "downtime_hours": 106.04, "style_count": 1}
+    ],
+    "top_machines_by_converted_scrap": [
+      {"machine_id": "7C-V04", "converted_scrap": 103.08, "style_count": 8},
+      {"machine_id": "7C-R03", "converted_scrap": 90.97, "style_count": 5},
+      {"machine_id": "7C-F05", "converted_scrap": 87.79, "style_count": 5},
+      {"machine_id": "7C-B05", "converted_scrap": 84.26, "style_count": 4},
+      {"machine_id": "7C-G03", "converted_scrap": 77.58, "style_count": 5}
+    ],
+    "top_styles_by_converted_scrap": [
+      {"style_id": "2UH3572-01", "converted_scrap": 179.32, "machine_count": 4},
+      {"style_id": "RM3061A-01", "converted_scrap": 162.79, "machine_count": 9},
+      {"style_id": "9322L-01", "converted_scrap": 136.52, "machine_count": 6},
+      {"style_id": "RA3061A-01", "converted_scrap": 106.87, "machine_count": 5},
+      {"style_id": "SB25011-01", "converted_scrap": 99.05, "machine_count": 2}
+    ],
+    "top_machines_by_fault_duration": [
+      {"machine_id": "7C-K02", "fault_duration_seconds": 143674, "fault_event_count": 34, "style_count": 3},
+      {"machine_id": "7C-L06", "fault_duration_seconds": 135784, "fault_event_count": 201, "style_count": 4},
+      {"machine_id": "7C-Q03", "fault_duration_seconds": 94689, "fault_event_count": 355, "style_count": 3},
+      {"machine_id": "7C-L05", "fault_duration_seconds": 92225, "fault_event_count": 325, "style_count": 3},
+      {"machine_id": "7C-K06", "fault_duration_seconds": 69806, "fault_event_count": 421, "style_count": 3}
+    ],
+    "top_fault_codes_by_duration": [
+      {"fault_code": "11109001", "fault_description": "Fabric pipe monitoring, no fabric detected", "fault_duration_seconds": 261092, "machine_count": 75, "style_count": 103},
+      {"fault_code": "11137018", "fault_description": "Path 2 needle break self-stop", "fault_duration_seconds": 259308, "machine_count": 63, "style_count": 84},
+      {"fault_code": "11133027", "fault_description": "BTSR feeder stop", "fault_duration_seconds": 146031, "machine_count": 24, "style_count": 19},
+      {"fault_code": "111713020", "fault_description": "Sensor 20 sampling failure", "fault_duration_seconds": 142463, "machine_count": 1, "style_count": 1},
+      {"fault_code": "11137019", "fault_description": "Path 6 needle break self-stop", "fault_duration_seconds": 90680, "machine_count": 53, "style_count": 65}
+    ]
+  },
+  "candidate_training_tasks": [
+    {
+      "task_id": "TPI-GM-DELIVERY-001",
+      "capability": "manager_priority_understanding",
+      "question": "天派总经理最关心什么，Athena 应该优先回答哪些生产风险？",
+      "expected_behavior": [
+        "identify delivery as P0",
+        "quality as P1",
+        "cost as future capability requiring purchasing/labor data",
+        "avoid overclaiming current IOT data can calculate delivery risk by order"
+      ],
+      "evidence_refs": ["VOC-TPI-001", "VOC-TPI-002", "VOC-TPI-003", "DQ-TPI-001"]
+    },
+    {
+      "task_id": "TPI-IOT-DATA-GAP-001",
+      "capability": "data_gap_explanation",
+      "question": "为什么现在不能完整做订单交期 root cause？",
+      "expected_behavior": [
+        "state order_id is missing in IOT production data",
+        "explain current analysis is machine/style/shift-level only",
+        "request APS export and order-machine join rule"
+      ],
+      "evidence_refs": ["DQ-TPI-001", "SRC-TPI-IOT-OUTPUT-001"]
+    },
+    {
+      "task_id": "TPI-IOT-DOWNTIME-001",
+      "capability": "machine_downtime_ranking",
+      "question": "最近一周哪些机台停机最严重？",
+      "expected_behavior": [
+        "rank machines by downtime_hours",
+        "flag zero-output high-downtime machines",
+        "avoid assuming delivery impact without order linkage"
+      ],
+      "evidence_refs": ["SRC-TPI-IOT-OUTPUT-001"]
+    },
+    {
+      "task_id": "TPI-IOT-SCRAP-001",
+      "capability": "scrap_root_cause_seed",
+      "question": "最近一周废品率升高主要和哪些款式、机台或班次有关？",
+      "expected_behavior": [
+        "rank machine-level converted scrap",
+        "rank style-level converted scrap",
+        "suggest follow-up by machine/style pairing",
+        "avoid claiming material or labor root cause without data"
+      ],
+      "evidence_refs": ["SRC-TPI-IOT-SCRAP-001"]
+    },
+    {
+      "task_id": "TPI-IOT-FAULT-001",
+      "capability": "fault_root_cause_seed",
+      "question": "从故障数据看，哪些故障类型最影响现场？",
+      "expected_behavior": [
+        "rank fault codes by duration",
+        "distinguish widespread faults from one-machine sensor fault",
+        "connect output to service candidate preparation but not auto-dispatch",
+        "avoid overclaiming fault root cause without accepted service evidence"
+      ],
+      "evidence_refs": ["SRC-TPI-IOT-FAULT-001"]
+    },
+    {
+      "task_id": "TPI-GM-COST-001",
+      "capability": "cost_capability_boundary",
+      "question": "Athena 现在能不能计算每件衣服的实时成本？",
+      "expected_behavior": [
+        "answer no for current data",
+        "explain purchasing and labor cost data are required",
+        "mention Agnes VOC says current reports may be post-order and hard to produce"
+      ],
+      "evidence_refs": ["VOC-TPI-003", "SRC-TPI-VOC-AGNES-002"]
+    },
+    {
+      "task_id": "TPI-APS-WORKFLOW-001",
+      "capability": "order_mainline_workflow_understanding",
+      "question": "如果已有 APS Planned Task 交期附件，但还没有 APS-to-IOT join rule，Athena 应该如何使用这份资料？",
+      "expected_behavior": [
+        "map the workflow as order intake -> ERP work split -> APS weaving scheduling -> physical production stages -> container loading",
+        "state that the attachment can support APS schedule and delivery-time field coverage review",
+        "avoid claiming full APS-to-IOT order root cause until the join rule is confirmed",
+        "ask whether produce_order_code is the canonical order/work-order key and how it maps to IOT or ERP order identifiers"
+      ],
+      "evidence_refs": ["SRC-TPI-APS-WORKFLOW-001", "SRC-TPI-APS-PLANNED-TASK-001", "DQ-TPI-005", "WF-TPI-001"]
+    },
+    {
+      "task_id": "TPI-WORKFLOW-BOUNDARY-001",
+      "capability": "tenant_workflow_boundary",
+      "question": "天派现场里 ERP、APS、IOT 分别参与哪些生产流程？",
+      "expected_behavior": [
+        "state that ERP records the order, total quantity, split deliveries, and work split",
+        "state that APS only schedules the weaving portion",
+        "state that IOT currently does not participate in the production workflow",
+        "avoid using generic demo assumptions that treat IOT as a live Tianpai workflow node"
+      ],
+      "evidence_refs": ["SRC-TPI-ONSITE-WORKFLOW-001", "DQ-TPI-006", "DQ-TPI-007", "WF-TPI-001"]
+    },
+    {
+      "task_id": "TPI-PROCESS-STAGES-001",
+      "capability": "physical_process_stage_mapping",
+      "question": "天派从领纱线到装集装箱，中间有哪些关键生产阶段？",
+      "expected_behavior": [
+        "list yarn picking, weaving greige, pre-treatment, storage, dyeing scheduling/dyeing, inspection and replenishment order if failed, cutting, sewing, packing, needle/metal detection, packing, storage, and container loading",
+        "distinguish production stages from IT systems",
+        "ask for timestamp, quantity, WIP, hold, defect, and rework fields per stage before doing bottleneck root cause"
+      ],
+      "evidence_refs": ["SRC-TPI-ONSITE-WORKFLOW-001", "WF-TPI-001"]
+    },
+    {
+      "task_id": "TPI-MATERIAL-RISK-001",
+      "capability": "material_risk_readiness",
+      "question": "只有纱线库存数据时，Athena 能不能判断哪些订单会因为缺料延期？",
+      "expected_behavior": [
+        "explain that yarn inventory can support material structure, batch, supplier, color, twist, and balance review",
+        "state that order-level shortage and delivery impact require ERP/APS produce_order_code mapping and BOM yarn demand",
+        "treat zero and negative balance as review signals until warehouse/ERP owners confirm movement rules",
+        "avoid claiming material-caused quality root cause without quality-to-yarn-batch joins"
+      ],
+      "evidence_refs": ["SRC-TPI-MATERIAL-INVENTORY-001", "DQ-TPI-008"]
+    },
+    {
+      "task_id": "TPI-DATA-READINESS-001",
+      "capability": "data_readiness_and_question_bank",
+      "question": "在 ERP 和总经理 VOC 还没拿到前，Athena 应该怎样判断哪些总经理问题能回答、哪些不能回答？",
+      "expected_behavior": [
+        "classify general-manager questions as answerable, partial, or blocked based on required data sources",
+        "keep the General Manager Question Bank in hypothesis status until reviewed by Product Owner, Agnes, Tianpai onsite roles, and customer management",
+        "name the next data owner for blocked questions, especially ERP order, BOM yarn demand, and quality records",
+        "avoid treating hypothesis questions as approved VOC"
+      ],
+      "evidence_refs": ["SRC-TPI-MATERIAL-INVENTORY-001", "DQ-TPI-008", "VOC-TPI-001"]
+    }
+  ],
+  "training_governance": {
+    "first_training_persona": {
+      "role": "tianpai_general_manager",
+      "priority": "P0",
+      "reason": "The first training target is the Tianpai general manager."
+    },
+    "answer_format": [
+      "management_summary",
+      "reason_and_evidence",
+      "recommended_action"
+    ],
+    "recommendation_scope": {
+      "current_allowed_scope": "Athena may propose recommendations related to the weaving process.",
+      "current_boundary": "Recommendations outside weaving should be framed as data needs or items requiring confirmation.",
+      "future_extension": "If real ERP data is connected later, recommendation scope may expand after human confirmation."
+    },
+    "kpi_priority": [
+      "delivery",
+      "quality",
+      "cost"
+    ],
+    "kpi_priority_note": "Current PRD priority is delivery > quality > cost. Cost is treated as the consequence of delivery and quality failures until purchasing, labor, rework, and freight records are available.",
+    "data_insufficiency_policy": {
+      "allowed": true,
+      "expected_behavior": "Athena should explicitly say when data is insufficient and name the missing data, rather than forcing a root-cause conclusion."
+    },
+    "terminology_policy": {
+      "format": "standard_field_name (site_term)",
+      "examples": [
+        "pre_treatment (鎾戠櫧鍧?/ 韪╃櫧鍧?",
+        "dyeing_scheduling (鎺掔几)",
+        "dyeing (鏌撹壊)",
+        "needle_and_metal_detection (楠岄拡 / 閲戝睘妫€娴?"
+      ]
+    },
+    "automation_boundary": {
+      "small_fixes": "Codex/Hermes loop may proceed automatically for small corrections, training-pack updates, tests, wording, and patch-version changes.",
+      "requires_human_confirmation": [
+        "large feature changes",
+        "new pages",
+        "real data integration",
+        "feature-version changes",
+        "major-version changes"
+      ]
+    },
+    "acceptance_standard": {
+      "status": "iterative",
+      "note": "No fixed pass/fail standard yet. Training standards will be discovered through repeated tasks, evaluation JSON, and review."
+    }
+  },
+  "hermes_memory_events": [
+    {
+      "event_id": "MEM-TPI-001",
+      "type": "tenant_voc",
+      "summary": "Tianpai general manager's primary concern is delivery date; quality is secondary; cost is useful but depends on purchasing/labor data.",
+      "scope": "tenant",
+      "tenant_id": "tianpai",
+      "factory_id": null,
+      "source": "user feedback",
+      "retention_policy": "project_lifecycle",
+      "sensitivity_level": "internal",
+      "promotion_status": "candidate",
+      "object_scope": ["manager_priority", "delivery", "quality", "cost"],
+      "write_policy": "candidate_only_until_tianpai_review",
+      "evidence_ref": "VOC-TPI-001"
+    },
+    {
+      "event_id": "MEM-TPI-002",
+      "type": "tenant_data_limit",
+      "summary": "Tianpai IOT exports currently do not support full order-level workflow training because machine records have no order_id.",
+      "scope": "tenant",
+      "tenant_id": "tianpai",
+      "factory_id": null,
+      "source": "IOT export",
+      "retention_policy": "training_lifecycle",
+      "sensitivity_level": "internal",
+      "promotion_status": "candidate",
+      "object_scope": ["iot", "order_id", "data_gap"],
+      "write_policy": "read_only_evidence",
+      "evidence_ref": "DQ-TPI-001"
+    },
+    {
+      "event_id": "MEM-TPI-003",
+      "type": "tenant_iot_training_seed",
+      "summary": "Current Tianpai IOT data can train machine/style/shift monitoring, scrap ranking, and fault ranking before APS order data is available.",
+      "scope": "tenant",
+      "tenant_id": "tianpai",
+      "factory_id": null,
+      "source": "IOT export",
+      "retention_policy": "training_lifecycle",
+      "sensitivity_level": "internal",
+      "promotion_status": "candidate",
+      "object_scope": ["machine_monitoring", "scrap", "fault"],
+      "write_policy": "read_only_evidence",
+      "evidence_ref": "SRC-TPI-IOT-OUTPUT-001"
+    },
+    {
+      "event_id": "MEM-TPI-004",
+      "type": "tenant_workflow_spine_candidate",
+      "summary": "Tianpai onsite workflow should be modeled as order intake -> ERP work split -> APS weaving scheduling -> physical production stages -> container loading; IOT currently does not participate in the production workflow.",
+      "scope": "tenant",
+      "tenant_id": "tianpai",
+      "factory_id": null,
+      "source": "meeting",
+      "retention_policy": "training_lifecycle",
+      "sensitivity_level": "internal",
+      "promotion_status": "candidate",
+      "object_scope": ["order_workflow", "erp", "aps", "weaving", "dyeing", "inspection", "sewing", "packing", "container_loading"],
+      "write_policy": "candidate_only_until_tianpai_workflow_review",
+      "evidence_ref": "SRC-TPI-ONSITE-WORKFLOW-001"
+    },
+    {
+      "event_id": "MEM-TPI-005",
+      "type": "tenant_training_governance",
+      "summary": "First Tianpai training target is the general manager. Preferred answer format is summary plus reason/evidence plus recommendation. KPI priority is delivery > quality > cost, and the first-screen risk cards should cover delivery, quality/replenishment, and labor effective hours. Athena may propose weaving-process recommendations, should say when data is insufficient, and should use standard_field_name (site_term) terminology.",
+      "scope": "tenant",
+      "tenant_id": "tianpai",
+      "factory_id": null,
+      "source": "user feedback",
+      "retention_policy": "training_lifecycle",
+      "sensitivity_level": "internal",
+      "promotion_status": "candidate",
+      "object_scope": ["training_governance", "general_manager", "kpi_priority", "answer_format", "automation_boundary"],
+      "write_policy": "candidate_only_until_tianpai_training_review",
+      "evidence_ref": "training_governance"
+    }
+  ],
+  "next_data_requests": [
+    "Detailed APS schedule export for the same Tianpai date window, including order_id, style_id, due date, planned quantity, machine assignment, planned start/end time, schedule status, planner exception fields, and production status.",
+    "Tianpai onsite workflow document covering order intake, ERP order entry, ERP work split, APS weaving scheduling, yarn picking, weaving, pre-treatment, storage, dyeing, inspection/replenishment, cutting, sewing, packing, needle/metal detection, finished-goods storage, and container loading; Word, Excel, or Markdown format is acceptable.",
+    "Stage-level production records for each physical process step: order_id, batch_id, style_id, planned quantity, actual quantity, start/end time, WIP quantity, hold reason, defect/rework reason, responsible team, and owner system.",
+    "Machine master table: machine_id, serial number, model, location/line, connected status, needle/gauge/cylinder if available.",
+    "Order-to-machine mapping rule if order_id cannot be written directly to IOT records.",
+    "Quality inspection or garment output table with defect reason categories.",
+    "Purchasing/material and labor-cost data if per-garment cost or ROI training is required.",
+    "A small set of Tianpai general-manager review questions and expected answer style."
+  ]
+}
+
+
+
+
+

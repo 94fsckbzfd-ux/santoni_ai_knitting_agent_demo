@@ -364,6 +364,219 @@
       "evidence_ref": "EV-PROD-016"
     }
   ],
+  "tianpai_material_inventory": {
+    "source_summary": {
+      "source_name": "Tianpai yarn inventory export",
+      "source_file_reference": "Athena Training/纱线库存数据.xlsx",
+      "raw_file_stored_in_repo": false,
+      "adapter_status": "mock_contract",
+      "sensitivity_level": "internal_aggregate",
+      "row_count": 8146,
+      "unique_task_order_count": 1134,
+      "unique_yarn_code_count": 128,
+      "unique_batch_count": 392,
+      "unique_supplier_count": 67,
+      "task_order_rows": 7530,
+      "common_inventory_rows": 561,
+      "unit_distribution": [
+        {
+          "unit": "kg",
+          "row_count": 8146
+        }
+      ]
+    },
+    "balance_summary": {
+      "positive_balance_rows": 3123,
+      "zero_balance_rows": 968,
+      "negative_balance_rows": 4055,
+      "total_balance_quantity": 354320.36,
+      "quantity_unit": "kg",
+      "interpretation_required": true,
+      "interpretation_note": "Negative balance appears in the export and needs warehouse or ERP owner confirmation before Athena treats it as shortage."
+    },
+    "dimension_distribution": {
+      "top_colors": [
+        {
+          "color": "胚色",
+          "row_count": 6532
+        },
+        {
+          "color": "特白",
+          "row_count": 341
+        },
+        {
+          "color": "深灰",
+          "row_count": 160
+        },
+        {
+          "color": "特黑",
+          "row_count": 109
+        },
+        {
+          "color": "本白",
+          "row_count": 91
+        }
+      ],
+      "twist_distribution": [
+        {
+          "twist": "Z",
+          "row_count": 3297
+        },
+        {
+          "twist": "S",
+          "row_count": 3274
+        },
+        {
+          "twist": "blank",
+          "row_count": 1575
+        }
+      ]
+    },
+    "field_mapping": [
+      {
+        "excel_field": "生产任务单",
+        "normalized_field": "produce_order_code",
+        "target_object": "production_task_material_balance",
+        "join_role": "future_erp_aps_join_key",
+        "status": "needs_customer_confirmation"
+      },
+      {
+        "excel_field": "物料编码",
+        "normalized_field": "yarn_code",
+        "target_object": "yarn_product",
+        "join_role": "yarn_master_key",
+        "status": "mapped_to_yarn_product"
+      },
+      {
+        "excel_field": "物料名称",
+        "normalized_field": "yarn_name",
+        "target_object": "yarn_product",
+        "join_role": "description",
+        "status": "mapped_to_yarn_product"
+      },
+      {
+        "excel_field": "颜色",
+        "normalized_field": "color",
+        "target_object": "yarn_product",
+        "join_role": "material_attribute",
+        "status": "mapped_to_yarn_product"
+      },
+      {
+        "excel_field": "批次号",
+        "normalized_field": "batch",
+        "target_object": "yarn_product",
+        "join_role": "lot_traceability",
+        "status": "mapped_to_yarn_product"
+      },
+      {
+        "excel_field": "捻向",
+        "normalized_field": "twist",
+        "target_object": "yarn_product",
+        "join_role": "material_attribute",
+        "status": "mapped_to_yarn_product"
+      },
+      {
+        "excel_field": "物料供应商",
+        "normalized_field": "supplier_code_or_name",
+        "target_object": "yarn_product",
+        "join_role": "supplier_traceability",
+        "status": "needs_supplier_code_mapping"
+      },
+      {
+        "excel_field": "单位",
+        "normalized_field": "unit",
+        "target_object": "production_task_material_balance",
+        "join_role": "quantity_unit",
+        "status": "needs_package_unit_confirmation"
+      },
+      {
+        "excel_field": "期初数",
+        "normalized_field": "opening_qty",
+        "target_object": "production_task_material_balance",
+        "join_role": "inventory_movement",
+        "status": "mapped"
+      },
+      {
+        "excel_field": "转入数",
+        "normalized_field": "in_qty",
+        "target_object": "production_task_material_balance",
+        "join_role": "inventory_movement",
+        "status": "mapped"
+      },
+      {
+        "excel_field": "损益数",
+        "normalized_field": "adjustment_qty",
+        "target_object": "production_task_material_balance",
+        "join_role": "inventory_adjustment",
+        "status": "needs_sign_rule_confirmation"
+      },
+      {
+        "excel_field": "转出数",
+        "normalized_field": "out_qty",
+        "target_object": "production_task_material_balance",
+        "join_role": "inventory_movement",
+        "status": "mapped"
+      },
+      {
+        "excel_field": "结存数",
+        "normalized_field": "balance_qty",
+        "target_object": "production_task_material_balance",
+        "join_role": "material_risk_metric",
+        "status": "mapped"
+      }
+    ],
+    "yarn_product_schema": {
+      "source": "Yarn_Product field mapping screenshot",
+      "table": "Yarn_Product",
+      "mapped_fields": [
+        "outer_id",
+        "yarn_code",
+        "yarn_name",
+        "package_unit",
+        "batch",
+        "supplier_code",
+        "twist",
+        "color_id",
+        "color",
+        "description"
+      ],
+      "missing_for_inventory_risk": [
+        "produce_order_code",
+        "opening_qty",
+        "in_qty",
+        "adjustment_qty",
+        "out_qty",
+        "balance_qty"
+      ]
+    },
+    "risk_rules": [
+      {
+        "rule_id": "MAT-RULE-ZERO-BALANCE",
+        "condition": "balance_qty == 0",
+        "risk": "needs_review",
+        "evidence_ref": "EV-PROD-027"
+      },
+      {
+        "rule_id": "MAT-RULE-NEGATIVE-BALANCE",
+        "condition": "balance_qty < 0",
+        "risk": "needs_erp_warehouse_interpretation",
+        "evidence_ref": "EV-PROD-027"
+      },
+      {
+        "rule_id": "MAT-RULE-UNJOINED-TASK",
+        "condition": "produce_order_code cannot be mapped to ERP/APS order",
+        "risk": "cannot_prove_order_impact",
+        "evidence_ref": "EV-PROD-028"
+      }
+    ],
+    "future_join_plan": [
+      "Confirm whether 生产任务单 equals APS produce_order_code, with or without prefix normalization.",
+      "Connect ERP order and split-delivery records to produce_order_code before claiming delivery impact.",
+      "Connect BOM yarn demand by style_code and yarn_code before calculating material shortage quantity.",
+      "Connect quality and scrap records by produce_order_code, yarn_code, batch, and production date before claiming material root cause."
+    ],
+    "evidence_refs": ["EV-PROD-027", "EV-PROD-028"]
+  },
   "labor": [
     {
       "team_id": "SHIFT-A",
@@ -522,6 +735,18 @@
       "source": "IOT program-interface observation",
       "claim": "Future real integration should use formal IOT program-interface documentation instead of browser scraping.",
       "adapter_status": "read_only_planned"
+    },
+    {
+      "evidence_id": "EV-PROD-027",
+      "source": "Tianpai yarn inventory aggregate",
+      "claim": "The yarn inventory export has 8146 rows, 128 yarn codes, 392 batches, 67 suppliers, and balance fields for material-risk analysis.",
+      "adapter_status": "mock_contract"
+    },
+    {
+      "evidence_id": "EV-PROD-028",
+      "source": "Yarn_Product field mapping",
+      "claim": "Yarn_Product maps yarn_code, yarn_name, package_unit, batch, supplier_code, twist, and color, but does not contain production task balance quantities.",
+      "adapter_status": "mock_contract"
     }
   ]
 }

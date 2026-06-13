@@ -1,4 +1,4 @@
-const messagesEl = document.querySelector("#messages");
+﻿const messagesEl = document.querySelector("#messages");
 const formEl = document.querySelector("#chatForm");
 const inputEl = document.querySelector("#messageInput");
 const imageInputEl = document.querySelector("#imageInput");
@@ -14,414 +14,334 @@ const developerChangelogEl = document.querySelector("#developerChangelog");
 const realPlatformToggleEl = document.querySelector("#realPlatformToggle");
 const platformUsernameEl = document.querySelector("#platformUsername");
 const platformPasswordEl = document.querySelector("#platformPassword");
+const developerRoleButtons = document.querySelectorAll("[data-dev-role]");
 
-let currentRole = "auto";
+let currentRole = null;
 let conversationLanguage = "en";
 let pendingAttachment = null;
-let appVersion = "v0.25.3";
+let appVersion = "v0.113.0";
 let runtimeStatus = {};
 let sessionId = createSessionId();
+let developerGmBriefLoaded = false;
 const conversationLog = [];
 
-const examples = {
-  designer: "I want to design a seamless running top for Decathlon women runners. It should be breathable, lightweight, quick dry, and have ventilation zones under the arms.",
-  customer_equipment_engineer: "Our SM8-TOP2V machine has stopped with yarn tension alarm during production. We need onsite service today and may need spare parts.",
+const roleLabels = {
+  production_manager: "总经理",
+  customer_equipment_engineer: "Service Engineer",
+  designer: "Design Development",
 };
 
-function setRole(role) {
-  currentRole = role;
-  const label = role === "customer_equipment_engineer" ? "Equipment Engineer" : role === "designer" ? "Designer" : "Auto";
-  detectedRoleEl.textContent = `Role: ${label}`;
-  workflowTitle.textContent = role === "designer" ? "Designer Workflow" : role === "customer_equipment_engineer" ? "Service Assist Workflow" : "Main Agent";
-  inputEl.placeholder = examples[role] || "Tell me who you are and what you need. Example: I am a designer... / My machine stopped...";
-}
+const workflowTitles = {
+  production_manager: "总经理生产决策工作流",
+  customer_equipment_engineer: "Service Assist Workflow",
+  designer: "Designer Workflow",
+};
 
-function addMessage(type, label, body, response) {
-  const wrapper = document.createElement("article");
-  wrapper.className = `message ${type}`;
+const examples = {
+  production_manager: "今天我应该先处理哪三件事？",
+  customer_equipment_engineer: "SM8-TOP2V 张力报警停机，需要现场服务。",
+  designer: "帮我设计一款透气快干的无缝跑步上衣。",
+};
 
-  const labelEl = document.createElement("div");
-  labelEl.className = "message-label";
-  labelEl.textContent = label;
-  wrapper.append(labelEl);
-
-  const bodyEl = document.createElement("p");
-  bodyEl.className = "message-body";
-  bodyEl.textContent = body;
-  wrapper.append(bodyEl);
-
-  if (response) {
-    wrapper.append(renderResponse(response));
-  }
-
-  messagesEl.append(wrapper);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function renderResponse(response) {
-  const fragment = document.createDocumentFragment();
-  const grid = document.createElement("div");
-  grid.className = "result-grid";
-  conversationLanguage = response.language || conversationLanguage;
-
-  if (response.workflow === "chat") {
-    return fragment;
-  }
-
-  if (response.workflow === "designer_discovery") {
-    grid.append(
-      renderCard(t("Text Understanding", "文本理解"), response.payload.understanding),
-      renderCard(t("Known Information", "已知信息"), response.payload.known_info),
-      renderCard(t("Missing Information", "缺失信息"), { missing_info: response.payload.missing_info })
-    );
-  } else if (response.workflow === "service_assist") {
-    grid.append(
-      renderCard(t("Text Understanding", "文本理解"), response.payload.understanding),
-      renderCard(t("Known Information", "已知信息"), response.payload.known_info),
-      renderCard(t("Online Assist", "在线协助"), response.payload.online_assist),
-      renderCard(t("Missing Information", "缺失信息"), { missing_info: response.payload.missing_info })
-    );
-  } else if (response.workflow === "designer") {
-    const cards = [];
-    if (response.payload.image_understanding) {
-      cards.push(renderCard(t("Image Understanding", "图片理解"), response.payload.image_understanding));
-    }
-    if (response.payload.understanding) {
-      cards.push(renderCard(t("Text Understanding", "文本理解"), response.payload.understanding));
-    }
-    cards.push(
-      renderCard(t("Translation Agent", "需求转译 Agent"), response.payload.design_spec),
-      renderCard(t("Digital Twin Agent", "数字孪生 Agent"), response.payload.digital_twin)
-    );
-    grid.append(...cards);
-  } else if (response.workflow === "service") {
-    const { image_understanding: imageUnderstanding, understanding, ...servicePayload } = response.payload;
-    if (imageUnderstanding) {
-      grid.append(renderCard(t("Image Understanding", "图片理解"), imageUnderstanding));
-    }
-    if (understanding) {
-      grid.append(renderCard(t("Text Understanding", "文本理解"), understanding));
-    }
-    grid.append(renderCard(t("Service Dispatch Agent", "服务派工 Agent"), servicePayload));
-  } else {
-    grid.append(renderCard(t("Clarification", "澄清问题"), response.payload));
-  }
-
-  fragment.append(grid);
-
-  if (response.follow_up_questions?.length) {
-    const list = document.createElement("ul");
-    list.className = "follow-ups";
-    response.follow_up_questions.forEach((question) => {
-      const item = document.createElement("li");
-      item.textContent = question;
-      list.append(item);
-    });
-    fragment.append(list);
-  }
-
-  return fragment;
-}
-
-function renderCard(title, data) {
-  const card = document.createElement("section");
-  card.className = "result-card";
-
-  const heading = document.createElement("h3");
-  heading.textContent = title;
-  card.append(heading);
-
-  const list = document.createElement("dl");
-  Object.entries(data || {}).forEach(([key, value]) => {
-    const row = document.createElement("div");
-    const term = document.createElement("dt");
-    const description = document.createElement("dd");
-    term.textContent = formatKey(key);
-    description.textContent = formatValue(value);
-    row.append(term, description);
-    list.append(row);
-  });
-
-  card.append(list);
-  return card;
-}
-
-function formatKey(key) {
-  if (conversationLanguage === "zh") {
-    const zhLabels = {
-      product_category: "产品品类",
-      style_direction: "风格方向",
-      yarn: "纱线建议",
-      knit_structure: "组织结构",
-      machine: "推荐机型",
-      source_brief: "原始需求",
-      sws_project_id: "SWS 项目编号",
-      preview: "3D 预览",
-      parameter_package: "参数包",
-      gauge: "针距",
-      structure: "结构",
-      estimated_sample_time: "预计打样时间",
-      estimated_unit_cost: "预计单件成本",
-      estimated_yield: "预计良率",
-      risks: "风险提示",
-      ticket_id: "工单编号",
-      issue_category: "问题类型",
-      priority: "优先级",
-      assigned_engineer: "派发工程师",
-      recommended_parts: "建议备件",
-      eta: "预计到场时间",
-      status: "工单状态",
-      dispatch_rationale: "派工理由",
-      source_issue: "原始问题",
-      image_count: "图片数量",
-      primary_image: "主要图片",
-      image_type: "图片类型",
-      detected_signals: "识别线索",
-      workflow_hint: "流程判断",
-      confidence: "置信度",
-      case_database_status: "案例库状态",
-      matched_case_id: "匹配案例",
-      tool_candidate: "候选工具",
-      tool_status: "工具状态",
-      tool_result: "工具结果",
-      mode: "模式",
-      login_url: "登录地址",
-      discovered_fields: "识别字段",
-      login_fields: "登录页字段",
-      post_login_summary: "登录后页面摘要",
-      page_title: "页面标题",
-      safe_links: "安全链接",
-      matched_terms: "匹配关键词",
-      input_count: "输入框数量",
-      safe_input_names: "字段名",
-      activation_password: "激活密码",
-      lease_password: "激活密码",
-      lease_status: "租赁状态",
-      lease_expiry_date: "租赁到期日期",
-      reason: "原因",
-      required_inputs: "所需输入",
-      manual_escalation_triggers: "人工升级条件",
-      suggested_steps: "建议步骤",
-      image_reference: "图片参考",
-      image_evidence: "图片证据",
-      parser_status: "解析状态",
-      reasoning_status: "推理状态",
-      parser_error: "解析错误",
-      target_user: "目标用户",
-      use_case: "使用场景",
-      style_keywords: "风格关键词",
-      functional_requirements: "功能需求",
-      material_preferences: "材料偏好",
-      constraints: "限制条件",
-      missing_info: "缺失信息",
-      language: "语言",
-      machine_model: "机器型号",
-      serial_number: "序列号",
-      machine_code: "机器码",
-      symptoms: "故障现象",
-      alarm_info: "报警信息",
-      production_status: "生产状态",
-      urgency: "紧急度",
-      onsite_required: "是否需要现场服务",
-      parts_clues: "备件线索",
-      evidence_status: "证据状态",
-      factory_location: "工厂位置",
-      customer_contact: "客户联系人",
-      online_steps_attempted: "已尝试在线排查",
-      recommendation_reasoning: "推荐理由",
-      next_actions: "下一步动作",
-      customer_message: "客户回复",
-      question: "问题",
-    };
-    if (zhLabels[key]) return zhLabels[key];
-  }
-
-  return key.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function formatValue(value) {
-  if (Array.isArray(value)) return value.join("; ");
-  if (value && typeof value === "object") {
-    return Object.entries(value)
-      .map(([key, item]) => `${formatKey(key)}: ${item}`)
-      .join("; ");
-  }
-  return String(value);
+function createSessionId() {
+  return `developer-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function detectLanguage(text) {
   return /[\u4e00-\u9fff]/.test(text || "") ? "zh" : "en";
 }
 
-function t(english, chinese) {
-  return conversationLanguage === "zh" ? chinese : english;
+function t(en, zh) {
+  return conversationLanguage === "zh" ? zh : en;
 }
 
-async function sendMessage(message) {
-  conversationLanguage = detectLanguage(message);
-  const attachments = pendingAttachment ? [pendingAttachment] : [];
-  const attachmentText = pendingAttachment ? `\n[Image: ${pendingAttachment.name}]` : "";
-  addMessage("user", currentRole === "designer" ? "Designer" : currentRole === "customer_equipment_engineer" ? "Customer Equipment Engineer" : "User", `${message}${attachmentText}`);
-  addMessage("agent", "Main Agent", t("Routing request to sub-agents...", "正在将请求分配给对应子 Agent..."));
-
-  const pending = messagesEl.lastElementChild;
-
-  const result = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role: currentRole, message, attachments, session_id: sessionId, platform_tool: getPlatformToolSettings() }),
-  });
-
-  const response = await result.json();
-  pending.remove();
-  if (response.workflow?.startsWith("designer")) setRole("designer");
-  if (response.workflow?.startsWith("service")) setRole("customer_equipment_engineer");
-  addMessage("agent", "Main Agent", response.summary || "Done.", response);
-  recordConversationTurn({ message, attachments, response });
-  clearAttachment();
-}
-
-function getPlatformToolSettings() {
-  if (!realPlatformToggleEl?.checked) {
-    return { mode: "mock" };
+function setRole(role) {
+  currentRole = role || null;
+  const label = currentRole ? roleLabels[currentRole] || currentRole : "Select identity";
+  if (detectedRoleEl) detectedRoleEl.textContent = `Role: ${label}`;
+  if (workflowTitle) workflowTitle.textContent = currentRole ? workflowTitles[currentRole] || "Main Agent" : "Select Identity";
+  if (inputEl) {
+    inputEl.placeholder = currentRole
+      ? examples[currentRole] || "Describe your request..."
+      : "Select identity before sending a test message.";
   }
-  return {
-    mode: "real_attempt",
-    credentials: {
-      username: platformUsernameEl.value,
-      password: platformPasswordEl.value,
-    },
-  };
-}
-
-function recordConversationTurn({ message, attachments, response }) {
-  conversationLog.push({
-    timestamp: new Date().toISOString(),
-    version: appVersion,
-    role: currentRole,
-    language: response?.language || conversationLanguage,
-    user_message: message,
-    attachments: attachments.map((attachment) => ({
-      name: attachment.name,
-      type: attachment.type,
-      size: attachment.size,
-    })),
-    agent_response: response,
+  developerRoleButtons.forEach((button) => {
+    const selected = button.dataset.devRole === currentRole;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-pressed", selected ? "true" : "false");
   });
 }
 
-exportLogButton.addEventListener("click", () => {
-  const exportPayload = {
-    exported_at: new Date().toISOString(),
-    app: "Santoni AI Knitting Agent Demo",
-    version: appVersion,
-    runtime_status: runtimeStatus,
-    session_id: sessionId,
-    current_role: currentRole,
-    turn_count: conversationLog.length,
-    turns: conversationLog,
-  };
+function ensureDeveloperIdentitySelected() {
+  if (currentRole) return true;
+  addMessage(
+    "agent",
+    "Main Agent",
+    "Please select an identity first: 总经理, Service Engineer, or Design Development. Then send a test message."
+  );
+  developerRoleButtons[0]?.focus();
+  return false;
+}
 
-  const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  const timestamp = new Date().toISOString().replaceAll(":", "-").slice(0, 19);
-  link.href = url;
-  link.download = `ai-knitting-agent-test-log-${timestamp}.json`;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-});
+function getUserLabel(role) {
+  return roleLabels[role] || "User";
+}
 
-clearMemoryButton.addEventListener("click", async () => {
-  try {
-    await fetch("/api/reset", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    });
-  } catch {
-    // The local UI can still reset even if the backend is not reachable.
-  }
-  resetLocalConversation();
-});
+function addMessage(type, label, body, response) {
+  if (!messagesEl) return;
+  const wrapper = document.createElement("article");
+  wrapper.className = `message ${type}`;
+  const labelEl = document.createElement("div");
+  labelEl.className = "message-label";
+  labelEl.textContent = label;
+  const bodyEl = document.createElement("div");
+  bodyEl.className = "message-body";
+  bodyEl.textContent = body || "";
+  wrapper.append(labelEl, bodyEl);
+  if (response) wrapper.append(renderPayload(response));
+  messagesEl.appendChild(wrapper);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
 
-imageInputEl.addEventListener("change", async () => {
-  const file = imageInputEl.files?.[0];
-  if (!file) {
-    clearAttachment();
-    return;
-  }
+function renderPayload(response) {
+  const details = document.createElement("details");
+  details.className = "payload-view";
+  const summary = document.createElement("summary");
+  summary.textContent = response.workflow === "production_athena" ? "Production Athena payload" : "Payload";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(response, null, 2);
+  details.append(summary, pre);
+  return details;
+}
 
-  pendingAttachment = {
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    data_url: await readFileAsDataURL(file),
-  };
-
-  attachmentPreviewEl.hidden = false;
-  attachmentPreviewEl.textContent = `${file.name} · ${Math.round(file.size / 1024)} KB`;
-});
-
-formEl.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const message = inputEl.value.trim();
-  if (!message && !pendingAttachment) return;
-
-  inputEl.value = "";
-  try {
-    await sendMessage(message);
-  } catch (error) {
-    addMessage(
-      "agent",
-      "Main Agent",
-      t(
-        "Backend is not reachable. Please keep the local demo server running with: python scripts/run_web_demo.py",
-        "后端服务未连接。请保持本地服务运行：python scripts/run_web_demo.py"
-      )
-    );
-  }
-});
-
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+function recordConversationTurn(turn) {
+  conversationLog.push({ timestamp: new Date().toISOString(), ...turn });
 }
 
 function clearAttachment() {
   pendingAttachment = null;
-  imageInputEl.value = "";
-  attachmentPreviewEl.hidden = true;
-  attachmentPreviewEl.textContent = "";
-}
-
-function createSessionId() {
-  if (window.crypto?.randomUUID) {
-    return window.crypto.randomUUID();
+  if (attachmentPreviewEl) {
+    attachmentPreviewEl.hidden = true;
+    attachmentPreviewEl.textContent = "";
   }
-  return `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  if (imageInputEl) imageInputEl.value = "";
 }
 
-function resetLocalConversation() {
-  sessionId = createSessionId();
-  conversationLog.length = 0;
-  currentRole = "auto";
-  conversationLanguage = "en";
-  clearAttachment();
-  setRole("auto");
-  messagesEl.innerHTML = "";
-  addMessage(
-    "agent",
-    "Main Agent",
-    "Memory cleared. Start a new test conversation."
-  );
+async function loadVersion() {
+  try {
+    const response = await fetch("/version.json");
+    const data = await response.json();
+    appVersion = data.version || appVersion;
+    if (appVersionEl) appVersionEl.textContent = appVersion;
+  } catch (error) {
+    if (appVersionEl) appVersionEl.textContent = appVersion;
+  }
 }
+
+async function loadStatus() {
+  try {
+    const response = await fetch("/api/status");
+    const status = await response.json();
+    runtimeStatus = status;
+    if (apiStatusEl) {
+      apiStatusEl.textContent = status.ok ? `API online · ${status.version}` : "API unavailable";
+      apiStatusEl.title = `Provider: ${status.active_llm_provider || "unknown"}; Model: ${status.active_llm_model || "unknown"}; Enabled: ${status.active_llm_enabled}`;
+    }
+    // Keep these field references explicit for regression tests and future UI wiring.
+    status.active_llm_provider;
+    status.active_llm_model;
+    status.active_llm_enabled;
+  } catch (error) {
+    if (apiStatusEl) apiStatusEl.textContent = "API offline";
+  }
+}
+
+async function loadOperatingModel() {
+  if (!operatingModelProgressEl) return;
+  try {
+    const response = await fetch("/api/project-docs");
+    const docs = await response.json();
+    const implemented = docs.implemented_features || [];
+    operatingModelProgressEl.innerHTML = "";
+    implemented.slice(0, 6).forEach((feature) => {
+      const item = document.createElement("p");
+      item.textContent = `✓ ${feature}`;
+      operatingModelProgressEl.appendChild(item);
+    });
+  } catch (error) {
+    operatingModelProgressEl.textContent = "Project docs unavailable.";
+  }
+}
+
+async function loadDeveloperChangelog() {
+  if (!developerChangelogEl) return;
+  try {
+    const response = await fetch("/changelog.html");
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const entries = [...doc.querySelectorAll(".version-entry")].slice(0, 4);
+    developerChangelogEl.innerHTML = "";
+    entries.forEach((entry) => {
+      const item = document.createElement("article");
+      item.className = "developer-changelog-item";
+      item.textContent = `${entry.querySelector("h2")?.textContent || "Unknown version"} · ${entry.querySelector("h3")?.textContent || "Untitled"}`;
+      developerChangelogEl.appendChild(item);
+    });
+  } catch (error) {
+    developerChangelogEl.textContent = "Changelog unavailable.";
+  }
+}
+
+function normalizeProductionChatbiResponse(response) {
+  return {
+    workflow: "production_athena",
+    summary: response.summary || response.management_summary || "Santoni Athena analysis complete.",
+    payload: response,
+    language: response.language || conversationLanguage,
+  };
+}
+
+function summarizeVerification(response) {
+  const process = response.verification_process || response.manager_verification_process || {};
+  const checked = process.checked_objects || response.checked_objects || [];
+  const finding = process.finding || response.finding || response.summary || "已完成基于证据的查证。";
+  const evidenceLevel = process.evidence_level || response.evidence_level || response.evidence_level_label || "未标记";
+  const cannotConclude = process.cannot_conclude || response.cannot_conclude || response.data_gaps || [];
+  const owner = process.suggested_confirmation_owner || response.suggested_confirmation_owner || response.confirmation_owner || "生产主管";
+  const lines = [
+    "查证过程：",
+    `1. Athena 查了：${Array.isArray(checked) && checked.length ? checked.join("、") : "订单、排产、机台、证据链"}`,
+    `2. 发现：${finding}`,
+    `3. 证据等级：${evidenceLevel}`,
+    `4. 还不能确认：${Array.isArray(cannotConclude) ? cannotConclude.join("；") : cannotConclude || "需要现场复核"}`,
+    `5. 建议确认人：${owner}`,
+  ];
+  return lines.join("\n");
+}
+
+async function loadDeveloperGeneralManagerBrief() {
+  if (developerGmBriefLoaded) return;
+  developerGmBriefLoaded = true;
+  addMessage("agent", "Santoni Athena", "正在加载总经理今日三件事...");
+  const response = await fetch("/api/production/daily-brief");
+  const brief = await response.json();
+  setRole("production_manager");
+  addMessage("agent", "Santoni Athena", brief.narrative || brief.summary || "今日三件事已生成。", brief);
+  recordConversationTurn({ message: "load daily brief", response: brief });
+}
+
+async function sendProductionChatbiMessage(prompt, options = {}) {
+  if (options.echoUser) addMessage("user", getUserLabel(currentRole), prompt);
+  addMessage("agent", "Santoni Athena", "正在查证订单、排产、机台、Service 风险和证据链...");
+  const response = await fetch("/api/production/chatbi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: prompt, language: conversationLanguage, session_id: sessionId }),
+  });
+  const raw = await response.json();
+  const normalized = normalizeProductionChatbiResponse(raw);
+  const pending = messagesEl?.lastElementChild;
+  if (pending?.textContent.includes("正在查证")) pending.remove();
+  setRole("production_manager");
+  addMessage("agent", "Santoni Athena", `${normalized.summary}\n\n${summarizeVerification(raw)}\n\nSkill Execution Trace: management-facing verification, not raw debug trace.`, normalized);
+  recordConversationTurn({ message: prompt, response: normalized });
+  return normalized;
+}
+
+async function sendMainAgentMessage(message, attachments) {
+  addMessage("user", getUserLabel(currentRole), `${message}${attachments.length ? `\n[Image: ${attachments[0].name}]` : ""}`);
+  addMessage("agent", "Main Agent", t("Routing request to sub-agents...", "正在将请求分配给对应 Agent..."));
+  const platformTool = realPlatformToggleEl?.checked
+    ? { mode: "real_attempt", username: platformUsernameEl?.value || "", password: platformPasswordEl?.value || "" }
+    : { mode: "mock" };
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role: currentRole, message, attachments, session_id: sessionId, platform_tool: platformTool }),
+  });
+  const data = await response.json();
+  const pending = messagesEl?.lastElementChild;
+  if (pending?.textContent.includes("Routing") || pending?.textContent.includes("正在将")) pending.remove();
+  if (data.workflow?.startsWith("designer")) setRole("designer");
+  if (data.workflow?.startsWith("service")) setRole("customer_equipment_engineer");
+  if (data.workflow?.startsWith("production_athena")) setRole("production_manager");
+  addMessage("agent", data.workflow?.startsWith("production_athena") ? "Santoni Athena" : "Main Agent", data.summary || "Done.", data);
+  recordConversationTurn({ message, attachments, response: data });
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+  const message = (inputEl?.value || "").trim();
+  if (!message && !pendingAttachment) return;
+  if (!ensureDeveloperIdentitySelected()) return;
+  conversationLanguage = detectLanguage(message);
+  inputEl.value = "";
+  const attachments = pendingAttachment ? [pendingAttachment] : [];
+  clearAttachment();
+  if (currentRole === "production_manager" && !attachments.length) {
+    await sendProductionChatbiMessage(message, { echoUser: true });
+    return;
+  }
+  await sendMainAgentMessage(message, attachments);
+}
+
+function exportLog() {
+  const payload = {
+    version: appVersion,
+    role: currentRole,
+    language: conversationLanguage,
+    session_id: sessionId,
+    runtime_status: runtimeStatus,
+    turns: conversationLog,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `ai-knitting-agent-test-log-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearMemory() {
+  conversationLog.length = 0;
+  currentRole = null;
+  conversationLanguage = "en";
+  developerGmBriefLoaded = false;
+  sessionId = createSessionId();
+  clearAttachment();
+  setRole(null);
+  if (messagesEl) messagesEl.innerHTML = "";
+  addMessage("agent", "Main Agent", "Memory cleared. Please select an identity before starting a new test conversation.");
+}
+
+developerRoleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const selectedRole = button.dataset.devRole || null;
+    setRole(selectedRole);
+    addMessage("agent", "Main Agent", `已选择身份：${roleLabels[selectedRole] || selectedRole}。现在可以开始测试。`);
+    if (selectedRole === "production_manager") {
+      loadDeveloperGeneralManagerBrief().catch((error) => addMessage("agent", "Santoni Athena", `总经理三件事加载失败：${error.message}`));
+    }
+  });
+});
+
+formEl?.addEventListener("submit", (event) => {
+  handleSubmit(event).catch((error) => addMessage("agent", "Main Agent", `Request failed: ${error.message}`));
+});
+
+imageInputEl?.addEventListener("change", () => {
+  const file = imageInputEl.files?.[0];
+  if (!file) return;
+  pendingAttachment = { name: file.name, type: file.type, size: file.size };
+  if (attachmentPreviewEl) {
+    attachmentPreviewEl.hidden = false;
+    attachmentPreviewEl.textContent = `Attached: ${file.name}`;
+  }
+});
+
+exportLogButton?.addEventListener("click", exportLog);
+clearMemoryButton?.addEventListener("click", clearMemory);
 
 setRole(currentRole);
 loadVersion();
@@ -431,94 +351,5 @@ loadDeveloperChangelog();
 addMessage(
   "agent",
   "Main Agent",
-  "Tell me who you are and what you need: a knitting design brief, reference image, or machine service issue. I will route the request to the correct sub-agents."
+  "Please select an identity first: 总经理, Service Engineer, or Design Development. Then send a test message."
 );
-
-async function loadVersion() {
-  try {
-    const response = await fetch(`/version.json?ts=${Date.now()}`);
-    const versionInfo = await response.json();
-    appVersion = versionInfo.version;
-    appVersionEl.textContent = versionInfo.version;
-  } catch {
-    appVersionEl.textContent = appVersion;
-  }
-}
-
-async function loadStatus() {
-  try {
-    const response = await fetch(`/api/status?ts=${Date.now()}`);
-    const status = await response.json();
-    runtimeStatus = status;
-    if (status.version) {
-      if (appVersion && appVersion !== status.version) {
-        addMessage(
-          "agent",
-          "System",
-          `Frontend ${appVersion} is connected to backend ${status.version}. Please restart the demo server before testing.`
-        );
-      }
-      appVersion = status.version;
-      appVersionEl.textContent = status.version;
-    }
-    if (status.llm_provider === "deepseek") {
-      apiStatusEl.textContent = status.deepseek_key_configured ? `DeepSeek · ${status.deepseek_model}` : "Fallback Mode";
-    } else {
-      apiStatusEl.textContent = status.openai_key_configured ? `OpenAI · ${status.openai_model}` : "Fallback Mode";
-    }
-  } catch {
-    runtimeStatus = { status: "unknown" };
-    apiStatusEl.textContent = "Status Unknown";
-  }
-}
-
-async function loadOperatingModel() {
-  try {
-    const response = await fetch(`/api/operating-model?ts=${Date.now()}`);
-    const model = await response.json();
-    operatingModelProgressEl.innerHTML = "";
-    model.capabilities.forEach((capability) => {
-      const item = document.createElement("section");
-      item.className = "model-item";
-      item.innerHTML = `
-        <div class="model-item-header">
-          <strong>${capability.name}</strong>
-          <span class="model-status">${capability.status} · ${capability.progress}%</span>
-        </div>
-        <div class="progress-track"><div class="progress-fill" style="width:${capability.progress}%"></div></div>
-        <p>${capability.next_step}</p>
-      `;
-      operatingModelProgressEl.append(item);
-    });
-  } catch {
-    operatingModelProgressEl.innerHTML = "<p>Operating model status unavailable.</p>";
-  }
-}
-
-async function loadDeveloperChangelog() {
-  if (!developerChangelogEl) return;
-  try {
-    const response = await fetch(`/changelog.html?ts=${Date.now()}`);
-    const html = await response.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const entries = [...doc.querySelectorAll(".version-entry")].slice(0, 4);
-    if (!entries.length) throw new Error("No changelog entries found");
-
-    developerChangelogEl.innerHTML = "";
-    entries.forEach((entry) => {
-      const version = entry.querySelector("h2")?.textContent || "Unknown version";
-      const date = entry.querySelector(".version-entry-header span")?.textContent || "";
-      const title = entry.querySelector("h3")?.textContent || "Untitled";
-      const item = document.createElement("article");
-      item.className = "developer-changelog-item";
-      item.innerHTML = `
-        <strong>${version}</strong>
-        <span>${date}</span>
-        <p>${title}</p>
-      `;
-      developerChangelogEl.append(item);
-    });
-  } catch {
-    developerChangelogEl.innerHTML = "<p>Changelog preview unavailable. Open the Changelog page for full version history.</p>";
-  }
-}
