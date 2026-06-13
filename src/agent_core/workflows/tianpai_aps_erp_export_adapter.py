@@ -1,4 +1,4 @@
-﻿"""Read-only Tianpai APS/ERP CSV export adapter.
+"""Read-only Tianpai APS/ERP CSV export adapter.
 
 The adapter reads customer-provided CSV exports from an external folder. It
 does not copy raw files into the repository and only returns aggregate object
@@ -35,7 +35,7 @@ TABLE_FILE_NAMES = {
     "T_Machine_Info": "T_Machine_Info.csv",
 }
 
-ADAPTER_VERSION = "v0.113.1"
+ADAPTER_VERSION = "v0.113.3"
 CURRENT_DELIVERY_OVERDUE_REVIEW_DAYS = -30
 CURRENT_DELIVERY_LOOKAHEAD_DAYS = 45
 COMPLETED_PLAN_RATE_THRESHOLD = 0.98
@@ -1580,7 +1580,7 @@ class TianpaiApsErpExportAdapter:
                 "Purchasing/labor/freight cost root cause without cost records.",
                 "Automatic schedule modification or ERP/APS write-back.",
             ],
-            "next_prd_step": "Use the v0.113.1 delivery risk driver guard and actual-data Q&A evidence chains as the regression baseline for management question training.",
+            "next_prd_step": "Use the v0.113.3 delivery risk driver guard and actual-data Q&A evidence chains as the regression baseline for management question training.",
         }
 
     def _missing_required_fields(self, tables: dict[str, list[dict[str, str]]]) -> list[dict]:

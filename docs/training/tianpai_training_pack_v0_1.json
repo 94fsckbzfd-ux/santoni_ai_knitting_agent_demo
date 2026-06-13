@@ -1,6 +1,6 @@
 {
   "schema_version": "tianpai_training_pack.v0.1",
-  "project_version_context": "v0.113.1",
+  "project_version_context": "v0.113.3",
   "created_at": "2026-06-08",
   "tenant_id": "tianpai",
   "factory_id": null,

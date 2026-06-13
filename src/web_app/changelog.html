@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -24,6 +24,32 @@
 
     <section class="changelog-list">
       <article class="version-entry current">
+        <div class="version-entry-header">
+          <h2>v0.113.3 - Stable Demo Story Pack Encoding Guard</h2>
+          <span>2026-06-13</span>
+        </div>
+        <h3>Stable Demo Story Pack Chinese Text Fix</h3>
+        <ul>
+          <li>Fixes mojibake in the Production Console Stable Demo Story Pack Chinese titles, questions, demo policy, actual-data notes, and recommended demo sequence.</li>
+          <li>Extends <code>scripts/smoke_check.py</code> to scan the stable demo story pack returned by <code>ProductionOperationsWorkflow().overview()</code>, not only the top-three priority cards.</li>
+          <li>Updates version metadata and cache-busting parameters to v0.113.3.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
+        <div class="version-entry-header">
+          <h2>v0.113.2 - Daily Smoke Check</h2>
+          <span>2026-06-13</span>
+        </div>
+        <h3>Fast Encoding and Regression Guard</h3>
+        <ul>
+          <li>Adds <code>scripts/smoke_check.py</code> for daily development checks covering compileall, critical-page mojibake scanning, Production GM API text scanning, and high-signal smoke tests.</li>
+          <li>Keeps full harness as the release-level validation path while making encoding regressions cheap to catch during normal edits.</li>
+          <li>Updates version metadata and cache-busting parameters to v0.113.2.</li>
+        </ul>
+      </article>
+
+      <article class="version-entry">
         <div class="version-entry-header">
           <h2>v0.113.1 - GM Dashboard Hotfix</h2>
           <span>2026-06-13</span>
@@ -2437,7 +2463,7 @@
       </article>
     </section>
   </main>
-  <script src="/i18n.js?v=0.113.1"></script>
+  <script src="/i18n.js?v=0.113.3"></script>
 </body>
 </html>
 

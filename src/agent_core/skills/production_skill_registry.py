@@ -1,11 +1,11 @@
-﻿"""Production skill contracts for Athena's general-manager workflow."""
+"""Production skill contracts for Athena's general-manager workflow."""
 
 from __future__ import annotations
 
 from copy import deepcopy
 
 
-PRODUCTION_SKILL_VERSION = "v0.113.1"
+PRODUCTION_SKILL_VERSION = "v0.113.3"
 
 READ_ONLY_BOUNDARY = [
     "read_erp_aps_iot_or_export_evidence_only",
@@ -22,7 +22,7 @@ READ_ONLY_BOUNDARY = [
 _SKILLS: list[dict] = [
     {
         "skill_id": "gm_daily_brief_skill",
-        "name_zh": "鎬荤粡鐞嗘瘡鏃ヤ笁浠朵簨鎶€鑳?",
+        "name_zh": "总经理每日三件事技能",
         "name_en": "GM Daily Brief Skill",
         "purpose": "Rank the top three evidence-backed production priorities for a general manager within three minutes.",
         "input_objects": ["management_priority_brief", "production_overview", "actual_data_snapshot", "evidence_log"],
@@ -36,7 +36,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "delivery_risk_skill",
-        "name_zh": "浜や粯椋庨櫓鎶€鑳?",
+        "name_zh": "交付风险技能",
         "name_en": "Delivery Risk Skill",
         "purpose": "Identify orders or weaving part orders that may affect delivery because of due date, unscheduled quantity, or low plan completion.",
         "input_objects": ["Produce_Order", "Weaving_Part_Order", "Planned_Task", "production_order"],
@@ -50,7 +50,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "machine_fit_skill",
-        "name_zh": "鏈哄彴閫傞厤鎶€鑳?",
+        "name_zh": "机台适配技能",
         "name_en": "Machine Fit Skill",
         "purpose": "Check whether machine cylinder diameter and needle spacing match the style/component requirements.",
         "input_objects": ["Style_Component", "T_Machine_Info", "Planned_Task"],
@@ -64,7 +64,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "material_constraint_skill",
-        "name_zh": "鐗╂枡绾︽潫鎶€鑳?",
+        "name_zh": "物料约束技能",
         "name_en": "Material Constraint Skill",
         "purpose": "Identify material, yarn, quantity, or part-order constraints that may block weaving execution.",
         "input_objects": ["Weaving_Part_Order", "Yarn_Product", "material_inventory", "aps_yarn_forecast"],
@@ -78,7 +78,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "bottleneck_detection_skill",
-        "name_zh": "鐡堕璇嗗埆鎶€鑳?",
+        "name_zh": "瓶颈识别技能",
         "name_en": "Bottleneck Detection Skill",
         "purpose": "Find capacity concentration, plan/report gaps, high machine load, or output bottlenecks.",
         "input_objects": ["Planned_Task", "Manual_Machine_Production", "T_Machine_Info", "machine_status"],
@@ -92,7 +92,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "quality_or_scrap_skill",
-        "name_zh": "璐ㄩ噺/搴熷搧鍒嗘瀽鎶€鑳?",
+        "name_zh": "质量/废品分析技能",
         "name_en": "Quality or Scrap Skill",
         "purpose": "Prepare quality, scrap, yield, defect, and replenishment root-cause analysis when real quality data is available.",
         "input_objects": ["quality_inspection", "defect_reason", "garment_output", "iot_quality_signal"],
@@ -106,7 +106,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "service_escalation_skill",
-        "name_zh": "鏈嶅姟鍗囩骇鎶€鑳?",
+        "name_zh": "服务升级技能",
         "name_en": "Service Escalation Skill",
         "purpose": "Turn production-impacting equipment alarms or stoppage into a service request candidate without dispatching.",
         "input_objects": ["machine_alarm", "service_escalations", "production_priority"],
@@ -120,7 +120,7 @@ _SKILLS: list[dict] = [
     },
     {
         "skill_id": "follow_up_action_skill",
-        "name_zh": "鏈湴璺熻繘琛屽姩鎶€鑳?",
+        "name_zh": "本地跟进行动技能",
         "name_en": "Follow-up Action Skill",
         "purpose": "Convert a risk card into a local metadata-only follow-up item linked to evidence.",
         "input_objects": ["risk_card", "action_candidate", "decision_loop", "production_follow_up_reviews"],
@@ -182,20 +182,20 @@ def production_skill_trace_for_priority(priority: dict) -> list[dict]:
     for index, skill in enumerate(skills, start=1):
         if skill["skill_id"] == "gm_daily_brief_skill":
             checked = "Ranked this item against today's delivery, quality, cost, equipment, labor, and material risks."
-            checked_zh = "灏嗚浜嬮」鏀惧叆浠婂ぉ浜や粯銆佽川閲忋€佹垚鏈€佽澶囥€佷汉宸ャ€佺墿鏂欓闄╀腑鎺掑簭銆?"
+            checked_zh = "把该事项放入今天交付、质量、成本、设备、人工、物料风险中排序。"
             result = f"Selected as priority #{priority.get('rank', index)} with risk level {priority.get('risk_level_label', priority.get('priority', 'P1'))}."
-            result_zh = f"璇ヤ簨椤硅閫変负绗?{priority.get('rank', index)} 浼樺厛绾э紝椋庨櫓绛夌骇涓?{priority.get('risk_level_label', priority.get('priority', 'P1'))}銆?"
+            result_zh = f"该事项被选为第 {priority.get('rank', index)} 优先级，风险等级为 {priority.get('risk_level_label', priority.get('priority', 'P1'))}。"
         elif skill["skill_id"] == "follow_up_action_skill":
             checked = "Converted the risk card into a local follow-up candidate and blocked real-system writes."
-            checked_zh = "鎶婇闄╁崱鐗囪浆鎴愭湰鍦拌窡杩涘€欓€夛紝骞堕樆姝㈢湡瀹炵郴缁熷啓鍏ャ€?"
+            checked_zh = "把风险卡片转成本地跟进候选，并阻止真实系统写入。"
             action = priority.get("action_candidate", {})
             result = f"Follow-up owner: {action.get('owner_role') or priority.get('owner_role', 'Production Owner')}."
-            result_zh = f"寤鸿璺熻繘璐熻矗浜猴細{action.get('owner_role') or priority.get('owner_role', 'Production Owner')}銆?"
+            result_zh = f"建议跟进负责人：{action.get('owner_role') or priority.get('owner_role', 'Production Owner')}。"
         else:
             checked = f"Checked {', '.join(skill.get('input_objects', [])[:4])} for this {theme} risk."
-            checked_zh = f"鍥寸粫 {priority.get('risk_theme_label') or theme} 椋庨櫓妫€鏌?{', '.join(skill.get('input_objects', [])[:4])}銆?"
+            checked_zh = f"围绕 {priority.get('risk_theme_label') or theme} 风险检查 {', '.join(skill.get('input_objects', [])[:4])}。"
             result = priority.get("reason") or priority.get("conclusion") or "Evidence supports visibility, but owner confirmation is still required."
-            result_zh = priority.get("reason_zh") or priority.get("conclusion_zh") or "璇佹嵁鏀寔杩涘叆鍙鑼冨洿锛屼絾浠嶉渶瑕佽礋璐ｄ汉纭銆?"
+            result_zh = priority.get("reason_zh") or priority.get("conclusion_zh") or "证据支持进入可视范围，但仍需要负责人确认。"
 
         trace.append(
             {
@@ -203,7 +203,7 @@ def production_skill_trace_for_priority(priority: dict) -> list[dict]:
                 "skill_id": skill["skill_id"],
                 "skill_name_zh": skill["name_zh"],
                 "skill_name_en": skill["name_en"],
-                "step_name_zh": f"姝ラ {index}: {skill['name_zh']}",
+                "step_name_zh": f"步骤 {index}: {skill['name_zh']}",
                 "step_name_en": f"Step {index}: {skill['name_en']}",
                 "what_athena_checked": checked,
                 "what_athena_checked_zh": checked_zh,

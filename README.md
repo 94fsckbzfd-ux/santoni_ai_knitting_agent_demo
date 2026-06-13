@@ -73,7 +73,7 @@ Main Agent is the orchestrator. It identifies role, intent, workflow state, and 
 
 ## Versioning
 
-Current version: `v0.113.1`
+Current version: `v0.113.3`
 
 Version rule: `vMajor.Feature.Patch`
 
@@ -86,6 +86,8 @@ The customer-facing Web demo is available at `/`. The developer/debugging page i
 The customer-facing home page and developer/debug page require users to select an identity before effective chat. Current identity buttons are 总经理, Service Engineer, and Design Development. The selected identity is sent as the request role for workflow routing and future permission management; natural-language identity detection remains only a fallback inside the backend.
 
 The current Athena structure map is rendered at `docs/athena_structure_v0.113.0.png`. Re-run `python scripts/render_athena_structure_png.py` after architecture changes to refresh the PNG.
+
+Daily development smoke check: run `python scripts/smoke_check.py` after routine edits. It performs compileall, scans the customer-facing Production surface plus General Manager priority / stable-demo-story API text for mojibake / malformed HTML, and runs the high-signal smoke tests. Keep the full harness for release validation and GitHub backup.
 
 Athena PRD v0.1 is available at `docs/product/athena_prd_v0.1.md` and mirrored as a customer-facing section inside `docs/Athena.html`.
 
@@ -152,6 +154,10 @@ Athena GM Decision UI Compression v0.111.0, Local Decision Follow-up Board v0.11
 GM First Screen Hierarchy Polish v0.113.0 keeps the customer-facing General Manager page focused on the KPI dashboard, today's three priorities, Service risk candidates, evidence review, local follow-up items, and same-page Santoni Athena drilldown while removing raw payload-style output from the user experience.
 
 GM Dashboard Hotfix v0.113.1 restores the customer-facing General Manager dashboard load path, adds the missing user-page percent formatter, improves the dashboard error message, and cleans the first-screen Daily Brief / risk-card Chinese wording used in the Production view.
+
+Daily Smoke Check v0.113.2 adds `scripts/smoke_check.py` so normal edits can catch compile errors, critical-page mojibake, malformed Production HTML, and high-risk Production regression failures without running the full harness every time.
+
+Stable Demo Story Pack Encoding Guard v0.113.3 fixes Chinese mojibake in the Production Console stable demo story pack and extends `scripts/smoke_check.py` to scan that API object so customer-visible story-pack text is covered by the fast daily check.
 
 Production Console now includes a Stable General Manager Demo Story Pack. The pack provides three repeatable internal-demo stories: a real APS/ERP delivery-risk story, a real APS/ERP machine/style-fit story, and a hybrid service-impact story that combines real scheduling context with clearly labeled mock IOT/Service evidence. Each story includes suggested questions, evidence refs, field sources, mock supplements, data gaps, suggested owner, and one-click Santoni Athena drilldown.
 

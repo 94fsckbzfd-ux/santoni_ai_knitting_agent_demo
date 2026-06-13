@@ -1,4 +1,4 @@
-﻿const messagesEl = document.querySelector("#messages");
+const messagesEl = document.querySelector("#messages");
 const formEl = document.querySelector("#chatForm");
 const inputEl = document.querySelector("#messageInput");
 const imageInputEl = document.querySelector("#imageInput");
@@ -19,7 +19,7 @@ const developerRoleButtons = document.querySelectorAll("[data-dev-role]");
 let currentRole = null;
 let conversationLanguage = "en";
 let pendingAttachment = null;
-let appVersion = "v0.113.1";
+let appVersion = "v0.113.3";
 let runtimeStatus = {};
 let sessionId = createSessionId();
 let developerGmBriefLoaded = false;

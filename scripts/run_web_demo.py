@@ -1,4 +1,4 @@
-﻿"""Run the zero-dependency local web demo."""
+"""Run the zero-dependency local web demo."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 WEB_ROOT = SRC / "web_app"
 DOCS_ROOT = ROOT / "docs"
-APP_VERSION = "v0.113.1"
+APP_VERSION = "v0.113.3"
 
 
 def load_local_env() -> None:

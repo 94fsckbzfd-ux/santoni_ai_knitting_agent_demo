@@ -1,4 +1,4 @@
-﻿"""Production Operations workflow for Athena local demo.
+"""Production Operations workflow for Athena local demo.
 
 The first implementation is deliberately read-only and mock-backed. It models
 the management workflow from order intake to garment output without writing to
@@ -22,7 +22,7 @@ from .tianpai_aps_erp_export_adapter import TianpaiApsErpExportAdapter
 
 
 PRODUCTION_TEMPLATE_ID = "athena.production_operations.v1"
-PRODUCTION_VERSION = "v0.113.1"
+PRODUCTION_VERSION = "v0.113.3"
 ADAPTER_CONTRACT_ID = "athena.production_aps_iot_read_only_contract.v1"
 DATA_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_operations.mock.json"
 FOLLOW_UP_REVIEW_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_follow_up_reviews.json"
@@ -118,7 +118,7 @@ def production_operations_template() -> dict:
             {
                 "adapter": "Tianpai APS/ERP Export Adapter",
                 "status": "read_only_external_csv",
-                "read": "Produce_Order, Weaving_Part_Order, Planned_Task, Manual_Machine_Production, Style_Component, Style_Sku, and T_Machine_Info exports using 琛ㄥ瓧娈?DDL field order for actual-data Q&A.",
+                "read": "Produce_Order, Weaving_Part_Order, Planned_Task, Manual_Machine_Production, Style_Component, Style_Sku, and T_Machine_Info exports using 表字段 DDL field order for actual-data Q&A.",
                 "write": "none",
             },
         ],
@@ -662,13 +662,13 @@ class ProductionOperationsWorkflow:
         suggested_owner = (
             trace_source_priority.get("owner_role")
             or trace_source_priority.get("action_candidate", {}).get("owner_role")
-            or self._choose(language, "Production Manager / Maintenance Owner", "鐢熶骇涓荤 / 鏈轰慨璐熻矗浜?")
+            or self._choose(language, "Production Manager / Maintenance Owner", "生产主管 / 机修负责人")
         )
         cannot_conclude = data_gaps[:4] or [
             self._choose(
                 language,
                 "Current evidence is enough for risk review, but not enough for a final root-cause conclusion.",
-                "褰撳墠璇佹嵁瓒冲鎻愮ず椋庨櫓锛屼絾杩樹笉瓒充互纭鏈€缁堟牴鍥犮€?",
+                "当前证据足够提示风险，但还不足以确认最终根因。",
             )
         ]
         return {
@@ -677,7 +677,7 @@ class ProductionOperationsWorkflow:
             "summary": self._choose(
                 language,
                 "Athena checked the available production evidence before recommending the next confirmation owner.",
-                "Athena 宸插厛鏌ヨ瘉褰撳墠鍙敤鐨勭敓浜ц瘉鎹紝鍐嶅缓璁笅涓€姝ョ敱璋佺‘璁ゃ€?",
+                "Athena 已先查证当前可用的生产证据，再建议下一步由谁确认。",
             ),
             "checked_objects": checked_objects,
             "findings": findings,
@@ -823,13 +823,13 @@ class ProductionOperationsWorkflow:
             ),
             "canonical_workflow_key": {
                 "field": "order_id",
-                "site_term": "璁㈠崟",
+                "site_term": "订单",
                 "rule": "Use order_id as the workflow spine whenever a source system exposes it; otherwise mark the object as unjoined evidence.",
             },
             "objects": [
                 {
                     "object": "order",
-                    "site_term": "璁㈠崟",
+                    "site_term": "订单",
                     "required_fields": ["order_id", "customer", "style_code", "quantity", "remaining_quantity", "due_date", "erp_status", "aps_status"],
                     "joins": ["style", "material", "aps_schedule", "machine", "measurement", "garment_output"],
                     "evidence_policy": "Order-level claims require ERP/APS evidence or an explicit mock evidence_ref.",
@@ -925,7 +925,7 @@ class ProductionOperationsWorkflow:
         exception_rows = zero_rows + negative_rows
         exception_ratio = self._ratio(exception_rows, row_count)
         readiness_blockers = [
-            "Confirm whether 鐢熶骇浠诲姟鍗?equals APS/ERP produce_order_code, with or without prefix normalization.",
+            "Confirm whether 生产任务单 equals APS/ERP produce_order_code, with or without prefix normalization.",
             "Confirm why negative balance exists before treating it as shortage.",
             "Connect BOM yarn demand by style_code and yarn_code before calculating shortage quantity.",
             "Connect quality/scrap records by produce_order_code, yarn_code, batch, and date before claiming material root cause.",
@@ -967,7 +967,7 @@ class ProductionOperationsWorkflow:
                     "priority": "P1",
                     "theme": "material_balance_interpretation",
                     "conclusion": f"{exception_rows} inventory rows have zero or negative balance and need warehouse/ERP interpretation.",
-                    "conclusion_zh": f"{exception_rows} 琛屽簱瀛樼粨瀛樹负 0 鎴栬礋鏁帮紝闇€瑕佷粨搴?ERP 璐熻矗浜虹‘璁や笟鍔″惈涔夈€?",
+                    "conclusion_zh": f"{exception_rows} 行库存结存为 0 或负数，需要仓库/ERP 负责人确认业务含义。",
                     "evidence_refs": ["EV-PROD-027"],
                     "owner_role": "Warehouse / ERP Owner",
                     "data_gap": "Negative balance cannot be treated as true shortage until sign and movement rules are confirmed.",
@@ -977,7 +977,7 @@ class ProductionOperationsWorkflow:
                     "priority": "P0",
                     "theme": "order_join_readiness",
                     "conclusion": "Material data has production task order fields, but ERP order and APS produce_order_code mapping still need confirmation.",
-                    "conclusion_zh": "鐗╂枡鏁版嵁宸叉湁鐢熶骇浠诲姟鍗曞瓧娈碉紝浣嗚繕闇€瑕佺‘璁ゅ畠鍜?ERP 璁㈠崟銆丄PS produce_order_code 鐨勬槧灏勫叧绯汇€?",
+                    "conclusion_zh": "物料数据已有生产任务单字段，但还需要确认它和 ERP 订单、APS produce_order_code 的映射关系。",
                     "evidence_refs": ["EV-PROD-028"],
                     "owner_role": "ERP / APS Owner",
                     "data_gap": "Without the join rule, Athena can describe material inventory but cannot prove delivery impact by order.",
@@ -1304,22 +1304,22 @@ class ProductionOperationsWorkflow:
                     "management_theme": "quality",
                     "theme_label": "璐ㄩ噺浼樺厛",
                     "title": f"Stabilize {order.get('style_code', quality.get('order_id'))} quality before expanding production",
-                    "title_zh": f"鍏堢ǔ瀹?{order.get('style_code', quality.get('order_id'))} 璐ㄩ噺锛屽啀鎵╁ぇ鐢熶骇",
+                    "title_zh": f"先稳定 {order.get('style_code', quality.get('order_id'))} 质量，再扩大生产",
                     "management_question": "Will this quality issue damage customer trust or trigger replenishment cost?",
                     "conclusion": (
                         f"{order.get('order_id', quality.get('order_id'))} has quality warning, "
                         f"defect rate {quality.get('defect_rate', 0):.1%}, yield {quality.get('yield_rate', 0):.1%}."
                     ),
                     "conclusion_zh": (
-                        f"{order.get('order_id', quality.get('order_id'))} 瑙﹀彂璐ㄩ噺棰勮锛?"
-                        f"缂洪櫡鐜?{quality.get('defect_rate', 0):.1%}锛岃壇鍝佺巼 {quality.get('yield_rate', 0):.1%}銆?"
+                        f"{order.get('order_id', quality.get('order_id'))} 触发质量预警，"
+                        f"缺陷率 {quality.get('defect_rate', 0):.1%}，良品率 {quality.get('yield_rate', 0):.1%}。"
                     ),
                     "reason": "Quality is ranked first because poor quality can lose repeat orders and create hidden cost beyond visible scrap.",
-                    "reason_zh": "璐ㄩ噺鎺掔涓€锛屽洜涓鸿川閲忛棶棰樹笉鍙骇鐢熷彲瑙佸簾鍝侊紝杩樺彲鑳芥崯瀹冲鎴峰璐苟褰㈡垚闅愭€ф垚鏈€?",
+                    "reason_zh": "质量排第一，因为质量问题不只产生可见废品，还可能损害客户复购并形成隐性成本。",
                     "risk_if_ignored": "More rework, replenishment orders, delayed downstream sewing/packing, and customer confidence loss.",
-                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘甯︽潵杩斿伐銆佽ˉ鍗曘€佸悗閬撶紳鍒?鍖呰寤惰鍜屽鎴蜂俊浠绘崯澶便€?",
+                    "risk_if_ignored_zh": "如果不处理，可能带来返工、补单、后道缝制/包装延误和客户信任损失。",
                     "recommended_action": "Hold expansion on the affected style, review SM8-03 setup/program evidence, and confirm defect reasons before the next shift.",
-                    "recommended_action_zh": "鍏堟殏鍋滄墿澶ц娆剧敓浜э紝鍦ㄤ笅涓€涓彮娆″墠澶嶆牳 SM8-03 鐨?setup/绋嬪簭璇佹嵁锛屽苟纭涓嶈壇鍘熷洜銆?",
+                    "recommended_action_zh": "先暂停扩大该款生产，在下一个班次前复核 SM8-03 的 setup/程序证据，并确认不良原因。",
                     "owner_role": "Production Manager / Quality Owner",
                     "confirmation_needed_by": "next_shift_start",
                     "decision_gate": "quality_owner_confirms_root_cause_or_releases_hold",
@@ -1369,22 +1369,22 @@ class ProductionOperationsWorkflow:
                     "management_theme": "delivery",
                     "theme_label": "浜ゆ湡椋庨櫓",
                     "title": "Resolve unscheduled and material-held orders before they force air freight",
-                    "title_zh": "鍏堝鐞嗘湭鎺掑崟鍜岀己鏂欒鍗曪紝閬垮厤鍚庣画琚揩绌鸿繍銆?",
+                    "title_zh": "先处理未排单和缺料订单，避免后续被迫空运。",
                     "management_question": "Which backlog items can still be protected before delivery risk becomes cost?",
                     "conclusion": (
                         f"{len(risky_orders)} orders need scheduling or ERP/material review; "
                         f"remaining quantity {sum(int(item.get('remaining_quantity', 0)) for item in risky_orders)}."
                     ),
                     "conclusion_zh": (
-                        f"{len(risky_orders)} 涓鍗曢渶瑕佹帓鍗曟垨 ERP/鐗╂枡澶嶆牳锛?"
-                        f"鍓╀綑鏁伴噺 {sum(int(item.get('remaining_quantity', 0)) for item in risky_orders)}銆?"
+                        f"{len(risky_orders)} 个订单需要排单或 ERP/物料复核，"
+                        f"剩余数量 {sum(int(item.get('remaining_quantity', 0)) for item in risky_orders)}。"
                     ),
                     "reason": "Delivery risk converts into cost when buffer is consumed and the only recovery option becomes overtime or air freight.",
-                    "reason_zh": "浜ゆ湡椋庨櫓浼氬湪缂撳啿琚秷鑰楀悗杞寲涓烘垚鏈紝甯歌琛ユ晳鏂瑰紡鏄姞鐝垨绌鸿繍銆?",
+                    "reason_zh": "交期风险会在缓冲被消耗后转化为成本，常见补救方式是加班或空运。",
                     "risk_if_ignored": "Planner firefighting, production resequencing, overtime, or air freight escalation.",
-                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘鍑虹幇璁″垝鍛樻晳鐏€佺敓浜ч噸鎺掋€佸姞鐝垨绌鸿繍鎴愭湰涓婂崌銆?",
+                    "risk_if_ignored_zh": "如果不处理，可能出现计划员救火、生产重排、加班或空运成本上升。",
                     "recommended_action": "Confirm ERP exception on ORD-20260605-004 and elastane lot E-224 availability before changing APS sequence.",
-                    "recommended_action_zh": "鍦ㄨ皟鏁?APS 椤哄簭鍓嶏紝鍏堢‘璁?ORD-20260605-004 鐨?ERP 寮傚父鍜?E-224 姘ㄧ憾鎵规鍒版枡鎯呭喌銆?",
+                    "recommended_action_zh": "在调整 APS 顺序前，先确认 ORD-20260605-004 的 ERP 异常和 E-224 氨纶批次到料情况。",
                     "owner_role": "Planner / ERP Owner",
                     "confirmation_needed_by": "same_day_planning_meeting",
                     "decision_gate": "erp_exception_closed_and_material_eta_confirmed",
@@ -1432,15 +1432,15 @@ class ProductionOperationsWorkflow:
                         f"{labor_item.get('manual_interventions', 0)} manual interventions."
                     ),
                     "conclusion_zh": (
-                        f"{labor_item.get('team_id')} 鏈夋晥宸ユ椂鏁堢巼涓?{labor_item.get('efficiency', 0):.0%}锛?"
-                        f"浜哄伐骞查 {labor_item.get('manual_interventions', 0)} 娆°€?"
+                        f"{labor_item.get('team_id')} 有效工时效率为 {labor_item.get('efficiency', 0):.0%}，"
+                        f"人工干预 {labor_item.get('manual_interventions', 0)} 次。"
                     ),
                     "reason": "Low effective hours can hide waiting, repeated mechanic intervention, rework, or unclear handoff before they become visible delivery misses.",
-                    "reason_zh": "鏈夋晥宸ユ椂鍋忎綆浼氭妸绛夊緟銆佸弽澶嶆満淇共棰勩€佽繑宸ユ垨浜ゆ帴涓嶆竻闅愯棌璧锋潵锛岀洿鍒板畠浠彉鎴愪氦浠橀棶棰樸€?",
+                    "reason_zh": "有效工时偏低会把等待、反复机修干预、返工或交接不清隐藏起来，直到它们变成交付问题。",
                     "risk_if_ignored": "The same people may stay busy while useful output stays low, creating missed delivery recovery windows and hidden labor cost.",
-                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鐜板満鍙兘鐪嬭捣鏉ュ緢蹇欎絾鏈夋晥浜у嚭鍋忎綆锛岄敊杩囦氦浠樻仮澶嶇獥鍙ｅ苟褰㈡垚闅愭€т汉宸ユ垚鏈€?",
+                    "risk_if_ignored_zh": "如果不处理，现场可能看起来很忙但有效产出偏低，错过交付恢复窗口并形成隐性人工成本。",
                     "recommended_action": "Ask the team leader and maintenance owner to confirm whether interventions are service, setup, waiting, or rework before the next shift review.",
-                    "recommended_action_zh": "涓嬫鐝澶嶇洏鍓嶏紝璇风彮缁勯暱鍜岃澶囪礋璐ｄ汉纭浜哄伐骞查鏉ヨ嚜鏈嶅姟銆佽皟鏈恒€佺瓑寰呰繕鏄繑宸ャ€?",
+                    "recommended_action_zh": "下次班次复盘前，请班组长和设备负责人确认人工干预来自服务、调机、等待还是返工。",
                     "owner_role": "Team Leader / Maintenance Owner",
                     "confirmation_needed_by": "next_shift_review",
                     "decision_gate": "team_leader_confirms_effective_hour_cause",
@@ -1489,15 +1489,15 @@ class ProductionOperationsWorkflow:
                         f"{machine.get('downtime_minutes', 0)} downtime minutes and OEE {machine.get('oee', 0):.0%}."
                     ),
                     "conclusion_zh": (
-                        f"{machine.get('machine_id')} 褰撳墠鐘舵€佷负 {machine.get('state')}锛?"
-                        f"鍋滄満 {machine.get('downtime_minutes', 0)} 鍒嗛挓锛孫EE {machine.get('oee', 0):.0%}銆?"
+                        f"{machine.get('machine_id')} 当前状态为 {machine.get('state')}，"
+                        f"停机 {machine.get('downtime_minutes', 0)} 分钟，OEE {machine.get('oee', 0):.0%}。"
                     ),
                     "reason": "Idle or stopped machine time creates hidden cost even before it shows up as a delivery miss.",
-                    "reason_zh": "鏈哄彴绌洪棽鎴栧仠鏈哄湪褰㈡垚浜ゆ湡闂涔嬪墠锛屽氨宸茬粡浜х敓闅愭€ф垚鏈€?",
+                    "reason_zh": "机台空闲或停机在形成交期问题之前，就已经产生隐性成本。",
                     "risk_if_ignored": "Lost machine hours, repeated mechanic intervention, lower labor efficiency, and delayed recovery.",
-                    "risk_if_ignored_zh": "濡傛灉涓嶅鐞嗭紝鍙兘鎹熷け鏈哄彴宸ユ椂銆佸鍔犵淮淇弽澶嶅共棰勩€侀檷浣庝汉宸ユ晥鐜囧苟寤堕暱鎭㈠鏃堕棿銆?",
+                    "risk_if_ignored_zh": "如果不处理，可能损失机台工时、增加维修反复干预、降低人工效率并延长恢复时间。",
                     "recommended_action": "Confirm whether the machine is waiting for work order, material, setup, or service review; do not auto-dispatch.",
-                    "recommended_action_zh": "纭鏈哄彴鏄湪绛夊伐鍗曘€佺瓑鐗╂枡銆佺瓑璋冩満杩樻槸闇€瑕佹湇鍔″鏍革紱涓嶈鑷姩娲惧伐銆?",
+                    "recommended_action_zh": "确认机台是在等工单、等物料、等调机还是需要服务复核；不要自动派工。",
                     "owner_role": "Production Supervisor / Service Manager",
                     "confirmation_needed_by": "current_shift_review",
                     "decision_gate": "machine_recovery_owner_assigned",
@@ -2046,7 +2046,7 @@ class ProductionOperationsWorkflow:
                 owner_role=owner,
                 status=status,
                 title=f"Evidence review for order {object_id}",
-                title_zh=f"璁㈠崟 {object_id} 鏁版嵁澶嶆牳",
+                title_zh=f"订单 {object_id} 数据复核",
                 confirmation_need=confirmation_need,
                 recommendation=card.get("suggested_confirmation_action") or confirmation_need,
                 recommendation_zh=card.get("suggested_confirmation_action") or confirmation_need,
@@ -2313,7 +2313,7 @@ class ProductionOperationsWorkflow:
             "schema_id": "athena.production_daily_brief_narrative.v1",
             "version": PRODUCTION_VERSION,
             "title": "Daily Brief Narrative",
-            "title_zh": "浠婃棩鎬荤粡鐞嗘棭浼氭憳瑕?",
+            "title_zh": "今日总经理早会摘要",
             "read_time": "3_minutes",
             "read_only": True,
             "raw_json_visible_to_user": False,
@@ -2354,9 +2354,9 @@ class ProductionOperationsWorkflow:
             "mode_id": f"INTERNAL-DEMO-{PRODUCTION_VERSION}",
             "status": "ready_for_internal_demo" if can_demo else "needs_work_before_internal_demo",
             "audience": "Santoni internal team and selected customer preview",
-            "audience_zh": "Santoni 鍐呴儴鍥㈤槦鍜屽鎴烽瑙?",
+            "audience_zh": "Santoni 内部团队和客户预览",
             "demo_positioning": "General Manager 3-minute production decision workflow",
-            "demo_positioning_zh": "鎬荤粡鐞嗕笁鍒嗛挓鐢熶骇鍐崇瓥宸ヤ綔娴?",
+            "demo_positioning_zh": "总经理三分钟生产决策工作流",
             "can_demo": [
                 "Select General Manager on the user page and see today's top three production priorities.",
                 "Click a risk card to ask Athena for evidence-based root-cause drilldown.",
@@ -2409,15 +2409,15 @@ class ProductionOperationsWorkflow:
             "schema_id": "athena.production_permission_boundary.v1",
             "version": PRODUCTION_VERSION,
             "final_confirmation_owner": "General Manager",
-            "final_confirmation_owner_zh": "鎬荤粡鐞?",
+            "final_confirmation_owner_zh": "总经理",
             "decision_authority": (
                 "Athena supports fact collection, risk explanation, owner suggestion, "
                 "local follow-up reminders, and evidence review. It does not replace "
                 "the general manager's final decision authority."
             ),
             "decision_authority_zh": (
-                "Athena 璐熻矗鏀堕泦浜嬪疄銆佽В閲婇闄┿€佸缓璁礋璐ｄ汉銆佺敓鎴愭湰鍦拌窡杩涘拰澶嶆牳璇佹嵁锛?"
-                "浣嗕笉鏇夸唬鎬荤粡鐞嗙殑鏈€缁堢‘璁ゆ潈銆?"
+                "Athena 负责收集事实、解释风险、建议负责人、生成本地跟进和复核证据，"
+                "但不替代总经理的最终确认权。"
             ),
             "allowed_actions": [
                 "show_risks",
@@ -2455,7 +2455,7 @@ class ProductionOperationsWorkflow:
                 "鎺у埗鏈哄彴",
                 "鐩存帴璇勪环鍛樺伐缁╂晥",
                 "璇佹嵁涓嶈冻鏃剁粰鍑虹‘瀹氱粨璁?",
-                "鏇夸唬鎬荤粡鐞嗗喅绛?",
+                "替代总经理决策",
             ],
             "evidence_policy": {
                 "insufficient_evidence_behavior": "state_missing_data_and_next_needed_evidence",
@@ -2471,7 +2471,7 @@ class ProductionOperationsWorkflow:
             },
             "ui_note": {
                 "en": "Athena can recommend what to check and who should confirm it; the general manager remains the final decision owner.",
-                "zh": "Athena 鍙互寤鸿鏌ヤ粈涔堛€佺敱璋佺‘璁わ紱鏈€缁堝喅绛栦粛鐢辨€荤粡鐞嗙‘璁ゃ€?",
+                "zh": "Athena 可以建议查什么、由谁确认；最终决策仍由总经理确认。",
             },
         }
 
@@ -2496,17 +2496,17 @@ class ProductionOperationsWorkflow:
             {
                 "step_id": "story_step_1_open",
                 "title": "Open Athena and read the management summary",
-                "title_zh": "鎵撳紑 Athena锛屽厛鐪嬬鐞嗘憳瑕?",
+                "title_zh": "打开 Athena，先看管理摘要",
                 "object_refs": [management_priority_brief.get("brief_id", "")],
                 "proof": "daily_brief.summary",
                 "proof_zh": "daily_brief.summary_zh",
                 "expected_manager_understanding": "Know today's delivery, quality, labor, and data-boundary situation before drilling down.",
-                "expected_manager_understanding_zh": "鍏堢煡閬撲粖澶╀氦浠樸€佽川閲忋€佷汉宸ュ拰鏁版嵁杈圭晫鐨勫ぇ鑷存儏鍐碉紝鍐嶈繘鍏ヤ笅閽汇€?",
+                "expected_manager_understanding_zh": "先知道今天交付、质量、人工和数据边界的大致情况，再进入下钻。",
             },
             {
                 "step_id": "story_step_2_delivery",
                 "title": "Start from the delivery-risk order",
-                "title_zh": "浠庝氦浠橀闄╄鍗曞紑濮?",
+                "title_zh": "从交付风险订单开始",
                 "object_refs": [delivery.get("priority_id", ""), service_order],
                 "proof": delivery.get("evidence_refs", []),
                 "proof_zh": delivery.get("evidence_refs", []),
@@ -2516,7 +2516,7 @@ class ProductionOperationsWorkflow:
             {
                 "step_id": "story_step_3_root_cause",
                 "title": "Connect delivery risk to quality, labor, and service signals",
-                "title_zh": "鎶婁氦浠橀闄╄繛鎺ュ埌璐ㄩ噺銆佷汉宸ュ拰鏈嶅姟淇″彿",
+                "title_zh": "把交付风险连接到质量、人工和服务信号",
                 "object_refs": [
                     quality.get("priority_id", ""),
                     labor.get("priority_id", ""),
@@ -2537,23 +2537,23 @@ class ProductionOperationsWorkflow:
                     "low effective labor hours, and a machine/service review candidate."
                 ),
                 "expected_manager_understanding_zh": (
-                    "杩欎釜璁㈠崟椋庨櫓涓嶆槸鍗曚釜 KPI 闂锛岃€屾槸鍙兘鍚屾椂鍏宠仈琛ュ崟璐ㄩ噺銆佷汉宸ユ湁鏁堝伐鏃跺亸浣庯紝浠ュ強鏈哄彴/鏈嶅姟澶嶆牳鍊欓€夈€?"
+                    "这个订单风险不是单个 KPI 问题，而是可能同时关联补单质量、人工有效工时偏低，以及机台/服务复核候选。"
                 ),
             },
             {
                 "step_id": "story_step_4_follow_up",
                 "title": "Turn the story into local follow-up items",
-                "title_zh": "鎶婃晠浜嬬嚎杞垚鏈湴璺熻繘浜嬮」",
+                "title_zh": "把故事线转成本地跟进事项",
                 "object_refs": [item.get("follow_up_id", "") for item in follow_ups],
                 "proof": [item.get("linked_risk_card_id", "") for item in follow_ups],
                 "proof_zh": [item.get("linked_risk_card_id", "") for item in follow_ups],
                 "expected_manager_understanding": "Every suggested action has an owner, evidence request, closure gate, and linked risk card.",
-                "expected_manager_understanding_zh": "姣忔潯寤鸿鍔ㄤ綔閮芥湁璐熻矗浜恒€佽瘉鎹姹傘€佸叧闂棬妲涳紝骞跺叧鑱斿洖椋庨櫓鍗°€?",
+                "expected_manager_understanding_zh": "每条建议动作都有负责人、证据要求、关闭门槛，并关联回风险卡。",
             },
             {
                 "step_id": "story_step_5_confirm",
                 "title": "Keep final confirmation with the general manager",
-                "title_zh": "鏈€缁堢‘璁や粛鐢辨€荤粡鐞嗗畬鎴?",
+                "title_zh": "最终确认仍由总经理完成",
                 "object_refs": [permission_boundary.get("schema_id", "")],
                 "proof": permission_boundary.get("blocked_actions", []),
                 "proof_zh": permission_boundary.get("blocked_actions_zh", []),
@@ -2567,19 +2567,19 @@ class ProductionOperationsWorkflow:
             "version": PRODUCTION_VERSION,
             "story_id": f"MVP-DEMO-STORY-{PRODUCTION_VERSION}-ORDER-RISK",
             "title": "Order delivery risk connected to quality, labor, and service signals",
-            "title_zh": "璁㈠崟浜や粯椋庨櫓杩炴帴璐ㄩ噺銆佷汉宸ュ拰鏈嶅姟淇″彿",
+            "title_zh": "订单交付风险连接质量、人工和服务信号",
             "audience": "General Manager / customer management demo",
-            "audience_zh": "鎬荤粡鐞?/ 瀹㈡埛绠＄悊灞傛紨绀?",
+            "audience_zh": "总经理 / 客户管理层演示",
             "positioning": "A three-minute story path for explaining Athena as a digital general manager, not as a chatbot.",
-            "positioning_zh": "鐢ㄤ簬涓夊垎閽熻鏄?Athena 鏄暟瀛楁€荤粡鐞嗭紝鑰屼笉鏄亰澶╂満鍣ㄤ汉鐨勬晠浜嬬嚎銆?",
+            "positioning_zh": "用于三分钟说明 Athena 是数字总经理，而不是聊天机器人。",
             "source_prd_section": "16. MVP Demo Story",
             "initial_story": (
                 "An order's delivery risk increases. Athena detects that the risk may be connected to quality "
                 "replenishment, low labor effective hours, and service-related machine stoppage risk."
             ),
             "initial_story_zh": (
-                "鏌愪釜璁㈠崟鐨勪氦浠橀闄╁崌楂樸€侫thena 鍙戠幇杩欎釜椋庨櫓鍙兘涓庤川閲忚ˉ鍗曘€佷汉宸ユ湁鏁堝伐鏃跺亸浣庛€?"
-                "浠ュ強 Service 鐩稿叧鐨勬満鍙板仠鏈洪闄╂湁鍏炽€?"
+                "某个订单的交付风险升高。Athena 发现这个风险可能与质量补单、人工有效工时偏低，"
+                "以及 Service 相关的机台停机风险有关。"
             ),
             "story_steps": story_steps,
             "success_criteria": [
@@ -2591,16 +2591,16 @@ class ProductionOperationsWorkflow:
                 "final_confirmation_boundary_visible",
             ],
             "success_criteria_zh": [
-                "鑳界湅鍒颁粖澶╁墠涓変欢浜?",
-                "鑳界湅鍒颁负浠€涔堥噸瑕?",
-                "鑳界湅鍒拌瘉鎹紩鐢?",
-                "鑳界湅鍒颁笅涓€姝ョ敱璋佺‘璁?",
-                "鑳界湅鍒版暟鎹己鍙?",
-                "鑳界湅鍒版渶缁堢‘璁よ竟鐣?",
+                "能看到今天前三件事",
+                "能看到为什么重要",
+                "能看到证据引用",
+                "能看到下一步由谁确认",
+                "能看到数据缺口",
+                "能看到最终确认边界",
             ],
             "read_only": True,
             "data_boundary": "Local mock story assembled from management_priority_brief, decision_loop, service_escalations, and permission_boundary.",
-            "data_boundary_zh": "鏈湴 mock 鏁呬簨绾匡紝鐢?management_priority_brief銆乨ecision_loop銆乻ervice_escalations 鍜?permission_boundary 缁勮銆?",
+            "data_boundary_zh": "本地 mock 故事线，由 management_priority_brief、decision_loop、service_escalations 和 permission_boundary 组装。",
         }
 
     def _stable_demo_story_pack(
@@ -2674,22 +2674,22 @@ class ProductionOperationsWorkflow:
             story_from_priority(
                 "STABLE-DEMO-001-REAL-DELIVERY",
                 "Which order should the General Manager watch first?",
-                "鎬荤粡鐞嗕粖澶╁厛鐩摢涓鍗曪紵",
+                "总经理今天先盯哪个订单？",
                 "real_data_main_line",
                 delivery,
-                "浠婂ぉ鍏堢洴鍝釜璁㈠崟锛熶负浠€涔堬紵",
+                "今天先盯哪个订单？为什么？",
                 "Actual APS/ERP export",
-                "鐪熷疄 APS/ERP 瀵煎嚭",
+                "真实 APS/ERP 导出",
             ),
             story_from_priority(
                 "STABLE-DEMO-002-REAL-MACHINE-FIT",
                 "Is any style scheduled onto a risky machine specification?",
-                "鏄惁鏈夋寮忚鎺掑埌瀛樺湪瑙勬牸椋庨櫓鐨勬満鍙帮紵",
+                "是否有款式被排到存在规格风险的机台？",
                 "real_data_main_line",
                 equipment,
-                "杩欐壒璁㈠崟鏄惁鏈夋満鍙?娆惧紡瑙勬牸涓嶅尮閰嶉闄╋紵",
+                "这批订单是否有机台/款式规格不匹配风险？",
                 "Actual APS/ERP export",
-                "鐪熷疄 APS/ERP 瀵煎嚭",
+                "真实 APS/ERP 导出",
             ),
         ]
 
@@ -2698,11 +2698,11 @@ class ProductionOperationsWorkflow:
                 "story_id": "STABLE-DEMO-003-HYBRID-SERVICE-IMPACT",
                 "story_type": "hybrid_real_order_mock_iot_service",
                 "title": "If a machine keeps stopping, which order may be affected?",
-                "title_zh": "杩欏彴鏈哄鏋滅户缁仠鏈猴紝浼氬奖鍝嶅摢涓鍗曪紵",
+                "title_zh": "这台机如果继续停机，会影响哪个订单？",
                 "demo_badge": "Real schedule context + mock IOT/Service signal",
-                "demo_badge_zh": "鐪熷疄鎺掍骇涓婁笅鏂?+ mock IOT/Service 淇″彿",
-                "manager_question": "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
-                "chatbi_question": service.get("drilldown_question") or "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
+                "demo_badge_zh": "真实排产上下文 + mock IOT/Service 信号",
+                "manager_question": "这台机如果继续停机会影响哪个订单？",
+                "chatbi_question": service.get("drilldown_question") or "这台机如果继续停机会影响哪个订单？",
                 "primary_objects": service.get("affected_objects", {}),
                 "what_athena_shows": [
                     service.get("title_zh") or service.get("title") or "",
@@ -2738,18 +2738,18 @@ class ProductionOperationsWorkflow:
             "version": PRODUCTION_VERSION,
             "pack_id": f"STABLE-DEMO-PACK-{PRODUCTION_VERSION}",
             "title": "General Manager three-minute production decision demo",
-            "title_zh": "鎬荤粡鐞嗕笁鍒嗛挓鐢熶骇鍐崇瓥婕旂ず鍖?",
+            "title_zh": "总经理三分钟生产决策演示包",
             "positioning": "A repeatable demo pack that separates real evidence, mock supplements, and missing data before Athena gives recommendations.",
-            "positioning_zh": "涓€濂楀彲閲嶅婕旂ず鐨勬晠浜嬪寘锛氬厛鍖哄垎鐪熷疄璇佹嵁銆乵ock 琛ュ厖鍜岀己澶辨暟鎹紝鍐嶈 Athena 缁欏缓璁€?",
+            "positioning_zh": "一套可重复演示的故事包：先区分真实证据、mock 补充和缺失数据，再让 Athena 给出建议。",
             "demo_policy": {
                 "real_data_main_line": "Use Tianpai APS/ERP export evidence for delivery and machine/style-fit stories.",
                 "mock_supplement_rule": "Use mock IOT/Service only to show future workflow behavior, and label it clearly.",
                 "claim_boundary": "Do not claim live root cause, live IOT status, real dispatch, cost result, or downstream quality proof.",
             },
             "demo_policy_zh": {
-                "real_data_main_line": "浜や粯椋庨櫓鍜屾満鍙?娆惧紡瑙勬牸椋庨櫓浼樺厛浣跨敤澶╂淳 APS/ERP 瀵煎嚭璇佹嵁銆?",
-                "mock_supplement_rule": "IOT/Service mock 鍙敤浜庡睍绀烘湭鏉ュ伐浣滄祦琛屼负锛屽繀椤绘槑纭爣娉ㄣ€?",
-                "claim_boundary": "涓嶅０绉板疄鏃舵牴鍥犮€佸疄鏃?IOT 鐘舵€併€佺湡瀹炴淳宸ャ€佺湡瀹炴垚鏈垨涓嬫父璐ㄩ噺璇佹槑銆?",
+                "real_data_main_line": "交付风险和机台/款式规格风险优先使用天派 APS/ERP 导出证据。",
+                "mock_supplement_rule": "IOT/Service mock 只用于展示未来工作流行为，必须明确标注。",
+                "claim_boundary": "不声称实时根因、实时 IOT 状态、真实派工、真实成本或下游质量证明。",
             },
             "actual_data_available": {
                 "usable_for_demo": [
@@ -2758,9 +2758,9 @@ class ProductionOperationsWorkflow:
                     "material signal from yarn inventory aggregate and material priority card",
                 ],
                 "usable_for_demo_zh": [
-                    "鍩轰簬 Produce_Order / Weaving_Part_Order / Planned_Task / Manual_Machine_Production 鐨勪氦浠橀闄?",
-                    "鍩轰簬 Style_Component 鍜?T_Machine_Info 鐨勬満鍙?娆惧紡瑙勬牸鍖归厤",
-                    "鍩轰簬绾辩嚎搴撳瓨姹囨€诲拰鐗╂枡椋庨櫓鍗＄殑鐗╂枡淇″彿",
+                    "基于 Produce_Order / Weaving_Part_Order / Planned_Task / Manual_Machine_Production 的交付风险",
+                    "基于 Style_Component 和 T_Machine_Info 的机台/款式规格匹配",
+                    "基于纱线库存汇总和物料风险卡的物料信号",
                 ],
                 "source_tables": actual_source_names,
                 "evidence_level": "Level 2: external APS/ERP export evidence",
@@ -2781,11 +2781,11 @@ class ProductionOperationsWorkflow:
                 "Create or review a local follow-up item without writing real systems.",
             ],
             "recommended_demo_sequence_zh": [
-                "鎵撳紑 /production.html锛屽厛鐪嬬ǔ瀹氭紨绀烘晠浜嬪寘銆?",
-                "鎵撳紑鏁呬簨 1锛屾妸闂鍙戦€佺粰 Santoni Athena銆?",
-                "灞曠ず鏌ヨ瘉杩囩▼鍜岃瘉鎹摼銆?",
-                "鎵撳紑鏁呬簨 3锛岃鏄庡摢浜涙槸 mock 琛ュ厖銆?",
-                "鍒涘缓鎴栨煡鐪嬫湰鍦?follow-up锛屼笉鍐欑湡瀹炵郴缁熴€?",
+                "打开 /production.html，先看稳定演示故事包。",
+                "打开故事 1，把问题发送给 Santoni Athena。",
+                "展示查证过程和证据链。",
+                "打开故事 3，说明哪些是 mock 补充。",
+                "创建或查看本地 follow-up，不写真实系统。",
             ],
             "decision_loop_refs": [item.get("follow_up_id") for item in decision_loop.get("follow_up_items", [])],
             "material_context": {
@@ -2827,27 +2827,27 @@ class ProductionOperationsWorkflow:
             {
                 "criterion_id": "success_top_three_things",
                 "prd_requirement": "The top three things to handle today",
-                "prd_requirement_zh": "浠婂ぉ鏈€搴旇澶勭悊鐨勫墠涓変欢浜?",
+                "prd_requirement_zh": "今天最应该处理的前三件事",
                 "status": "pass" if len(priorities) == 3 and 3 <= len(summary_lines) <= 5 else "needs_work",
                 "evidence_refs": [item.get("priority_id", "") for item in priorities],
                 "object_refs": [management_priority_brief.get("brief_id", "")],
                 "manager_visible_surface": "General Manager 3-Minute Brief",
-                "manager_visible_surface_zh": "鎬荤粡鐞嗕笁鍒嗛挓绠€鎶?",
+                "manager_visible_surface_zh": "总经理三分钟简报",
             },
             {
                 "criterion_id": "success_why_they_matter",
                 "prd_requirement": "Why they matter",
-                "prd_requirement_zh": "涓轰粈涔堥噸瑕?",
+                "prd_requirement_zh": "为什么重要",
                 "status": "pass" if all_priorities_have_reasons else "needs_work",
                 "evidence_refs": [item.get("priority_id", "") for item in priorities if item.get("risk_if_ignored")],
                 "object_refs": [item.get("priority_id", "") for item in priorities],
                 "manager_visible_surface": "Risk cards and expanded details",
-                "manager_visible_surface_zh": "椋庨櫓鍗′笌灞曞紑璇︽儏",
+                "manager_visible_surface_zh": "风险卡与展开详情",
             },
             {
                 "criterion_id": "success_evidence_support",
                 "prd_requirement": "Which evidence supports them",
-                "prd_requirement_zh": "鍝簺璇佹嵁鏀寔杩欎簺鍒ゆ柇",
+                "prd_requirement_zh": "哪些证据支持这些判断",
                 "status": "pass" if all_priorities_have_evidence else "needs_work",
                 "evidence_refs": list(dict.fromkeys(
                     ref
@@ -2857,27 +2857,27 @@ class ProductionOperationsWorkflow:
                 )),
                 "object_refs": [item.get("priority_id", "") for item in priorities],
                 "manager_visible_surface": "Evidence chips and evidence detail lists",
-                "manager_visible_surface_zh": "璇佹嵁鏍囩涓庤瘉鎹鎯呭垪琛?",
+                "manager_visible_surface_zh": "证据标签与证据详情列表",
             },
             {
                 "criterion_id": "success_next_owner_confirmation",
                 "prd_requirement": "Who should confirm next",
-                "prd_requirement_zh": "涓嬩竴姝ュ簲璇ョ敱璋佺‘璁?",
+                "prd_requirement_zh": "下一步应该由谁确认",
                 "status": "pass" if all_followups_have_owner else "needs_work",
                 "evidence_refs": [item.get("linked_risk_card_id", "") for item in follow_ups],
                 "object_refs": [item.get("follow_up_id", "") for item in follow_ups],
                 "manager_visible_surface": "Decision Loop / local follow-up items",
-                "manager_visible_surface_zh": "鍐崇瓥闂幆 / 鏈湴璺熻繘浜嬮」",
+                "manager_visible_surface_zh": "决策闭环 / 本地跟进事项",
             },
             {
                 "criterion_id": "success_missing_data_visible",
                 "prd_requirement": "Which data is still missing",
-                "prd_requirement_zh": "浠嶇劧缂哄皯鍝簺鏁版嵁",
+                "prd_requirement_zh": "仍然缺少哪些数据",
                 "status": "pass" if brief_data_gaps and priority_data_gaps else "needs_work",
                 "evidence_refs": [item.get("gap_id", "") for item in brief_data_gaps],
                 "object_refs": [item.get("priority_id", "") for item in priorities if item.get("data_gaps")],
                 "manager_visible_surface": "Data gaps in risk-card details and data-readiness section",
-                "manager_visible_surface_zh": "椋庨櫓鍗¤鎯呬笌鏁版嵁鍑嗗搴﹂噷鐨勬暟鎹己鍙?",
+                "manager_visible_surface_zh": "风险卡详情与数据准备度里的数据缺口",
             },
         ]
         pass_count = len([item for item in checks if item["status"] == "pass"])
@@ -2907,8 +2907,8 @@ class ProductionOperationsWorkflow:
                 "and data gaps in one Production Console flow. Current proof is still Level 1 mock evidence."
             ),
             "manager_readout_zh": (
-                "鎬荤粡鐞嗗彲浠ュ湪涓€涓?Production Console 娴佺▼涓湅鍒板墠涓変欢浜嬨€佸師鍥犮€佽瘉鎹€佷笅涓€姝ョ‘璁よ礋璐ｄ汉鍜屾暟鎹己鍙ｃ€?"
-                "褰撳墠璇佹槑浠嶅睘浜?Level 1 mock 璇佹嵁銆?"
+                "总经理可以在一个 Production Console 流程中看到前三件事、原因、证据、下一步确认负责人和数据缺口。"
+                "当前证明仍属于 Level 1 mock 证据。"
             ),
             "remaining_data_boundary": [
                 "Real ERP/APS/IOT joins are not connected.",
@@ -2917,10 +2917,10 @@ class ProductionOperationsWorkflow:
                 "General manager VOC verification is still pending.",
             ],
             "remaining_data_boundary_zh": [
-                "鐪熷疄 ERP/APS/IOT 鍏宠仈灏氭湭鎺ュ叆銆?",
-                "鍘嗗彶浜哄伐鏈夋晥宸ユ椂鍩虹嚎灏氭湭鎺ュ叆銆?",
-                "璐ㄩ噺鍜屽悗閬撳伐搴忚褰曚粛鏄?mock 鎴栬鍒掍腑銆?",
-                "鎬荤粡鐞?VOC 楠岃瘉浠嶅緟瀹屾垚銆?",
+                "真实 ERP/APS/IOT 关联尚未接入。",
+                "历史人工有效工时基线尚未接入。",
+                "质量和后道工序记录仍是 mock 或计划中。",
+                "总经理 VOC 验证仍待完成。",
             ],
             "blocked_actions": permission_boundary.get("blocked_actions", []),
             "read_only": True,
@@ -2944,28 +2944,28 @@ class ProductionOperationsWorkflow:
         question_set = [
             {
                 "question_id": "GM-REG-001",
-                "question_zh": "浠婂ぉ鍏堢湅鍝笁浠朵簨锛?",
+                "question_zh": "今天先看哪三件事？",
                 "question": "What are today's top three production priorities?",
                 "coverage": "today_top_three",
                 "expected_contract": ["conclusion", "evidence", "recommendation", "data_gap", "read_only_boundary"],
             },
             {
                 "question_id": "GM-REG-002",
-                "question_zh": "鍝釜璁㈠崟鏈€鍙兘褰卞搷浜や粯锛熻瘉鎹槸浠€涔堬紵",
+                "question_zh": "哪个订单最可能影响交付？证据是什么？",
                 "question": "Which order has the strongest delivery risk and what evidence supports it?",
                 "coverage": "delivery_risk",
                 "expected_contract": ["affected_order", "actual_export_evidence", "suggested_confirmation_owner"],
             },
             {
                 "question_id": "GM-REG-003",
-                "question_zh": "鏈夋病鏈夋満鍙板拰娆惧紡瑙勬牸涓嶅尮閰嶇殑椋庨櫓锛?",
+                "question_zh": "有没有机台和款式规格不匹配的风险？",
                 "question": "Is any style scheduled on a machine with specification-fit risk?",
                 "coverage": "machine_style_fit",
                 "expected_contract": ["machine", "style_or_part", "field_sources", "cannot_confirm_root_cause"],
             },
             {
                 "question_id": "GM-REG-004",
-                "question_zh": "杩欏彴鏈哄鏋滅户缁仠鏈轰細褰卞搷鍝釜璁㈠崟锛?",
+                "question_zh": "这台机如果继续停机会影响哪个订单？",
                 "question": "If this machine keeps stopping, which order may be affected?",
                 "coverage": "service_risk",
                 "expected_contract": ["service_candidate", "mock_iot_boundary", "no_auto_dispatch"],
@@ -2979,7 +2979,7 @@ class ProductionOperationsWorkflow:
             },
             {
                 "question_id": "GM-REG-006",
-                "question_zh": "鐩墠鍝簺缁撹涓嶈兘璇存锛?",
+                "question_zh": "目前哪些结论不能说死？",
                 "question": "Which conclusions cannot be claimed as final today?",
                 "coverage": "data_gap",
                 "expected_contract": ["cannot_claim", "missing_data", "human_confirmation"],
@@ -3094,7 +3094,7 @@ class ProductionOperationsWorkflow:
             "user_page_gm_demo_entry": {
                 "schema_id": "athena.user_page_gm_demo_entry.v1",
                 "version": PRODUCTION_VERSION,
-                "entry_label": "鎬荤粡鐞?",
+                "entry_label": "总经理",
                 "visible_sections": ["today_top_three", "stable_story_shortcuts", "service_risk", "local_follow_up", "original_chat_drilldown"],
                 "hidden_from_user_page": ["Internal Demo Mode", "raw payload", "debug trace", "development plan"],
                 "read_only": True,
@@ -4414,7 +4414,7 @@ class ProductionOperationsWorkflow:
             "answer_summary": self._choose(
                 language,
                 headline or "Athena ranks today's management attention from evidence-backed production risks.",
-                "Athena 宸叉牴鎹綋鍓嶈瘉鎹敓鎴愪粖澶╂€荤粡鐞嗘渶搴旇鍏堢湅鐨勭鐞嗕紭鍏堢骇銆?",
+                "Athena 已根据当前证据生成今天总经理最应该先看的管理优先级。",
             ),
             "metric_snapshot": {
                 "priority_count": len(priorities),
@@ -4453,11 +4453,11 @@ class ProductionOperationsWorkflow:
                     "decision_impact": self._choose(
                         language,
                         "Athena must avoid claiming this conclusion as proven until the missing data is connected.",
-                        "鍦ㄧ己澶辨暟鎹帴鍏ュ墠锛孉thena 涓嶈兘鎶婅繖涓粨璁鸿鎴愬凡璇佹槑浜嬪疄銆?",
+                        "在缺失数据接入前，Athena 不能把这个结论说成已证明事实。",
                     )
                 },
                 "data_points": [
-                    self._choose(language, "Current demo remains read-only and mock-backed.", "褰撳墠 demo 浠嶆槸鍙 mock 鏁版嵁銆?")
+                    self._choose(language, "Current demo remains read-only and mock-backed.", "当前 demo 仍是只读 mock 数据。")
                 ],
                 "evidence_refs": ["EV-PROD-025"],
             }
@@ -4469,10 +4469,10 @@ class ProductionOperationsWorkflow:
             "answer_summary": self._choose(
                 language,
                 "Athena can explain current mock order, machine, material, and quality signals, but cannot prove historical lead time, true per-garment cost, or full process bottlenecks yet.",
-                "Athena 鐜板湪鍙互瑙ｉ噴褰撳墠 mock 鐨勮鍗曘€佹満鍙般€佺墿鏂欏拰璐ㄩ噺淇″彿锛屼絾杩樹笉鑳借瘉鏄庡巻鍙茶揣鏈熴€佺湡瀹炲崟浠舵垚鏈垨鍏ㄦ祦绋嬬摱棰堛€?",
+                "Athena 现在可以解释当前 mock 的订单、机台、物料和质量信号，但还不能证明历史货期、真实单件成本或全流程瓶颈。",
             ),
             "metric_snapshot": {
-                "known_scope": self._choose(language, "mock orders, APS schedule, IOT-like machine snapshot, material and quality evidence", "mock 璁㈠崟銆丄PS 鎺掑崟銆佺被 IOT 鏈哄彴蹇収銆佺墿鏂欏拰璐ㄩ噺璇佹嵁"),
+                "known_scope": self._choose(language, "mock orders, APS schedule, IOT-like machine snapshot, material and quality evidence", "mock 订单、APS 排单、类 IOT 机台快照、物料和质量证据"),
                 "missing_scope_count": len(gaps),
                 "status": "needs_real_data",
             },
@@ -4503,7 +4503,7 @@ class ProductionOperationsWorkflow:
                 "cause": self._choose(
                     language,
                     f"{machine['machine_id']} is the strongest drag: OEE {machine.get('oee', 0):.0%}, downtime {machine.get('downtime_minutes', 0)} min, state {machine.get('state')}.",
-                    f"{machine['machine_id']} 鏄綋鍓嶆渶鏄庢樉鎷栫疮椤癸細OEE {machine.get('oee', 0):.0%}锛屽仠鏈?{machine.get('downtime_minutes', 0)} 鍒嗛挓锛岀姸鎬?{machine.get('state')}銆?",
+                    f"{machine['machine_id']} 是当前最明显拖累项：OEE {machine.get('oee', 0):.0%}，停机 {machine.get('downtime_minutes', 0)} 分钟，状态 {machine.get('state')}。",
                 ),
                 "impact": {
                     "machine_id": machine["machine_id"],
@@ -4528,7 +4528,7 @@ class ProductionOperationsWorkflow:
             self._choose(
                 language,
                 f"{worst.get('machine_id', 'No machine')} is the current top machine bottleneck based on OEE, downtime, and scrap evidence.",
-                f"{worst.get('machine_id', '鏆傛棤鏈哄彴')} 鏄綋鍓嶆渶闇€瑕佸叧娉ㄧ殑鏈哄彴鐡堕锛屼緷鎹槸 OEE銆佸仠鏈哄拰搴熷純璇佹嵁銆?",
+                f"{worst.get('machine_id', '暂无机台')} 是当前最需要关注的机台瓶颈，依据是 OEE、停机和废弃证据。",
             ),
             {
                 "top_bottleneck_machine": worst.get("machine_id", ""),
@@ -4567,7 +4567,7 @@ class ProductionOperationsWorkflow:
                     "cause": self._choose(
                         language,
                         f"{order.get('style_code', measurement['order_id'])} contributes {share:.0%} of current scrap.",
-                        f"{order.get('style_code', measurement['order_id'])} 璐＄尞浜嗗綋鍓嶅簾寮冩暟閲忕殑 {share:.0%}銆?",
+                        f"{order.get('style_code', measurement['order_id'])} 贡献了当前废弃数量的 {share:.0%}。",
                     ),
                     "impact": {
                         "order_id": measurement["order_id"],
@@ -4597,7 +4597,7 @@ class ProductionOperationsWorkflow:
                     "cause": self._choose(
                         language,
                         f"{machine['machine_id']} is stopped with {machine.get('alarm')}; this is a direct machine-side scrap driver.",
-                        f"{machine['machine_id']} 鍥?{machine.get('alarm')} 鍋滄満锛屾槸鐩存帴鐨勬満鍣ㄤ晶搴熷純椹卞姩鍥犵礌銆?",
+                        f"{machine['machine_id']} 因 {machine.get('alarm')} 停机，是直接的机器侧废弃驱动因素。",
                     ),
                     "impact": {
                         "machine_id": machine["machine_id"],
@@ -4608,7 +4608,7 @@ class ProductionOperationsWorkflow:
                     "data_points": [
                         self._choose(language, f"OEE {machine.get('oee', 0):.0%}", f"OEE {machine.get('oee', 0):.0%}"),
                         self._choose(language, f"Downtime {machine.get('downtime_minutes', 0)} min", f"鍋滄満 {machine.get('downtime_minutes', 0)} 鍒嗛挓"),
-                        self._choose(language, f".co {machine.get('co_file', '')}, .cx {machine.get('cx_file', '')}", f".co {machine.get('co_file', '')}锛?cx {machine.get('cx_file', '')}"),
+                        self._choose(language, f".co {machine.get('co_file', '')}, .cx {machine.get('cx_file', '')}", f".co {machine.get('co_file', '')}，.cx {machine.get('cx_file', '')}"),
                     ],
                     "evidence_refs": [machine["evidence_ref"]],
                 }
@@ -4625,7 +4625,7 @@ class ProductionOperationsWorkflow:
                             "cause": self._choose(
                                 language,
                                 f"{process['process_id']} has setup variance {process.get('changeover_variance_minutes', 0)} min.",
-                                f"{process['process_id']} 鐨勮皟鏈哄亸宸揪鍒?{process.get('changeover_variance_minutes', 0)} 鍒嗛挓銆?",
+                                f"{process['process_id']} 的调机偏差达到 {process.get('changeover_variance_minutes', 0)} 分钟。",
                             ),
                             "impact": {
                                 "order_id": order_id,
@@ -4655,7 +4655,7 @@ class ProductionOperationsWorkflow:
                 "cause": self._choose(
                     language,
                     "Material is not the primary current scrap driver in this snapshot.",
-                    "浠庡綋鍓嶅揩鐓х湅锛岀墿鏂欎笉鏄湰娆″簾寮冪巼鍗囬珮鐨勯瑕佸師鍥犮€?",
+                    "从当前快照看，物料不是本次废弃率升高的首要原因。",
                 ),
                 "impact": {
                     "causal_status": "not_primary_current_scrap_driver",
@@ -4665,7 +4665,7 @@ class ProductionOperationsWorkflow:
                     self._choose(
                         language,
                         "High-risk elastane is linked to an order that has not started, while current scrap comes from running/quality-hold orders.",
-                        "楂橀闄╂皑绾跺叧鑱旂殑鏄湭寮€濮嬭鍗曪紱褰撳墠搴熷純涓昏鏉ヨ嚜杩愯涓?璐ㄩ噺鏆傚仠璁㈠崟銆?",
+                        "高风险纱线关联的是未开始订单；当前废弃主要来自运行中/质量暂停订单。",
                     )
                 ],
                 "evidence_refs": ["EV-PROD-015", "EV-PROD-024"],
@@ -4678,7 +4678,7 @@ class ProductionOperationsWorkflow:
             "answer_summary": self._choose(
                 language,
                 f"Current scrap rate is about {overview['scrap_rate']:.0%}. The strongest evidence points to style/quality and machine/setup issues, not material as the primary current driver.",
-                f"褰撳墠搴熷純鐜囩害 {overview['scrap_rate']:.0%}銆傛渶寮鸿瘉鎹寚鍚戞寮?璐ㄩ噺涓庢満鍣?璋冩満闂锛岀墿鏂欎笉鏄綋鍓嶅簾寮冪巼鐨勯瑕侀┍鍔ㄥ洜绱犮€?",
+                f"当前废弃率约 {overview['scrap_rate']:.0%}。最强证据指向款式质量与机器调机问题，物料不是当前废弃率的首要驱动因素。",
             ),
             "metric_snapshot": {
                 "scrap_rate": overview["scrap_rate"],
@@ -4882,7 +4882,7 @@ class ProductionOperationsWorkflow:
             {
                 "rank": index + 1,
                 "category": "order_schedule",
-                "category_label": self._choose(language, "Order / schedule", "璁㈠崟 / 鎺掑崟"),
+                "category_label": self._choose(language, "Order / schedule", "订单 / 排单"),
                 "cause": self._choose(language, f"{order['order_id']} is {order.get('aps_status')}.", f"{order['order_id']} 褰撳墠鐘舵€佷负 {order.get('aps_status')}"),
                 "impact": {
                     "order_id": order["order_id"],
@@ -4907,7 +4907,7 @@ class ProductionOperationsWorkflow:
             self._choose(
                 language,
                 f"Current backlog has an average {average_days_to_due} days until due date; {overview['pending_or_exception_order_count']} orders still need scheduling or exception review.",
-                f"褰撳墠璁㈠崟 backlog 璺濈浜ゆ湡骞冲潎杩樻湁 {average_days_to_due} 澶╋紱{overview['pending_or_exception_order_count']} 涓鍗曚粛闇€瑕佹帓鍗曟垨寮傚父澶嶆牳銆?",
+                f"当前订单 backlog 距离交期平均还有 {average_days_to_due} 天；{overview['pending_or_exception_order_count']} 个订单仍需要排单或异常复核。",
             ),
             {
                 "average_days_to_due": average_days_to_due,
@@ -4919,7 +4919,7 @@ class ProductionOperationsWorkflow:
                 "data_boundary": self._choose(
                     language,
                     "This is not a real one-week historical average lead time because mock data has due_date but no order-created date or actual delivery records.",
-                    "杩欎笉鏄湡瀹炶繎涓€鍛ㄥ巻鍙插钩鍧囪揣鏈燂紱褰撳墠 mock 鍙湁 due_date锛屾病鏈夋帴鍗曟棩鏈熷拰瀹為檯浜よ揣璁板綍銆?",
+                    "这不是真实近一周历史平均货期；当前 mock 只有 due_date，没有接单日期和实际交货记录。",
                 ),
             },
             root_causes,
@@ -5010,7 +5010,7 @@ class ProductionOperationsWorkflow:
             "recommendation": recommended_actions[0] if recommended_actions else self._choose(
                 language,
                 "Ask the production owner to confirm the evidence before action.",
-                "琛屽姩鍓嶈鐢熶骇璐熻矗浜哄厛纭璇佹嵁銆?",
+                "行动前请生产负责人先确认证据。",
             ),
             "data_gap": data_gaps[0] if data_gaps else self._choose(language, "No major data gap for this mock answer.", "No major data gap for this mock answer."),
         }
@@ -5024,47 +5024,47 @@ class ProductionOperationsWorkflow:
             return self._choose(
                 language,
                 f"Risk is attention-level for {metric}; review before schedule, service, or cost decisions.",
-                f"{metric} 褰撳墠鏄渶瑕佸叧娉ㄧ骇鍒紱鎺掑崟銆佹湇鍔℃垨鎴愭湰鍐崇瓥鍓嶈鍏堝鏍搞€?",
+                f"{metric} 当前是需要关注级别；排单、服务或成本决策前要先复核。",
             )
         return self._choose(
             language,
             f"Risk is monitor-level for {metric}; keep tracking evidence before operational changes.",
-            f"{metric} 褰撳墠鏄寔缁瀵熺骇鍒紱鎿嶄綔璋冩暣鍓嶇户缁窡韪瘉鎹€?",
+            f"{metric} 当前是持续观察级别；操作调整前继续跟踪证据。",
         )
 
     def _default_data_gaps(self, metric: str, language: str) -> list[str]:
         gaps = {
             "order_delay": (
                 "True recent-week average lead time still needs order-created dates, shipment dates, and actual delivery records.",
-                "鐪熷疄杩戜竴鍛ㄥ钩鍧囪揣鏈熶粛闇€瑕佹帴鍗曟棩鏈熴€佸嚭璐ф棩鏈熷拰瀹為檯浜よ揣璁板綍銆?",
+                "真实近一周平均货期仍需要接单日期、出货日期和实际交货记录。",
             ),
             "scrap_rate": (
                 "Scrap root cause will be stronger after real defect inspection rows, yarn lot traceability, and operator/shift history are connected.",
-                "鎺ュ叆鐪熷疄妫€楠屾槑缁嗐€佺罕绾挎壒娆¤拷婧拰鐝粍/鐝璁板綍鍚庯紝搴熷純鐜囨牴鍥犱細鏇村彲闈犮€?",
+                "接入真实检验明细、纱线批次追溯和班组/班次记录后，废弃率根因会更可靠。",
             ),
             "oee": (
                 "OEE explanation still needs real shift history, planned downtime, and machine maintenance records.",
-                "OEE 瑙ｉ噴浠嶉渶瑕佺湡瀹炵彮娆″巻鍙层€佽鍒掑仠鏈哄拰鏈哄彴淇濆吇璁板綍銆?",
+                "OEE 解释仍需要真实班次历史、计划停机和机台保养记录。",
             ),
             "downtime": (
                 "Downtime explanation still needs alarm duration history, maintenance response time, and service closure records.",
-                "鍋滄満瑙ｉ噴浠嶉渶瑕佹姤璀︽寔缁椂闂淬€佺淮淇搷搴旀椂闂村拰鏈嶅姟鍏抽棴璁板綍銆?",
+                "停机解释仍需要报警持续时间、维修响应时间和服务关闭记录。",
             ),
             "material_risk": (
                 "Material risk explanation still needs purchasing ETA, warehouse movement, and supplier confirmation records.",
-                "鐗╂枡椋庨櫓瑙ｉ噴浠嶉渶瑕侀噰璐?ETA銆佷粨搴撴祦杞拰渚涘簲鍟嗙‘璁よ褰曘€?",
+                "物料风险解释仍需要采购 ETA、仓库流转和供应商确认记录。",
             ),
             "machine_bottleneck": (
                 "Machine bottleneck ranking still needs longer IOT history and comparable style/machine workload normalization.",
-                "鏈哄彴鐡堕鎺掑悕浠嶉渶瑕佹洿闀?IOT 鍘嗗彶锛屼互鍙婃寮?鏈哄彴璐熻浇鐨勫彲姣斿綊涓€鍖栥€?",
+                "机台瓶颈排名仍需要更长 IOT 历史，以及款式/机台负载的可比归一化。",
             ),
             "data_gap": (
                 "Full production root cause still needs APS-to-IOT order join, real delivery records, cost tables, and downstream process WIP/quality records.",
-                "瀹屾暣鐢熶骇鏍瑰洜浠嶉渶瑕?APS 鍒?IOT 鐨勮鍗曞叧鑱斻€佺湡瀹炰氦浠樿褰曘€佹垚鏈〃鍜屽悗閬撳伐搴忓湪鍒?璐ㄩ噺璁板綍銆?",
+                "完整生产根因仍需要 APS 到 IOT 的订单关联、真实交付记录、成本表和后道工序在制/质量记录。",
             ),
             "overall": (
                 "Overall management view still needs real APS/IOT/ERP joins before it can rank waste and cost with production-grade confidence.",
-                "绠＄悊鎬昏浠嶉渶瑕佺湡瀹?APS/IOT/ERP 鍏宠仈鍚庯紝鎵嶈兘鐢ㄧ敓浜х骇缃俊搴︽帓搴忔氮璐瑰拰鎴愭湰銆?",
+                "管理总览仍需要真实 APS/IOT/ERP 关联后，才能用生产级置信度排序浪费和成本。",
             ),
         }
         english, chinese = gaps.get(metric, gaps["overall"])

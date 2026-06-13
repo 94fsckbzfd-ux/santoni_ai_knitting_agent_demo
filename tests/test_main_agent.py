@@ -1,4 +1,4 @@
-﻿import json
+import json
 
 from agent_core.main_agent import AgentRequest, MainAgent
 from agent_core.operating_model import project_documentation
@@ -322,7 +322,7 @@ def test_service_case_review_library_marks_imported_cases_for_review():
 
 def test_project_docs_track_done_and_planned_features():
     docs = project_documentation()
-    assert docs["version"] == "v0.113.1"
+    assert docs["version"] == "v0.113.3"
     assert any(item["name"] == "Service Case Library review page" for item in docs["implemented_features"])
     assert any(item["name"] == "Operation guide page" for item in docs["implemented_features"])
     assert any(item["name"] == "Excel auto importer" for item in docs["implemented_features"])
@@ -514,7 +514,7 @@ def test_tianpai_training_pack_structures_voc_and_iot_exports():
     readme = Path("README.md").read_text(encoding="utf-8")
 
     assert pack["schema_version"] == "tianpai_training_pack.v0.1"
-    assert pack["project_version_context"] == "v0.113.1"
+    assert pack["project_version_context"] == "v0.113.3"
     assert pack["tenant_id"] == "tianpai"
     assert pack["factory_id"] is None
     assert len(pack["source_files"]) == 10
@@ -624,6 +624,22 @@ def test_tianpai_training_pack_structures_voc_and_iot_exports():
     assert "tianpai_training_pack_v0_1.json" in readme
 
 
+def test_daily_smoke_check_script_covers_encoding_and_key_regression_paths():
+    script = Path("scripts/smoke_check.py").read_text(encoding="utf-8")
+    changelog = Path("src/web_app/changelog.html").read_text(encoding="utf-8")
+    readme = Path("README.md").read_text(encoding="utf-8")
+
+    assert "MOJIBAKE_TOKENS" in script
+    assert "ProductionOperationsWorkflow().overview()" in script
+    assert "stable_demo_story_pack" in script
+    assert "test_production_page_defaults_to_chinese_customer_display" in script
+    assert "test_production_chatbi_answers_actual_export_management_questions_with_evidence_chains" in script
+    assert "compileall" in script
+    assert "Daily Smoke Check" in changelog
+    assert "scripts/smoke_check.py" in changelog
+    assert "v0.113.3" in readme
+
+
 def test_all_web_pages_include_bilingual_language_switch():
     web_root = Path("src/web_app")
     html_files = list(web_root.glob("*.html"))
@@ -631,7 +647,7 @@ def test_all_web_pages_include_bilingual_language_switch():
     assert html_files
     for html_file in html_files:
         content = html_file.read_text(encoding="utf-8")
-        assert '/i18n.js?v=0.113.1' in content
+        assert '/i18n.js?v=0.113.3' in content
 
     i18n_script = (web_root / "i18n.js").read_text(encoding="utf-8")
     assert "santoniDemoLanguage" in i18n_script
@@ -859,7 +875,7 @@ def test_production_page_defaults_to_chinese_customer_display():
     assert "Athena GM Demo Mode" in production_html
     assert "今天我应该先盯哪三件事？" in production_html
     assert "What are the top three production priorities today?" in production_html
-    assert '/production.js?v=0.113.1' in production_html
+    assert '/production.js?v=0.113.3' in production_html
     assert 'id="skillRegistryPanel"' in production_html
     assert 'id="actualDataSnapshot"' in production_html
     assert 'id="stableDemoStoryPack"' in production_html
@@ -1022,12 +1038,12 @@ def test_hermes_integration_workflow_outputs_adapter_contract_without_live_crede
     serialized = json.dumps(result, ensure_ascii=False).lower()
 
     assert result["workflow_template"]["template_id"] == "athena.hermes_integration.v1"
-    assert result["workflow_instance"]["version"] == "v0.113.1"
+    assert result["workflow_instance"]["version"] == "v0.113.3"
     assert result["workflow_instance"]["read_only"] is True
     assert result["workflow_instance"]["real_hermes_connected"] is False
     assert result["workflow_instance"]["write_actions_blocked"] is True
     assert result["organization_memory_playbook"]["schema_id"] == "athena.organization_memory_playbook.v1"
-    assert result["organization_memory_playbook"]["version"] == "v0.113.1"
+    assert result["organization_memory_playbook"]["version"] == "v0.113.3"
     assert result["organization_memory_playbook"]["source_decision_loop_id"].startswith("PROD-DECISION-LOOP")
     assert result["organization_memory_playbook"]["playbook_kpis"]["candidate_count"] == 8
     assert result["organization_memory_playbook"]["playbook_kpis"]["regression_case_candidate_count"] == 8
@@ -1175,8 +1191,8 @@ def test_hermes_page_exposes_integration_console_and_language_switch():
     assert "Mock contract only" in page
     assert "Organization Memory / Playbook Engine" in page
     assert 'id="hermesPlaybook"' in page
-    assert '/i18n.js?v=0.113.1' in page
-    assert '/hermes.js?v=0.113.1' in page
+    assert '/i18n.js?v=0.113.3' in page
+    assert '/hermes.js?v=0.113.3' in page
     assert "/api/hermes/overview" in script
     assert "/api/hermes/suggest" in script
     assert "/api/hermes/playbook/review" in script
@@ -1199,7 +1215,7 @@ def test_training_automation_workflow_runs_auto_evaluation_and_json_payload():
         serialized = json.dumps(result, ensure_ascii=False).lower()
 
         assert result["workflow_template"]["template_id"] == "athena.training_automation.v1"
-        assert result["workflow_instance"]["version"] == "v0.113.1"
+        assert result["workflow_instance"]["version"] == "v0.113.3"
         assert result["workflow_instance"]["automation_mode"] == "local_auto_evaluation"
         assert result["workflow_instance"]["real_hermes_connected"] is False
         assert result["workflow_instance"]["model_weight_finetuning"] is False
@@ -2483,8 +2499,8 @@ def test_training_page_exposes_auto_training_console_and_language_switch():
 
     assert "Santoni Athena - Training Console" in page
     assert "Run Auto Training" in page
-    assert '/i18n.js?v=0.113.1' in page
-    assert '/training.js?v=0.113.1' in page
+    assert '/i18n.js?v=0.113.3' in page
+    assert '/training.js?v=0.113.3' in page
     assert "/api/training/overview" in script
     assert "/api/training/run" in script
     assert "/api/training/review" in script
@@ -3053,7 +3069,7 @@ create table T_Machine_Info (
         tables = {name: adapter._active_rows(name, load.rows) for name, load in loads.items()}
         done_recon = next(item for item in adapter._order_aggregates(tables) if item["produce_order_code"] == "DONE_RECON")
 
-    assert report["version"] == "v0.113.1"
+    assert report["version"] == "v0.113.3"
     assert report["tables"]["Weaving_Part_Order"]["raw_row_count"] == 5
     assert report["tables"]["Weaving_Part_Order"]["row_count"] == 4
     assert report["tables"]["Weaving_Part_Order"]["excluded_deleted_row_count"] == 1
@@ -3194,11 +3210,11 @@ def test_production_operations_workflow_outputs_read_only_management_console():
 
     assert result["workflow_template"]["template_id"] == "athena.production_operations.v1"
     assert result["workflow_instance"]["read_only"] is True
-    assert result["workflow_instance"]["version"] == "v0.113.1"
+    assert result["workflow_instance"]["version"] == "v0.113.3"
     assert result["production_object_model"]["schema_id"] == "athena.production_object_model.v1"
     assert result["production_object_model"]["canonical_workflow_key"]["field"] == "order_id"
     assert result["skill_registry"]["schema_id"] == "athena.production_skill_registry.v1"
-    assert result["skill_registry"]["version"] == "v0.113.1"
+    assert result["skill_registry"]["version"] == "v0.113.3"
     assert result["skill_registry"]["read_only"] is True
     assert {
         "gm_daily_brief_skill",
@@ -3229,7 +3245,7 @@ def test_production_operations_workflow_outputs_read_only_management_console():
     assert result["general_manager_question_bank"]["status"] == "hypothesis_pending_voc"
     assert result["general_manager_question_bank"]["question_count"] == 17
     assert all(item["verification_status"] == "hypothesis" for item in result["general_manager_question_bank"]["questions"])
-    assert result["management_priority_brief"]["brief_id"].startswith("MGMT-BRIEF-v0.113.1")
+    assert result["management_priority_brief"]["brief_id"].startswith("MGMT-BRIEF-v0.113.3")
     assert result["management_priority_brief"]["priority_policy"]["kpi_priority"] == ["delivery", "quality", "cost"]
     assert result["management_priority_brief"]["priority_policy"]["card_themes"] == [
         "delivery_risk_order",
@@ -3313,9 +3329,9 @@ def test_production_operations_workflow_outputs_read_only_management_console():
     )
     stable_pack = result["stable_demo_story_pack"]
     assert stable_pack["schema_id"] == "athena.production_stable_demo_story_pack.v1"
-    assert stable_pack["version"] == "v0.113.1"
+    assert stable_pack["version"] == "v0.113.3"
     assert stable_pack["read_only"] is True
-    assert stable_pack["pack_id"].startswith("STABLE-DEMO-PACK-v0.113.1")
+    assert stable_pack["pack_id"].startswith("STABLE-DEMO-PACK-v0.113.3")
     assert len(stable_pack["stories"]) == 3
     assert [story["story_id"] for story in stable_pack["stories"]] == [
         "STABLE-DEMO-001-REAL-DELIVERY",
@@ -3473,7 +3489,7 @@ def test_production_chatbi_agent_explains_scrap_rate_with_evidence():
     assert all(step["evidence_refs"] for step in result["skill_execution_trace"])
     verification = result["verification_process"]
     assert verification["schema_id"] == "athena.manager_verification_process.v1"
-    assert verification["version"] == "v0.113.1"
+    assert verification["version"] == "v0.113.3"
     assert verification["checked_objects"]
     assert verification["findings"]
     assert verification["evidence_level"]
@@ -3605,7 +3621,7 @@ def test_production_skill_registry_contract_and_trace_fields_are_agent_ready():
     trace = priority["skill_execution_trace"]
 
     assert registry["schema_id"] == "athena.production_skill_registry.v1"
-    assert registry["version"] == "v0.113.1"
+    assert registry["version"] == "v0.113.3"
     assert registry["read_only"] is True
     assert registry["skill_count"] >= 8
     skill_ids = {item["skill_id"] for item in registry["skills"]}
@@ -3705,11 +3721,20 @@ def test_production_stable_demo_story_pack_contract_is_read_only():
 
     assert result["workflow_instance"]["scenario"] == "stable_demo_story_pack"
     assert pack["schema_id"] == "athena.production_stable_demo_story_pack.v1"
-    assert pack["version"] == "v0.113.1"
+    assert pack["version"] == "v0.113.3"
     assert pack["read_only"] is True
     assert len(pack["stories"]) == 3
     assert pack["actual_data_available"]["evidence_level"] == "Level 2: external APS/ERP export evidence"
     assert "delivery risk from Produce_Order / Weaving_Part_Order / Planned_Task / Manual_Machine_Production" in pack["actual_data_available"]["usable_for_demo"]
+    assert pack["title_zh"] == "总经理三分钟生产决策演示包"
+    assert pack["stories"][0]["title_zh"] == "总经理今天先盯哪个订单？"
+    assert pack["stories"][1]["manager_question"] == "这批订单是否有机台/款式规格不匹配风险？"
+    assert pack["stories"][2]["demo_badge_zh"] == "真实排产上下文 + mock IOT/Service 信号"
+    stable_pack_text = json.dumps(pack, ensure_ascii=False)
+    assert "鎬荤" not in stable_pack_text
+    assert "浠婂" not in stable_pack_text
+    assert "閹" not in stable_pack_text
+    assert "鐎" not in stable_pack_text
     assert "real service ticket dispatch status" in pack["mock_needed_for_demo"]
     assert pack["stories"][0]["story_type"] == "real_data_main_line"
     assert pack["stories"][0]["actual_evidence_chains"]
@@ -3725,7 +3750,7 @@ def test_production_internal_demo_candidate_contract_covers_v098_to_v0107():
 
     assert result["workflow_instance"]["scenario"] == "internal_demo_candidate"
     assert candidate["schema_id"] == "athena.production_internal_demo_candidate.v1"
-    assert candidate["version"] == "v0.113.1"
+    assert candidate["version"] == "v0.113.3"
     assert candidate["guided_demo_flow"]["status"] == "ready_for_internal_demo"
     assert len(candidate["guided_demo_flow"]["steps"]) == 6
     assert candidate["guided_demo_flow"]["demo_reset_policy"]["does_not_write_external_systems"] is True
@@ -3836,7 +3861,7 @@ def test_production_adapter_contract_maps_aps_iot_fields_without_credentials():
     source_systems = {item["system"] for item in contract["source_systems"]}
     serialized = json.dumps(contract, ensure_ascii=False).lower()
 
-    assert contract["version"] == "v0.113.1"
+    assert contract["version"] == "v0.113.3"
     assert {"APS", "Santoni IOT", "ERP / Yarn Inventory"}.issubset(source_systems)
     assert {
         "production_order",

@@ -1,4 +1,4 @@
-﻿"""Agent Operating Model placeholders.
+"""Agent Operating Model placeholders.
 
 These interfaces reserve the product architecture for the five capabilities
 that turn the demo from a chatbot into a business agent.
@@ -628,7 +628,7 @@ def operating_model_progress() -> dict:
     ]
 
     return {
-        "version": "v0.113.1",
+        "version": "v0.113.3",
         "capabilities": [asdict(item) for item in capabilities],
         "interfaces": {
             "goal": GoalInterface.__name__,
@@ -655,7 +655,7 @@ def operating_model_progress() -> dict:
 def project_documentation() -> dict:
     model = operating_model_progress()
     return {
-        "version": "v0.113.1",
+        "version": "v0.113.3",
         "title": "AI Knitting Agent Product / Development Notes",
         "implemented_features": [
             {
@@ -677,6 +677,11 @@ def project_documentation() -> dict:
                 "name": "Active LLM runtime status",
                 "status": "done",
                 "description": "Local demo startup now treats the current project .env as the active provider/model configuration and /api/status reports the normalized active LLM provider, model, and enabled state.",
+            },
+            {
+                "name": "Daily development smoke check",
+                "status": "done",
+                "description": "scripts/smoke_check.py now provides a fast daily check for compile errors, critical Production-page mojibake or malformed HTML, General Manager priority API text regressions, and high-signal smoke tests before running the full release harness.",
             },
             {
                 "name": "Chinese routing dictionary cleanup",
@@ -746,7 +751,7 @@ def project_documentation() -> dict:
             {
                 "name": "Actual Export Evidence Sanity Guard",
                 "status": "done",
-                "description": "The Tianpai APS/ERP export adapter reads no-header CSV by the 琛ㄥ瓧娈?DDL order, filters deleted rows, and marks stale delivery dates or extreme planned-vs-reported quantity gaps as evidence-reconciliation candidates before Athena can present them as management conclusions.",
+                "description": "The Tianpai APS/ERP export adapter reads no-header CSV by the 表字段 DDL order, filters deleted rows, and marks stale delivery dates or extreme planned-vs-reported quantity gaps as evidence-reconciliation candidates before Athena can present them as management conclusions.",
             },
             {
                 "name": "Machine Style Root Cause Evidence",
@@ -852,6 +857,11 @@ def project_documentation() -> dict:
                 "name": "Stable General Manager Demo Story Pack",
                 "status": "done",
                 "description": "Production Console now exposes a repeatable three-story internal demo pack that separates actual APS/ERP export evidence, clearly labeled mock IOT/Service supplements, data gaps, suggested owners, evidence refs, and one-click Santoni Athena drilldown questions.",
+            },
+            {
+                "name": "Stable Demo Story Pack Encoding Guard",
+                "status": "done",
+                "description": "Stable Demo Story Pack Chinese titles, questions, demo-policy text, actual-data notes, and recommended sequence are now covered by the daily smoke check so mojibake is caught at the API-object layer before it reaches /production.html.",
             },
             {
                 "name": "Risk card drill-down actions",
@@ -1321,7 +1331,7 @@ def project_documentation() -> dict:
             {
                 "name": "Tianpai APS/ERP export adapter",
                 "status": "done",
-                "description": "Production Operations now exposes a read-only Tianpai APS/ERP CSV export adapter that parses no-header external CSV files by 琛ㄥ瓧娈?DDL field order, builds standard object counts, join quality, missing-field checks, unmatched-record counts, capability boundaries, and blocked write actions without copying raw customer data into the repo.",
+                "description": "Production Operations now exposes a read-only Tianpai APS/ERP CSV export adapter that parses no-header external CSV files by 表字段 DDL field order, builds standard object counts, join quality, missing-field checks, unmatched-record counts, capability boundaries, and blocked write actions without copying raw customer data into the repo.",
             },
             {
                 "name": "Production mock plus actual snapshot console",
@@ -1457,6 +1467,7 @@ def project_documentation() -> dict:
             "Developer/debug chat should also require explicit identity selection before effective test messages, so the demo UI matches future role-based permission management.",
             "Page-specific scripts should not reuse shared global identifiers from the language switch; user-facing pages need a readiness signal or regression check when identity controls are script-driven.",
             "Chinese 鐠愌勬埂 questions are in Production Athena scope, but true recent-week average lead time requires order-created dates and actual delivery records; current mock data can only summarize due-date distance for the backlog.",
+            "Daily development should use scripts/smoke_check.py to catch compile errors, critical Production-page mojibake or malformed HTML, and General Manager priority API text regressions before the slower full harness.",
             "Production Athena answers for management users should follow a fixed conclusion, reason/evidence, risk, recommendation, and data-gap structure before any deeper drilldown.",
             "High-frequency general-manager questions should be routed to explicit structured branches: delivery risk, quality/scrap, machine bottleneck, and data gaps.",
             "Athena's production value proposition is not generic ChatBI; it should rank what management should look at first, explain evidence and risk, and prepare action candidates for follow-up.",
@@ -1468,6 +1479,7 @@ def project_documentation() -> dict:
             "The customer-facing General Manager page should not show Internal Demo Mode, demo readiness, development progress, version notes, raw JSON, payloads, or full technical field lists outside evidence details.",
             "General Manager drilldown answers should translate Athena's verification work into management language: checked objects, findings, evidence level, cannot-conclude/data-gap statements, and suggested confirmation owner.",
             "Stable internal demos should use actual APS/ERP export evidence as the main line and clearly label any mock IOT/Service supplements instead of blending them into one undifferentiated story.",
+            "Daily development smoke checks must scan the Stable Demo Story Pack API object, because customer-visible demo-story text is generated by ProductionOperationsWorkflow rather than only by static HTML.",
             "Athena's product-level value proposition is workflow-native onsite workforce, management decision-loop agent, and Hermes-governed self-evolution.",
             "Production Management Priority Engine should use delivery > quality > cost as the PRD priority policy while treating cost as a consequence of delivery and quality failures until real cost tables are available.",
             "Production priority decisions must be linked to production_object_model fields and evidence_refs before they can become follow-up or Hermes memory candidates.",
@@ -1592,7 +1604,7 @@ def project_documentation() -> dict:
             "The Design Intake Structuring Console uses deterministic mock rules; real Style3D/CLO/design-file/SWS/Arachne adapters are not connected yet.",
             "Production Operations Console uses deterministic mock data with APS/IOT-like normalized fields; real APS and IOT API adapters are not connected yet.",
             "Production first-screen priorities can use Tianpai APS/ERP export files, but this is still file-export evidence rather than a live read-only database/API adapter.",
-            "Tianpai APS/ERP no-header CSV files are interpreted by the 琛ㄥ瓧娈?DDL field order; if the DDL order changes or a CSV export layout changes, Athena must revalidate the mapping before using the evidence.",
+            "Tianpai APS/ERP no-header CSV files are interpreted by the 表字段 DDL field order; if the DDL order changes or a CSV export layout changes, Athena must revalidate the mapping before using the evidence.",
             "Extreme planned-vs-reported quantity gaps and stale delivery dates are now evidence-reconciliation candidates, not confirmed production root causes.",
             "Orders with essentially complete planned-task progress must not be shown as hard delivery-risk candidates unless a separate non-completion delivery driver is available.",
             "The Evidence Review Queue improves trust but still needs APS/planning owner validation before its thresholds and owner roles are treated as customer-standard workflow.",
@@ -1651,6 +1663,7 @@ def project_documentation() -> dict:
             "Validate whether the v0.113.0 delivery-risk driver guard matches APS owner expectations for completed orders, stale delivery dates, status fields, unscheduled quantities, and planned-vs-reported quantity reconciliation.",
             "Validate whether the v0.109.0 Evidence Review Queue should be reviewed daily by planning, APS owner, production supervisor, or a combined production-control role.",
             "Validate whether the v0.113.0 General Manager first-screen hierarchy is clear enough for internal demo without showing development-progress language.",
+            "Validate whether the Stable Demo Story Pack Chinese story wording is clear enough for internal demo presenters after the v0.113.3 encoding guard fix.",
             "Validate whether v0.108.2 machine/style mismatch root-cause evidence matches APS and engineering expectations for cylinder diameter, needle spacing, unit convention, and allowed machine substitutions.",
             "Validate whether the customer-facing 鎬荤粡鐞?identity workflow on / feels more like an agent session than a linked dashboard page.",
             "Validate whether the v0.113.0 customer-facing local follow-up loop feels like a General Manager decision workflow rather than a dashboard control.",

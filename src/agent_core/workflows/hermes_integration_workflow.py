@@ -1,4 +1,4 @@
-﻿"""Hermes integration workflow for Athena local demo.
+"""Hermes integration workflow for Athena local demo.
 
 This first Hermes layer is a contract, not a live connector. It models Hermes
 as Athena's optional runtime, memory, tool orchestration, and evolution loop
@@ -15,7 +15,7 @@ from pathlib import Path
 from agent_core.workflows.production_operations_workflow import ProductionOperationsWorkflow
 
 
-HERMES_VERSION = "v0.113.1"
+HERMES_VERSION = "v0.113.3"
 HERMES_TEMPLATE_ID = "athena.hermes_integration.v1"
 HERMES_CONTRACT_ID = "athena.hermes_agent_core_contract.v1"
 PROJECT_DATA_PATH = Path(__file__).resolve().parents[3] / "docs" / "data" / "athena_project_data.json"

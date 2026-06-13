@@ -1,4 +1,4 @@
-﻿"""Design intake structuring workflow for design-to-production readiness.
+"""Design intake structuring workflow for design-to-production readiness.
 
 This workflow is intentionally deterministic for the local demo. It models a
 Design Agent data-structuring layer: design inputs become auditable data
@@ -45,7 +45,7 @@ def athena_mvp_template() -> dict:
 
     template = WorkflowTemplate(
         template_id=WORKFLOW_TEMPLATE_ID,
-        version="v0.113.1",
+        version="v0.113.3",
         name="Design intake structuring to engineering handoff",
         positioning=(
             "This template is a Design Agent data-structuring middleware layer. It normalizes "
