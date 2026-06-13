@@ -17,7 +17,7 @@ from statistics import mean
 from agent_core.workflows.hermes_integration_workflow import HermesIntegrationWorkflow
 
 
-TRAINING_VERSION = "v0.113.0"
+TRAINING_VERSION = "v0.113.1"
 TRAINING_TEMPLATE_ID = "athena.training_automation.v1"
 TRAINING_PACK_PATH = Path(__file__).resolve().parents[3] / "docs" / "training" / "tianpai_training_pack_v0_1.json"
 TRAINING_REVIEW_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "training_task_reviews.json"

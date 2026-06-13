@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 WEB_ROOT = SRC / "web_app"
 DOCS_ROOT = ROOT / "docs"
-APP_VERSION = "v0.113.0"
+APP_VERSION = "v0.113.1"
 
 
 def load_local_env() -> None:

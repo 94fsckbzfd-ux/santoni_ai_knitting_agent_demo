@@ -1,4 +1,4 @@
-"""Render the current Athena demo structure map as a PNG."""
+﻿"""Render the current Athena demo structure map as a PNG."""
 
 from __future__ import annotations
 

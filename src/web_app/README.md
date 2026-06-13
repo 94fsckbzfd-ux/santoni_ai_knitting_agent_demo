@@ -26,6 +26,8 @@ Daily Brief Narrative v0.113.0 generates a three-minute General Manager morning-
 
 GM First Screen Hierarchy Polish v0.113.0 keeps the customer-facing General Manager page focused on the KPI dashboard, today's three priorities, Service risk candidates, evidence review, local follow-up items, and same-page Santoni Athena drilldown while avoiding raw payload-style output.
 
+GM Dashboard Hotfix v0.113.1 restores the user-page General Manager dashboard load path, adds the missing local percent formatter, keeps real render errors visible in the page, and cleans first-screen Chinese copy for the Daily Brief and actual-data risk cards.
+
 Machine/style evidence still uses `Style_Component` and `T_Machine_Info` as the required-vs-actual parameter sources for cylinder diameter and needle spacing checks.
 
 Production Operations Console defaults to Chinese for customer review and localizes API-driven status, KPI, evidence, APS/IOT field mapping, and production site-flow content.

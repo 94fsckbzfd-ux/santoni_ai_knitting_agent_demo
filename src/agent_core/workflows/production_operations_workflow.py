@@ -22,7 +22,7 @@ from .tianpai_aps_erp_export_adapter import TianpaiApsErpExportAdapter
 
 
 PRODUCTION_TEMPLATE_ID = "athena.production_operations.v1"
-PRODUCTION_VERSION = "v0.113.0"
+PRODUCTION_VERSION = "v0.113.1"
 ADAPTER_CONTRACT_ID = "athena.production_aps_iot_read_only_contract.v1"
 DATA_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_operations.mock.json"
 FOLLOW_UP_REVIEW_PATH = Path(__file__).resolve().parents[2] / "mock_data" / "production_follow_up_reviews.json"
@@ -1640,10 +1640,10 @@ class ProductionOperationsWorkflow:
                     "Data boundary: Athena remains read-only; final action still requires owner confirmation and downstream ERP/APS/IOT evidence.",
                 ],
                 "summary_zh": [
-                    f"鐪熷疄 APS/ERP 瀵煎嚭锛氫粖澶╁墠涓夊紶椋庨櫓鍗′腑鏈?{len([item for item in priorities if item.get('data_source_mode') == 'actual_aps_erp_export_first'])} 寮犲甫澶栭儴瀵煎嚭璇佹嵁閾俱€?",
-                    "浜や粯锛氬厛鐪嬫渶楂樿鍗曢闄╋紝鍐嶇‘璁ゆ湭鎺掓暟閲忔垨璁″垝瀹屾垚鐜囨槸鍚﹂渶瑕佷粖澶╁鐞嗐€?",
-                    "璁惧/鐗╂枡/鎴愭湰锛氭敼鎺掔▼鎴栬皟鏈哄墠锛屽厛澶嶆牳瑙勬牸涓嶅尮閰嶃€佹湭鎺掓弧閮ㄤ欢鍗曘€佽鍒?鎶ュ伐宸紓銆?",
-                    "鏁版嵁杈圭晫锛欰thena 淇濇寔鍙锛涙渶缁堣鍔ㄤ粛闇€瑕佽礋璐ｄ汉纭鍜屽悗缁?ERP/APS/IOT 璇佹嵁銆?",
+                    f"真实 APS/ERP 导出：今天前三张风险卡中有 {len([item for item in priorities if item.get('data_source_mode') == 'actual_aps_erp_export_first'])} 张带外部导出证据链。",
+                    "交付：先看最高订单风险，再确认未排数量或计划完成率是否需要今天处理。",
+                    "设备/物料/成本：改排程或调机前，先复核规格不匹配、未排满部件单、计划/报工差异。",
+                    "数据边界：Athena 保持只读；最终行动仍需要负责人确认和后续 ERP/APS/IOT 证据。",
                 ],
             },
             "shift_brief": {
@@ -1921,9 +1921,9 @@ class ProductionOperationsWorkflow:
                     "card_id": f"SVC-RISK-{index:03d}",
                     "candidate_id": candidate.get("candidate_id", ""),
                     "risk_theme": "service",
-                    "risk_theme_label": "Service / 璁惧",
+                    "risk_theme_label": "Service / 设备",
                     "title": f"Confirm whether {machine_id} is blocking production",
-                    "title_zh": f"纭 {machine_id} 鏄惁姝ｅ湪褰卞搷璁㈠崟浜や粯",
+                    "title_zh": f"确认 {machine_id} 是否正在影响订单交付",
                     "risk_level": risk_level,
                     "risk_level_label": "High risk" if risk_level == "red" else "Attention",
                     "priority": priority,
@@ -1938,7 +1938,7 @@ class ProductionOperationsWorkflow:
                         "confirms machine status, alarm history, and recovery plan."
                     ),
                     "why_it_matters_zh": (
-                        "濡傛灉娌℃湁璐熻矗浜虹‘璁ゆ満鍙扮姸鎬併€佹姤璀﹀巻鍙插拰鎭㈠璁″垝锛孲ervice 鍊欓€夐棶棰樺彲鑳芥妸鍗曟鐢熶骇寤惰鍙樻垚鍙嶅鐡堕銆?"
+                        "如果没有负责人确认机台状态、报警历史和恢复计划，Service 候选问题可能把单次生产延误变成反复瓶颈。"
                     ),
                     "suggested_owner": "Service Manager / Maintenance Owner",
                     "recommended_action": (
@@ -1946,7 +1946,7 @@ class ProductionOperationsWorkflow:
                         "and whether a real service ticket is required."
                     ),
                     "recommended_action_zh": (
-                        "璇锋満淇垨 Service 璐熻矗浜虹‘璁ゆ姤璀︽槸鍚︿粛鍦ㄣ€佹槸鍚﹀奖鍝嶈璁㈠崟锛屼互鍙婃槸鍚﹂渶瑕佸垱寤虹湡瀹?Service 宸ュ崟銆?"
+                        "请机修或 Service 负责人确认报警是否仍在、是否影响该订单，以及是否需要创建真实 Service 工单。"
                     ),
                     "evidence_refs": [ref for ref in [evidence_ref] if ref],
                     "evidence_claims": [
@@ -1974,7 +1974,7 @@ class ProductionOperationsWorkflow:
                         "Need ERP/APS order impact confirmation before changing production priority.",
                     ],
                     "drilldown_question": (
-                        f"涓轰粈涔?{machine_id} 鐨?Service 椋庨櫓鍙兘褰卞搷璁㈠崟 {order_id}锛熻鎸夋満鍙扮姸鎬併€佹姤璀︺€佽鍗曞奖鍝嶅拰璇佹嵁閾句笅閽汇€?"
+                        f"为什么 {machine_id} 的 Service 风险可能影响订单 {order_id}？请按机台状态、报警、订单影响和证据链下钻。"
                     ),
                     "linked_action_id": linked_action.get("action_id", ""),
                     "local_follow_up_supported": bool(linked_action.get("action_id")),
@@ -1993,9 +1993,9 @@ class ProductionOperationsWorkflow:
             "schema_id": "athena.production_first_screen_service_risk.v1",
             "version": PRODUCTION_VERSION,
             "title": "First-screen Service risk",
-            "title_zh": "鎬荤粡鐞嗛灞?Service 椋庨櫓",
+            "title_zh": "总经理首屏 Service 风险",
             "summary": "Service risks are shown as confirmation candidates beside the top-three production priorities.",
-            "summary_zh": "Service 椋庨櫓浣滀负寰呯‘璁ゅ€欓€夐」锛屼笌鎬荤粡鐞嗗墠涓変欢浜嬫斁鍦ㄥ悓涓€鏉＄敓浜у喅绛栭摼璺噷銆?",
+            "summary_zh": "Service 风险作为待确认候选项，与总经理前三件事放在同一条生产决策链路里。",
             "adapter_status": "mock_contract",
             "read_only": True,
             "write_scope": "local_metadata_only",
@@ -3322,6 +3322,7 @@ class ProductionOperationsWorkflow:
             risk_theme = config.get("risk_theme", "delivery")
             action_id = config.get("action_id", f"ACT-{analysis.get('metric', 'ACTUAL').upper()}")
             recommended_action = self._actual_priority_recommended_action(analysis.get("metric", ""), title_subject)
+            recommended_action_zh = self._actual_priority_recommended_action_zh(analysis.get("metric", ""), title_subject)
             drilldown_question = self._actual_priority_drilldown_question(analysis.get("metric", ""), title_subject)
             action_candidate = self._priority_action_candidate(
                 action_id,
@@ -3358,11 +3359,11 @@ class ProductionOperationsWorkflow:
                     "conclusion": analysis.get("answer_summary", ""),
                     "conclusion_zh": analysis.get("answer_summary", ""),
                     "reason": self._actual_priority_reason(analysis, chain),
-                    "reason_zh": self._actual_priority_reason(analysis, chain),
+                    "reason_zh": self._actual_priority_reason_zh(analysis, chain),
                     "risk_if_ignored": self._actual_priority_risk_if_ignored(analysis.get("metric", "")),
                     "risk_if_ignored_zh": self._actual_priority_risk_if_ignored_zh(analysis.get("metric", "")),
                     "recommended_action": recommended_action,
-                    "recommended_action_zh": recommended_action,
+                    "recommended_action_zh": recommended_action_zh,
                     "owner_role": config.get("owner_role", "Production Owner"),
                     "confirmation_needed_by": config.get("confirmation_needed_by", "current_shift_review"),
                     "decision_gate": config.get("decision_gate", "owner_confirms_actual_evidence"),
@@ -3397,13 +3398,13 @@ class ProductionOperationsWorkflow:
     @staticmethod
     def _actual_priority_title_zh(metric: str, subject: str) -> str:
         titles = {
-            "order_delay": f"纭璁㈠崟 {subject} 鐨勪氦浠橀闄?",
-            "machine_style_mismatch": f"纭 {subject} 鐨勬満鍙?娆惧紡鍖归厤椋庨櫓",
-            "unscheduled_weaving_part_order": f"纭缁囬€犻儴浠跺崟 {subject} 鏈帓婊￠闄?",
-            "quantity_report_gap": f"纭 {subject} 鐨勮鍒?鎶ュ伐鏁伴噺宸紓",
-            "machine_plan_load": f"澶嶆牳 {subject} 鐨勬満鍙拌鍒掕礋杞?",
+            "order_delay": f"确认订单 {subject} 的交付风险",
+            "machine_style_mismatch": f"确认 {subject} 的机台/款式匹配风险",
+            "unscheduled_weaving_part_order": f"确认织造部件单 {subject} 的未排满风险",
+            "quantity_report_gap": f"确认 {subject} 的计划/报工数量差异",
+            "machine_plan_load": f"复核 {subject} 的机台计划负载",
         }
-        return titles.get(metric, f"澶嶆牳 {subject} 鐨勭湡瀹炴暟鎹闄?")
+        return titles.get(metric, f"复核 {subject} 的真实数据风险")
 
     @staticmethod
     def _actual_priority_recommended_action(metric: str, subject: str) -> str:
@@ -3417,20 +3418,37 @@ class ProductionOperationsWorkflow:
         return actions.get(metric, f"Ask the responsible owner to confirm the actual-data evidence for {subject}.")
 
     @staticmethod
+    def _actual_priority_recommended_action_zh(metric: str, subject: str) -> str:
+        actions = {
+            "order_delay": f"请计划负责人确认订单 {subject} 的未排数量，以及今天是否需要恢复动作。",
+            "machine_style_mismatch": f"请 APS 或生产工程确认 {subject} 是否真实存在机台/款式不匹配，还是允许的替代机台。",
+            "unscheduled_weaving_part_order": f"请计划负责人确认部件单 {subject} 是否需要重排，还是故意保留未排。",
+            "quantity_report_gap": f"请报工负责人确认 {subject} 是否由拆分任务、返工或报工时间差造成。",
+            "machine_plan_load": f"请计划负责人确认 {subject} 是有意集中产能，还是排程风险。",
+        }
+        return actions.get(metric, f"请责任人确认 {subject} 的真实数据证据。")
+
+    @staticmethod
     def _actual_priority_drilldown_question(metric: str, subject: str) -> str:
         questions = {
-            "order_delay": f"涓轰粈涔堣鍗?{subject} 鏈変氦浠橀闄╋紵璇锋寜璁㈠崟銆侀儴浠跺崟銆佽鍒掍换鍔°€佹満鍙板拰瀛楁鏉ユ簮涓嬮捇銆?",
-            "machine_style_mismatch": f"涓轰粈涔?{subject} 鏈夋満鍙?娆惧紡瑙勬牸涓嶅尮閰嶉闄╋紵璇锋寜绛掑緞銆侀拡璺濄€佷换鍔″拰瀛楁鏉ユ簮涓嬮捇銆?",
-            "unscheduled_weaving_part_order": f"涓轰粈涔堢粐閫犻儴浠跺崟 {subject} 杩樻病鎺掓弧锛熻鎸夎鍗曘€侀儴浠跺崟銆佽鍒掗噺鍜屽瓧娈垫潵婧愪笅閽汇€?",
-            "quantity_report_gap": f"涓轰粈涔?{subject} 鐨勮鍒掗噺鍜屾姤宸ラ噺宸紓澶э紵璇锋寜璁㈠崟銆佷换鍔°€佹姤宸ュ拰瀛楁鏉ユ簮涓嬮捇銆?",
-            "machine_plan_load": f"涓轰粈涔堟満鍙?{subject} 璁″垝璐熻浇鏈€楂橈紵璇锋寜浠诲姟銆佽鍗曘€佽鍒掗噺鍜屽瓧娈垫潵婧愪笅閽汇€?",
+            "order_delay": f"为什么订单 {subject} 有交付风险？请按订单、部件单、计划任务、机台和字段来源下钻。",
+            "machine_style_mismatch": f"为什么 {subject} 有机台/款式规格不匹配风险？请按筒径、针距、任务和字段来源下钻。",
+            "unscheduled_weaving_part_order": f"为什么织造部件单 {subject} 还没排满？请按订单、部件单、计划量和字段来源下钻。",
+            "quantity_report_gap": f"为什么 {subject} 的计划量和报工量差异大？请按订单、任务、报工和字段来源下钻。",
+            "machine_plan_load": f"为什么机台 {subject} 计划负载最高？请按任务、订单、计划量和字段来源下钻。",
         }
-        return questions.get(metric, f"涓轰粈涔?{subject} 鏄綋鍓嶇湡瀹炴暟鎹闄╋紵璇锋寜璇佹嵁閾惧拰瀛楁鏉ユ簮涓嬮捇銆?")
+        return questions.get(metric, f"为什么 {subject} 是当前真实数据风险？请按证据链和字段来源下钻。")
 
     @staticmethod
     def _actual_priority_reason(analysis: dict, chain: dict) -> str:
         refs = ", ".join(chain.get("evidence_refs", [])[:3])
         return f"{analysis.get('answer_summary', '')} Field source: {chain.get('field_source', 'Tianpai APS Export')}. Evidence: {refs or 'actual export row'}."
+
+    @staticmethod
+    def _actual_priority_reason_zh(analysis: dict, chain: dict) -> str:
+        refs = "；".join(chain.get("evidence_refs", [])[:3])
+        source = chain.get("field_source", "天派 APS/ERP 导出")
+        return f"{analysis.get('answer_summary', '')} 字段来源：{source}。证据：{refs or '真实导出行'}。"
 
     @staticmethod
     def _actual_priority_risk_if_ignored(metric: str) -> str:
@@ -3446,13 +3464,13 @@ class ProductionOperationsWorkflow:
     @staticmethod
     def _actual_priority_risk_if_ignored_zh(metric: str) -> str:
         risks = {
-            "order_delay": "濡傛灉涓嶅鐞嗭紝璁㈠崟鍙兘浠庤鍒掔‘璁や簨椤瑰彉鎴愬綋澶╀氦浠樻仮澶嶉棶棰樸€?",
-            "machine_style_mismatch": "濡傛灉涓嶅鐞嗭紝鐜板満鍙兘鍦ㄨ皟鏈恒€佽繑宸ユ垨鎹㈡満鍙颁笂鎹熷け鏃堕棿锛岀洿鍒伴棶棰樿鍔ㄦ毚闇层€?",
-            "unscheduled_weaving_part_order": "濡傛灉涓嶅鐞嗭紝鏈帓婊￠儴浠跺崟浼氭倓鎮勬秷鑰椾氦浠?buffer锛屽苟鎶婃仮澶嶅帇鍔涙帹鍒板悗娈点€?",
-            "quantity_report_gap": "濡傛灉涓嶅鐞嗭紝璁″垝/鎶ュ伐宸紓鍙兘鎺╃洊杩斿伐銆佹媶鍒嗕换鍔℃垨杩涘害鍙鍖栦笉鍑嗐€?",
-            "machine_plan_load": "濡傛灉涓嶅鐞嗭紝鍗充娇鎬讳骇鑳界湅浼艰冻澶燂紝璐熻浇闆嗕腑涔熷彲鑳藉舰鎴愮摱棰堛€?",
+            "order_delay": "如果不处理，订单可能从计划确认事项变成当天交付恢复问题。",
+            "machine_style_mismatch": "如果不处理，现场可能在调机、返工或换机台上损失时间，直到问题被动暴露。",
+            "unscheduled_weaving_part_order": "如果不处理，未排满部件单会悄悄消耗交付 buffer，并把恢复压力推到后段。",
+            "quantity_report_gap": "如果不处理，计划/报工差异可能掩盖返工、拆分任务或进度可视化不准。",
+            "machine_plan_load": "如果不处理，即使总产能看似足够，负载集中也可能形成瓶颈。",
         }
-        return risks.get(metric, "濡傛灉涓嶅鐞嗭紝璇ラ闄╁彲鑳藉湪娌℃湁璐熻矗浜虹‘璁ょ殑鎯呭喌涓嬪弽澶嶅嚭鐜般€?")
+        return risks.get(metric, "如果不处理，该风险可能在没有负责人确认的情况下反复出现。")
 
     @staticmethod
     def _actual_priority_kpi_links(metric: str) -> list[str]:

@@ -45,7 +45,7 @@ def athena_mvp_template() -> dict:
 
     template = WorkflowTemplate(
         template_id=WORKFLOW_TEMPLATE_ID,
-        version="v0.113.0",
+        version="v0.113.1",
         name="Design intake structuring to engineering handoff",
         positioning=(
             "This template is a Design Agent data-structuring middleware layer. It normalizes "

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Athena 鐢熶骇杩愯惀鎺у埗鍙?/title>
+  <title>Athena 生产运营控制台</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <header class="production-header">
       <div>
         <p class="eyebrow">Athena GM Demo Mode</p>
-        <h1>浠婂ぉ鎴戝簲璇ュ厛鐩摢涓変欢浜嬶紵</h1>
+        <h1>今天我应该先盯哪三件事？</h1>
         <p>What are the top three production priorities today? Athena turns production evidence into risk cards, owner confirmation actions, and read-only drilldown.</p>
       </div>
       <div class="topbar-actions">
@@ -29,7 +29,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">General Manager 3-Minute Brief</p>
-          <h2>浠婂ぉ鎴戝簲璇ュ厛澶勭悊鍝笁浠朵簨锛?/h2>
+          <h2>今天我应该先处理哪三件事？</h2>
         </div>
         <span class="status-pill">Evidence-backed</span>
       </div>
@@ -42,15 +42,15 @@
     </section>
 
     <section class="production-guardrail production-key-rule">
-      <strong>璁㈠崟涓婚敭</strong>
-      <span>璁㈠崟鍙?order_id 鏄覆鑱旀帴鍗曘€丒RP銆丄PS銆両OT銆佺敓浜с€佹湇鍔″€欓€夊拰鎴愯。杈撳嚭鐨勫敮涓€宸ヤ綔娴佷富閿€?/span>
+      <strong>订单主键</strong>
+      <span>订单号 order_id 是串联接单、ERP、APS、IOT、生产、服务候选和成衣输出的唯一工作流主键。</span>
     </section>
 
     <section class="production-panel stable-demo-panel">
       <div class="form-header">
         <div>
           <p class="eyebrow">Stable Demo Story Pack</p>
-          <h2>绋冲畾婕旂ず鏁呬簨鍖?/h2>
+          <h2>稳定演示故事包</h2>
         </div>
         <span class="status-pill">Real evidence + labeled mock</span>
       </div>
@@ -61,7 +61,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">Internal Demo Candidate</p>
-          <h2>Athena v0.113.0 婕旂ず鍊欓€夋祦绋?/h2>
+          <h2>Athena v0.113.1 内部演示候选流程</h2>
         </div>
         <span class="status-pill">Presenter / Evidence / Training</span>
       </div>
@@ -72,7 +72,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">Athena Skill Layer</p>
-          <h2>Athena 宸叉鏌ョ殑鐢熶骇绠＄悊鎶€鑳?/h2>
+          <h2>Athena 已检查的生产管理技能</h2>
         </div>
         <span class="status-pill">Skill Registry</span>
       </div>
@@ -83,9 +83,9 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">Mock / Tianpai APS Export</p>
-          <h2>褰撳墠鏁版嵁婧愪笌鐪熷疄蹇収</h2>
+          <h2>当前数据源与真实快照</h2>
         </div>
-        <span class="status-pill">v0.113.0</span>
+        <span class="status-pill">v0.113.1</span>
       </div>
       <div id="actualDataSnapshot" class="actual-data-snapshot"></div>
     </section>
@@ -94,7 +94,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">MVP Demo Story</p>
-          <h2>涓夊垎閽熺鐞嗘晠浜嬬嚎</h2>
+          <h2>三分钟管理故事线</h2>
         </div>
         <span class="status-pill">PRD Section 16</span>
       </div>
@@ -105,7 +105,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">MVP Success Check</p>
-          <h2>PRD 鎴愬姛鏍囧噯妫€鏌?/h2>
+          <h2>PRD 成功标准检查</h2>
         </div>
         <span class="status-pill">PRD Section 17</span>
       </div>
@@ -116,7 +116,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">PRD Alignment Audit</p>
-          <h2>PRD 瑕嗙洊鐭╅樀</h2>
+          <h2>PRD 覆盖矩阵</h2>
         </div>
         <span class="status-pill">Sections 1-18</span>
       </div>
@@ -127,7 +127,7 @@
       <div class="form-header">
         <div>
           <p class="eyebrow">Service Risk</p>
-          <h2>褰卞搷浜や粯鐨勮澶囦笌鏈嶅姟椋庨櫓</h2>
+          <h2>影响交付的设备与服务风险</h2>
         </div>
         <span class="status-pill">Candidate Only</span>
       </div>
@@ -148,7 +148,7 @@
 
         <section class="production-panel">
           <div class="form-header">
-            <h2>Athena 鎬荤粡鐞嗕紭鍏堢骇</h2>
+            <h2>Athena 总经理优先级</h2>
             <span class="status-pill">Priority Engine</span>
           </div>
           <div id="managementPriorityBrief" class="priority-brief"></div>
@@ -158,7 +158,7 @@
           <div class="form-header">
             <div>
               <p class="eyebrow">Evidence Review Queue</p>
-              <h2>鏁版嵁澶嶆牳鍊欓€?/h2>
+              <h2>数据复核候选</h2>
             </div>
             <span class="status-pill">Not Hard Risk</span>
           </div>
@@ -167,7 +167,7 @@
 
         <section class="production-panel">
           <div class="form-header">
-            <h2>Athena 璺熻繘闂幆</h2>
+            <h2>Athena 跟进闭环</h2>
             <span class="status-pill">Decision Loop</span>
           </div>
           <div id="decisionLoop" class="decision-loop"></div>
@@ -177,7 +177,7 @@
           <div class="form-header">
             <div>
               <p class="eyebrow">Permission Boundary</p>
-              <h2>鎬荤粡鐞嗘渶缁堢‘璁?/h2>
+              <h2>总经理最终确认</h2>
             </div>
             <span class="status-pill">Human Gate</span>
           </div>
@@ -185,7 +185,7 @@
         </section>
 
         <section class="production-panel">
-          <h2>鐢熶骇鐜板満閾捐矾</h2>
+          <h2>生产现场链路</h2>
           <div id="operationsStack" class="operations-stack"></div>
         </section>
 
@@ -212,22 +212,22 @@
             <h2>Santoni Athena</h2>
             <span class="status-pill">Read-only</span>
           </div>
-          <p class="muted-text">瀵圭湅鏉?KPI 鎻愰棶鍘熷洜锛孲antoni Athena 浼氫粠缁撴瀯鍖?mock APS/IOT 鏁版嵁鍜岃瘉鎹棩蹇椾腑杩芥函鏍瑰洜銆?/p>
+          <p class="muted-text">对看板 KPI 提问原因，Santoni Athena 会从结构化 mock APS/IOT 数据和证据日志中追溯根因。</p>
           <div id="chatbiQuickQuestions" class="chatbi-quick">
-            <button type="button" class="secondary-button" data-question-zh="涓轰粈涔堝簾寮冪巼绾?4%锛熶粠娆惧紡銆佹満鍙般€佺墿鏂欏拰宸ヨ壓涓婃媶涓€涓嬪師鍥犮€? data-question-en="Why is scrap rate around 4%? Break it down by style, machine, material, and method.">搴熷純鐜囧垎鏋?/button>
-            <button type="button" class="secondary-button" data-question-zh="涓轰粈涔?OEE 浣庝簬鐩爣锛? data-question-en="Why is OEE below target?">OEE 涓嬮捇</button>
-            <button type="button" class="secondary-button" data-question-zh="鍋滄満鍒嗛挓涓昏鏉ヨ嚜鍝噷锛? data-question-en="Where does downtime mainly come from?">鍋滄満鏉ユ簮</button>
-            <button type="button" class="secondary-button" data-question-zh="鏈€杩戜氦浠橀闄╁湪鍝噷锛熷摢浜涜鍗曟渶鍙兘褰卞搷浜や粯锛? data-question-en="Where is the current delivery risk? Which orders may affect delivery?">浜や粯椋庨櫓</button>
-            <button type="button" class="secondary-button" data-question-zh="鍝簺鏈哄彴鏈€鎷栧悗鑵匡紵" data-question-en="Which machines are the biggest bottlenecks?">鏈哄彴鐡堕</button>
-            <button type="button" class="secondary-button" data-question-zh="褰撳墠鏁版嵁杩樹笉鑳藉洖绛斾粈涔堬紵" data-question-en="What can the current data not answer yet?">鏁版嵁缂哄彛</button>
-            <button type="button" class="secondary-button" data-question-zh="鎬荤粡鐞嗕粖澶╁厛鐪嬪摢涓変欢浜嬶紵" data-question-en="What are the top three management priorities today?">鎬荤粡鐞嗕紭鍏堢骇</button>
+            <button type="button" class="secondary-button" data-question-zh="为什么废弃率约 4%？从款式、机台、物料和工艺上拆一下原因。" data-question-en="Why is scrap rate around 4%? Break it down by style, machine, material, and method.">废弃率分析</button>
+            <button type="button" class="secondary-button" data-question-zh="为什么 OEE 低于目标？" data-question-en="Why is OEE below target?">OEE 下钻</button>
+            <button type="button" class="secondary-button" data-question-zh="停机分钟主要来自哪里？" data-question-en="Where does downtime mainly come from?">停机来源</button>
+            <button type="button" class="secondary-button" data-question-zh="最近交付风险在哪里？哪些订单最可能影响交付？" data-question-en="Where is the current delivery risk? Which orders may affect delivery?">交付风险</button>
+            <button type="button" class="secondary-button" data-question-zh="哪些机台最拖后腿？" data-question-en="Which machines are the biggest bottlenecks?">机台瓶颈</button>
+            <button type="button" class="secondary-button" data-question-zh="当前数据还不能回答什么？" data-question-en="What can the current data not answer yet?">数据缺口</button>
+            <button type="button" class="secondary-button" data-question-zh="总经理今天先看哪三件事？" data-question-en="What are the top three management priorities today?">总经理优先级</button>
           </div>
           <form id="chatbiForm" class="chatbi-form">
-            <input id="chatbiQuestion" type="text" placeholder="渚嬪锛氫负浠€涔堝簾寮冪巼绾?4%锛?>
-            <button id="chatbiAsk" type="submit">鎻愰棶</button>
+            <input id="chatbiQuestion" type="text" placeholder="例如：为什么废弃率约 4%？">
+            <button id="chatbiAsk" type="submit">提问</button>
           </form>
           <div id="chatbiOutput" class="chatbi-output">
-            <p class="muted-text">閫夋嫨涓€涓棶棰樻垨鐩存帴杈撳叆鐪嬫澘鎸囨爣闂銆?/p>
+            <p class="muted-text">选择一个问题或直接输入看板指标问题。</p>
           </div>
         </section>
 
@@ -264,8 +264,8 @@
     </section>
   </main>
 
-  <script src="/i18n.js?v=0.113.0"></script>
-  <script src="/production.js?v=0.113.0"></script>
+  <script src="/i18n.js?v=0.113.1"></script>
+  <script src="/production.js?v=0.113.1"></script>
 </body>
 </html>
 

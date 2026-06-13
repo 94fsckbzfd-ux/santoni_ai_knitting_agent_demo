@@ -1,11 +1,11 @@
-"""Production skill contracts for Athena's general-manager workflow."""
+﻿"""Production skill contracts for Athena's general-manager workflow."""
 
 from __future__ import annotations
 
 from copy import deepcopy
 
 
-PRODUCTION_SKILL_VERSION = "v0.113.0"
+PRODUCTION_SKILL_VERSION = "v0.113.1"
 
 READ_ONLY_BOUNDARY = [
     "read_erp_aps_iot_or_export_evidence_only",

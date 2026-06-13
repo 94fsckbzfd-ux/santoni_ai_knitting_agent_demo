@@ -148,8 +148,9 @@ function selectIdentity(role) {
     addBubble("agent", `已选择身份：${identityLabels[role] || role}。现在可以开始提问。`);
   }
   if (role === "production_manager") {
-    loadGeneralManagerDashboard({ force: false }).catch(() => {
-      renderGeneralManagerError("Production 看板暂时无法加载，请确认本地 demo server 正在运行。");
+    loadGeneralManagerDashboard({ force: false }).catch((error) => {
+      console.error("Failed to load General Manager dashboard", error);
+      renderGeneralManagerError(`Production 看板暂时无法加载：${error.message || "未知错误"}`);
     });
   }
 }
@@ -200,7 +201,7 @@ function renderGeneralManagerDashboard(result) {
   renderGeneralManagerDailyBrief(result.daily_brief_narrative || {});
   gmBriefSummaryEl.innerHTML = `
     <div class="gm-user-summary-lines">
-      <strong>${escapeHtml("浠婃棩绠＄悊鎽樿")}</strong>
+      <strong>${escapeHtml("今日管理摘要")}</strong>
       ${summaryLines.slice(0, 4).map((line) => `<p>${escapeHtml(localizeProductionPhrase(line))}</p>`).join("")}
     </div>
   `;
@@ -286,7 +287,8 @@ function renderGeneralManagerKpiDashboard(result) {
 }
 function renderGeneralManagerDailyBrief(brief) {
   if (!gmDailyBriefPanelEl || !gmDailyBriefContentEl) return;
-  const text = brief.narrative_zh || brief.narrative || "";
+  const summaryLines = brief.summary_zh || brief.summary || [];
+  const text = brief.narrative_zh || brief.narrative || (Array.isArray(summaryLines) ? summaryLines.join("\n") : String(summaryLines || ""));
   if (!text) {
     gmDailyBriefPanelEl.hidden = true;
     gmDailyBriefContentEl.innerHTML = "";
@@ -505,6 +507,14 @@ function renderInlineList(values) {
   const clean = (values || []).filter(Boolean).slice(0, 6);
   if (!clean.length) return "-";
   return `<ul>${clean.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul>`;
+}
+
+function formatPercentLike(value) {
+  if (value === null || value === undefined || value === "") return "-";
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return String(value);
+  const normalized = Math.abs(numeric) <= 1 ? numeric * 100 : numeric;
+  return `${normalized.toFixed(1).replace(/\.0$/, "")}%`;
 }
 
 function humanizeDataGap(value) {
@@ -1050,8 +1060,9 @@ identityButtons.forEach((button) => {
 });
 
 gmRefreshButton?.addEventListener("click", () => {
-  loadGeneralManagerDashboard({ force: true }).catch(() => {
-    renderGeneralManagerError("Production 看板暂时无法刷新，请确认本地 demo server 正在运行。");
+  loadGeneralManagerDashboard({ force: true }).catch((error) => {
+    console.error("Failed to refresh General Manager dashboard", error);
+    renderGeneralManagerError(`Production 看板暂时无法刷新：${error.message || "未知错误"}`);
   });
 });
 

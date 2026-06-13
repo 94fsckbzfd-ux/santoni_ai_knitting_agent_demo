@@ -73,7 +73,7 @@ Main Agent is the orchestrator. It identifies role, intent, workflow state, and 
 
 ## Versioning
 
-Current version: `v0.113.0`
+Current version: `v0.113.1`
 
 Version rule: `vMajor.Feature.Patch`
 
@@ -150,6 +150,8 @@ Skill Execution Trace v1 is now available. Risk-card details and Santoni Athena 
 Athena GM Decision UI Compression v0.111.0, Local Decision Follow-up Board v0.112.0, and Daily Brief Narrative v0.113.0 are available at `docs/product/athena_gm_decision_ui_compression_v0.111.0.md`, `docs/product/athena_local_decision_follow_up_board_v0.112.0.md`, and `docs/product/athena_daily_brief_narrative_v0.113.0.md`. They document how Athena compresses General Manager drilldowns, turns hard risk / evidence review / Service risk cards into local metadata-only follow-ups, and generates a three-minute daily brief without exposing raw JSON or writing external systems.
 
 GM First Screen Hierarchy Polish v0.113.0 keeps the customer-facing General Manager page focused on the KPI dashboard, today's three priorities, Service risk candidates, evidence review, local follow-up items, and same-page Santoni Athena drilldown while removing raw payload-style output from the user experience.
+
+GM Dashboard Hotfix v0.113.1 restores the customer-facing General Manager dashboard load path, adds the missing user-page percent formatter, improves the dashboard error message, and cleans the first-screen Daily Brief / risk-card Chinese wording used in the Production view.
 
 Production Console now includes a Stable General Manager Demo Story Pack. The pack provides three repeatable internal-demo stories: a real APS/ERP delivery-risk story, a real APS/ERP machine/style-fit story, and a hybrid service-impact story that combines real scheduling context with clearly labeled mock IOT/Service evidence. Each story includes suggested questions, evidence refs, field sources, mock supplements, data gaps, suggested owner, and one-click Santoni Athena drilldown.
 

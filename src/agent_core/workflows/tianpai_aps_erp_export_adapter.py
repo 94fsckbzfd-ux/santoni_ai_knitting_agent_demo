@@ -35,7 +35,7 @@ TABLE_FILE_NAMES = {
     "T_Machine_Info": "T_Machine_Info.csv",
 }
 
-ADAPTER_VERSION = "v0.113.0"
+ADAPTER_VERSION = "v0.113.1"
 CURRENT_DELIVERY_OVERDUE_REVIEW_DAYS = -30
 CURRENT_DELIVERY_LOOKAHEAD_DAYS = 45
 COMPLETED_PLAN_RATE_THRESHOLD = 0.98
@@ -398,7 +398,7 @@ class TianpaiApsErpExportAdapter:
             "summary": self._choose(
                 language,
                 f"{len(cards)} delivery evidence records need planning or quantity reconciliation before Athena can treat them as hard delivery risks.",
-                f"{len(cards)} 鏉′氦浠樿瘉鎹渶瑕佸厛鍋氳鍒掔姸鎬佹垨鏁伴噺鍙ｅ緞澶嶆牳锛孉thena 涓嶈兘鐩存帴鎶婂畠浠綋浣滅‖鎬т氦浠橀闄┿€?",
+                f"{len(cards)} 条交付证据需要先做计划状态或数量口径复核，Athena 不能直接把它们当作硬性交付风险。",
             ),
             "blocked_actions": ["write_aps", "write_erp", "write_iot", "change_schedule", "dispatch_service"],
         }
@@ -407,7 +407,7 @@ class TianpaiApsErpExportAdapter:
         summary = self._choose(
             language,
             "The Tianpai APS Export is not fully available, so Athena cannot answer this actual-data question yet.",
-            "澶╂淳 APS Export 灏氭湭瀹屾暣鍙敤锛屽洜姝?Athena 鏆傛椂涓嶈兘鍥炵瓟杩欎釜鐪熷疄鏁版嵁闂銆?",
+            "天派 APS Export 尚未完整可用，因此 Athena 暂时不能回答这个真实数据问题。",
         )
         return {
             "language": language,
@@ -417,7 +417,7 @@ class TianpaiApsErpExportAdapter:
             "metric_snapshot": {"status": "missing_external_csv", "unavailable_tables": unavailable},
             "root_causes": [],
             "recommended_actions": [
-                self._choose(language, "Confirm the external export folder and required CSV files.", "纭澶栭儴瀵煎嚭鐩綍鍜屾墍闇€ CSV 鏂囦欢鏄惁榻愬叏銆?")
+                self._choose(language, "Confirm the external export folder and required CSV files.", "确认外部导出目录和所需 CSV 文件是否齐全。")
             ],
             "next_drilldowns": [],
             "data_gaps": unavailable,
@@ -444,7 +444,7 @@ class TianpaiApsErpExportAdapter:
             self._root_cause_from_chain(
                 index,
                 "delivery_risk",
-                self._choose(language, "Delivery risk", "浜や粯椋庨櫓"),
+                self._choose(language, "Delivery risk", "交付风险"),
                 self._delivery_risk_cause(chain, language),
                 chain,
             )
@@ -456,7 +456,7 @@ class TianpaiApsErpExportAdapter:
             summary=self._choose(
                 language,
                 f"{len(risk_orders)} orders are current delivery-risk candidates in the Tianpai APS Export.",
-                f"澶╂淳 APS Export 涓綋鍓嶆湁 {len(risk_orders)} 涓鍗曡繘鍏ヤ氦浠橀闄╁€欓€夈€?",
+                f"天派 APS Export 中当前有 {len(risk_orders)} 个订单进入交付风险候选。",
             ),
             snapshot={
                 "risk_order_count": len(risk_orders),
@@ -467,12 +467,12 @@ class TianpaiApsErpExportAdapter:
             root_causes=root_causes,
             evidence=evidence,
             actions=[
-                self._choose(language, "Ask planning to confirm the top risk orders and missing scheduled quantities.", "??????????????????????"),
-                self._choose(language, "Use order code to drill into weaving part orders and planned tasks before changing any schedule.", "???????????????????????"),
+                self._choose(language, "Ask planning to confirm the top risk orders and missing scheduled quantities.", "请计划负责人确认最高风险订单和未排数量。"),
+                self._choose(language, "Use order code to drill into weaving part orders and planned tasks before changing any schedule.", "在改排程前，用订单号下钻织造部件单和计划任务。"),
             ],
             drilldowns=[
-                self._choose(language, "Open Weaving_Part_Order by produce_order_code.", "? produce_order_code ?? Weaving_Part_Order?"),
-                self._choose(language, "Open Planned_Task by produce_order_code and weaving_part_order_id.", "? produce_order_code ? weaving_part_order_id ?? Planned_Task?"),
+                self._choose(language, "Open Weaving_Part_Order by produce_order_code.", "按 produce_order_code 打开 Weaving_Part_Order。"),
+                self._choose(language, "Open Planned_Task by produce_order_code and weaving_part_order_id.", "按 produce_order_code 和 weaving_part_order_id 打开 Planned_Task。"),
             ],
         )
 
@@ -507,7 +507,7 @@ class TianpaiApsErpExportAdapter:
             summary=self._choose(
                 language,
                 f"{len(cards)} delivery evidence records are reconciliation candidates, not confirmed hard delivery risks.",
-                f"{len(cards)} 鏉′氦浠樿瘉鎹睘浜庡鏍稿€欓€夛紝涓嶆槸宸茬‘璁ょ殑纭€т氦浠橀闄┿€?",
+                f"{len(cards)} 条交付证据属于复核候选，不是已确认的硬性交付风险。",
             ),
             snapshot={
                 "review_candidate_count": len(cards),
@@ -521,7 +521,7 @@ class TianpaiApsErpExportAdapter:
                 self._choose(language, "Do not change schedule or claim delivery risk until the reconciliation owner confirms the evidence.", "??????????????????????????"),
             ],
             drilldowns=[
-                self._choose(language, "Drill into Produce_Order, Weaving_Part_Order, Planned_Task, and Manual_Machine_Production by produce_order_code.", "?????? Produce_Order?Weaving_Part_Order?Planned_Task ? Manual_Machine_Production?"),
+                self._choose(language, "Drill into Produce_Order, Weaving_Part_Order, Planned_Task, and Manual_Machine_Production by produce_order_code.", "按 produce_order_code 下钻 Produce_Order、Weaving_Part_Order、Planned_Task 和 Manual_Machine_Production。"),
             ],
         )
 
@@ -558,11 +558,11 @@ class TianpaiApsErpExportAdapter:
             self._root_cause_from_chain(
                 index,
                 "unscheduled_weaving_part_order",
-                self._choose(language, "Unscheduled part order", "鏈帓婊＄粐閫犻儴浠跺崟"),
+                self._choose(language, "Unscheduled part order", "未排满织造部件单"),
                 self._choose(
                     language,
                     f"Part order {chain['weaving_part_order_id']} still has {chain['unscheduled_quantity']} pieces not scheduled.",
-                    f"閮ㄤ欢鍗?{chain['weaving_part_order_id']} 浠嶆湁 {chain['unscheduled_quantity']} 浠舵湭鎺掋€?",
+                    f"部件单 {chain['weaving_part_order_id']} 仍有 {chain['unscheduled_quantity']} 件未排。",
                 ),
                 chain,
             )
@@ -571,12 +571,12 @@ class TianpaiApsErpExportAdapter:
         return self._actual_answer(
             language,
             "unscheduled_weaving_part_order",
-            self._choose(language, f"{len(parts)} top unscheduled part-order candidates are listed by due date and gap.", f"{len(parts)} top unscheduled part-order candidates are listed by due date and gap."),
+            self._choose(language, f"{len(parts)} top unscheduled part-order candidates are listed by due date and gap.", f"按交期和缺口列出 {len(parts)} 个未排满部件单候选。"),
             {"top_candidate_count": len(parts), "source": "Tianpai APS Export"},
             root_causes,
             parts,
-            [self._choose(language, "Ask planning to confirm whether these part orders need rescheduling or are intentionally left open.", "Ask planning to confirm whether these part orders need rescheduling or are intentionally left open.")],
-            [self._choose(language, "Drill into Planned_Task by weaving_part_order_id.", "Drill into Planned_Task by weaving_part_order_id.")],
+            [self._choose(language, "Ask planning to confirm whether these part orders need rescheduling or are intentionally left open.", "请计划负责人确认这些部件单是否需要重排，还是故意保留未排。")],
+            [self._choose(language, "Drill into Planned_Task by weaving_part_order_id.", "按 weaving_part_order_id 下钻 Planned_Task。")],
         )
 
     def _answer_machine_load(self, tables: dict[str, list[dict[str, str]]], language: str) -> dict:
@@ -592,11 +592,11 @@ class TianpaiApsErpExportAdapter:
             self._root_cause_from_chain(
                 index,
                 "machine_plan_load",
-                self._choose(language, "Machine plan load", "鏈哄彴璁″垝璐熻浇"),
+                self._choose(language, "Machine plan load", "机台计划负载"),
                 self._choose(
                     language,
                     f"Machine {chain['machine_code']} has planned quantity {chain['planned_quantity']} across {chain['task_count']} tasks.",
-                    f"鏈哄彴 {chain['machine_code']} 璁″垝閲?{chain['planned_quantity']}锛屽叧鑱?{chain['task_count']} 涓换鍔°€?",
+                    f"机台 {chain['machine_code']} 计划量 {chain['planned_quantity']}，关联 {chain['task_count']} 个任务。",
                 ),
                 chain,
             )
@@ -609,8 +609,8 @@ class TianpaiApsErpExportAdapter:
             {"machine_count": len(load), "top_machine": load[0]["machine_code"] if load else ""},
             root_causes,
             evidence,
-            [self._choose(language, "Confirm whether high planned load is intentional capacity concentration or a scheduling risk.", "Confirm whether high planned load is intentional capacity concentration or a scheduling risk.")],
-            [self._choose(language, "Drill into Planned_Task.id evidence refs for each machine.", "Drill into Planned_Task.id evidence refs for each machine.")],
+            [self._choose(language, "Confirm whether high planned load is intentional capacity concentration or a scheduling risk.", "确认高计划负载是有意集中产能，还是排程风险。")],
+            [self._choose(language, "Drill into Planned_Task.id evidence refs for each machine.", "按每台机的 Planned_Task.id 证据下钻。")],
         )
 
     def _answer_machine_style_mismatch(self, tables: dict[str, list[dict[str, str]]], language: str) -> dict:
@@ -622,7 +622,7 @@ class TianpaiApsErpExportAdapter:
             self._root_cause_from_chain(
                 index,
                 "machine_style_spec_mismatch",
-                self._choose(language, "Machine/style spec mismatch", "Machine/style spec mismatch"),
+                self._choose(language, "Machine/style spec mismatch", "机台/款式规格不匹配"),
                 self._choose(
                     language,
                     self._machine_style_mismatch_cause(chain, "en"),
@@ -635,12 +635,12 @@ class TianpaiApsErpExportAdapter:
         return self._actual_answer(
             language,
             "machine_style_mismatch",
-            self._choose(language, f"{mismatch['candidate_count_total']} machine/style spec mismatch candidates were found.", f"{mismatch['candidate_count_total']} machine/style spec mismatch candidates were found."),
+            self._choose(language, f"{mismatch['candidate_count_total']} machine/style spec mismatch candidates were found.", f"发现 {mismatch['candidate_count_total']} 个机台/款式规格不匹配候选。"),
             {"candidate_count_total": mismatch["candidate_count_total"], "sample_count": len(evidence)},
             root_causes,
             evidence,
-            [self._choose(language, "Ask APS or production engineering to confirm whether these are real mismatches or allowed substitutions.", "Ask APS or production engineering to confirm whether these are real mismatches or allowed substitutions.")],
-            [self._choose(language, "Compare Style_Component cylinder/needle fields with T_Machine_Info machine fields.", "Compare Style_Component cylinder/needle fields with T_Machine_Info machine fields.")],
+            [self._choose(language, "Ask APS or production engineering to confirm whether these are real mismatches or allowed substitutions.", "请 APS 或生产工程确认这些是真实不匹配，还是允许的替代机台。")],
+            [self._choose(language, "Compare Style_Component cylinder/needle fields with T_Machine_Info machine fields.", "对比 Style_Component 的筒径/针距字段和 T_Machine_Info 的机台字段。")],
         )
 
     def _answer_quantity_report_gap(self, tables: dict[str, list[dict[str, str]]], language: str) -> dict:
@@ -676,10 +676,10 @@ class TianpaiApsErpExportAdapter:
             self._root_cause_from_chain(
                 index,
                 "quantity_report_gap",
-                self._choose(language, "Plan/report quantity gap", "Plan/report quantity gap"),
+                self._choose(language, "Plan/report quantity gap", "计划/报工数量差异"),
                 self._choose(
                     language,
-                    f"Order {chain['produce_order_code']} has report-plan gap {chain['quantity_report_gap']}; treat it as a quantity reconciliation candidate before claiming production loss.",
+                    f"订单 {chain['produce_order_code']} 的报工量与计划量差异为 {chain['quantity_report_gap']}；在判断生产损失前，应先作为数量口径复核候选。",
                     f"Order {chain['produce_order_code']} has report-plan gap {chain['quantity_report_gap']}; treat it as a quantity reconciliation candidate before claiming production loss.",
                 ),
                 chain,
@@ -689,12 +689,12 @@ class TianpaiApsErpExportAdapter:
         return self._actual_answer(
             language,
             "quantity_report_gap",
-            self._choose(language, f"{len(evidence)} orders have the largest planned-vs-reported quantity gaps.", f"{len(evidence)} orders have the largest planned-vs-reported quantity gaps."),
+            self._choose(language, f"{len(evidence)} orders have the largest planned-vs-reported quantity gaps.", f"列出 {len(evidence)} 个计划量与报工量差异最大的订单。"),
             {"top_gap_count": len(evidence), "source": "Tianpai APS Export"},
             root_causes,
             evidence,
-            [self._choose(language, "Confirm whether manual reports can exceed planned quantity because of split tasks, rework, or reporting timing.", "Confirm whether manual reports can exceed planned quantity because of split tasks, rework, or reporting timing.")],
-            [self._choose(language, "Drill by produce_order_code into Planned_Task and Manual_Machine_Production rows.", "Drill by produce_order_code into Planned_Task and Manual_Machine_Production rows.")],
+            [self._choose(language, "Confirm whether manual reports can exceed planned quantity because of split tasks, rework, or reporting timing.", "确认报工量超过计划量是否由拆分任务、返工或报工时间差造成。")],
+            [self._choose(language, "Drill by produce_order_code into Planned_Task and Manual_Machine_Production rows.", "按 produce_order_code 下钻 Planned_Task 和 Manual_Machine_Production 行。")],
         )
 
     def _actual_answer(
@@ -737,7 +737,7 @@ class TianpaiApsErpExportAdapter:
             "recommended_actions": actions,
             "next_drilldowns": drilldowns,
             "data_gaps": [
-                self._choose(language, "This answer uses APS/ERP export data only; live IOT alarms, OEE, downtime, quality defects, and costs are not included.", "鏈洖绛斾粎浣跨敤 APS/ERP 瀵煎嚭鏁版嵁锛涗笉鍖呭惈瀹炴椂 IOT 鎶ヨ銆丱EE銆佸仠鏈恒€佽川閲忕己闄峰拰鎴愭湰銆?")
+                self._choose(language, "This answer uses APS/ERP export data only; live IOT alarms, OEE, downtime, quality defects, and costs are not included.", "本回答仅使用 APS/ERP 导出数据；不包含实时 IOT 报警、OEE、停机、质量缺陷和成本。")
             ] + list(dict.fromkeys(evidence_data_gaps)),
             "confidence": "medium_with_reconciliation_needed" if needs_reconciliation else "medium_high",
             "source_objects": ["Tianpai APS Export", "Produce_Order", "Weaving_Part_Order", "Planned_Task", "Manual_Machine_Production", "T_Machine_Info", "Style_Component"],
@@ -914,7 +914,7 @@ class TianpaiApsErpExportAdapter:
                     days_to_due,
                     f"<= {CURRENT_DELIVERY_OVERDUE_REVIEW_DAYS} days",
                     "Delivery date is 30 or more days overdue, so Athena needs order-status confirmation before showing it as a current delivery risk.",
-                    "浜ゆ湡宸茬粡閫炬湡 30 澶╂垨浠ヤ笂锛孉thena 闇€瑕佸厛纭璁㈠崟鏄惁宸插叧闂€佸彇娑堟垨鍘嗗彶閬楃暀锛屼笉鑳界洿鎺ュ綋浣滃綋鍓嶄氦浠橀闄┿€?",
+                    "交期已经逾期 30 天或以上，Athena 需要先确认订单是否已关闭、取消或属于历史遗留，不能直接当作当前交付风险。",
                 )
             )
             return drivers
@@ -928,7 +928,7 @@ class TianpaiApsErpExportAdapter:
                         {"plan_completion_rate": completion, "unscheduled_quantity": unscheduled},
                         f"completion >= {COMPLETED_PLAN_RATE_THRESHOLD:.0%}",
                         "Planned tasks are essentially complete while part-order quantity still appears unscheduled; this is a planning/status reconciliation candidate, not a delivery-risk conclusion.",
-                        "璁″垝浠诲姟鍩烘湰瀹屾垚锛屼絾閮ㄤ欢鍗曚粛鏄剧ず鏈帓鏁伴噺锛涜繖灞炰簬鎺掍骇/鐘舵€佸彛寰勫鏍稿€欓€夛紝涓嶅簲鐩存帴褰掔被涓轰氦浠橀闄┿€?",
+                        "计划任务基本完成，但部件单仍显示未排数量；这属于排产/状态口径复核候选，不应直接归类为交付风险。",
                     )
                 )
             if order.get("data_sanity_flags"):
@@ -940,7 +940,7 @@ class TianpaiApsErpExportAdapter:
                         order.get("data_sanity_flags", []),
                         "no sanity flags",
                         "Plan completion is essentially complete, but quantity evidence has sanity flags; reconcile the export before claiming delivery risk.",
-                        "璁″垝瀹屾垚鐜囧熀鏈畬鎴愶紝浣嗘暟閲忚瘉鎹瓨鍦ㄥ鏍告爣璁帮紱闇€瑕佸厛澶嶆牳瀵煎嚭鍙ｅ緞锛屼笉鑳界洿鎺ュ０绉颁氦浠橀闄┿€?",
+                        "计划完成率基本完成，但数量证据存在复核标记；需要先复核导出口径，不能直接声称交付风险。",
                     )
                 )
             return drivers
@@ -953,7 +953,7 @@ class TianpaiApsErpExportAdapter:
                     {"days_to_due": days_to_due, "plan_completion_rate": completion},
                     "days_to_due <= 14 and completion < 98%",
                     "Order is due within 14 days or already overdue inside the current review window, and planned-task completion is not close to complete.",
-                    "璁㈠崟鍦?14 澶╁唴鍒版湡鎴栧浜庡綋鍓嶅鏍哥獥鍙ｅ唴閫炬湡锛屽悓鏃惰鍒掍换鍔″畬鎴愮巼灏氭湭鎺ヨ繎瀹屾垚銆?",
+                    "订单在 14 天内到期或处于当前复核窗口内逾期，同时计划任务完成率尚未接近完成。",
                 )
             )
         if unscheduled > 0 and (days_to_due is None or days_to_due <= CURRENT_DELIVERY_LOOKAHEAD_DAYS):
@@ -965,7 +965,7 @@ class TianpaiApsErpExportAdapter:
                     unscheduled,
                     f"> 0 within {CURRENT_DELIVERY_LOOKAHEAD_DAYS} days",
                     "Part-order quantity is still not fully scheduled inside the delivery lookahead window.",
-                    "浜や粯瑙傚療绐楀彛鍐呬粛鏈夐儴浠跺崟鏁伴噺鏈帓婊°€?",
+                    "交付观察窗口内仍有部件单数量未排满。",
                 )
             )
         if completion < 0.8 and (days_to_due is None or days_to_due <= CURRENT_DELIVERY_LOOKAHEAD_DAYS):
@@ -977,7 +977,7 @@ class TianpaiApsErpExportAdapter:
                     completion,
                     "< 80% within delivery lookahead window",
                     "Planned-task completion is below the management warning threshold inside the delivery lookahead window.",
-                    "浜や粯瑙傚療绐楀彛鍐呰鍒掍换鍔″畬鎴愮巼浣庝簬绠＄悊棰勮闃堝€笺€?",
+                    "交付观察窗口内计划任务完成率低于管理预警阈值。",
                 )
             )
         return drivers
@@ -1014,20 +1014,20 @@ class TianpaiApsErpExportAdapter:
                 "Athena should ask planning to confirm order status and quantity scope before claiming delivery risk."
             ),
             (
-                f"璁㈠崟 {order.get('produce_order_code')} 鐩墠涓嶈兘鐩存帴绠楃‖鎬т氦浠橀闄┿€?"
-                f"璁″垝瀹屾垚鐜囦负 {order.get('plan_completion_rate', 0):.1%}锛屼絾瀵煎嚭璇佹嵁瀛樺湪澶嶆牳瑙﹀彂椤癸細{driver_text}銆?"
-                "Athena 闇€瑕佸厛璇疯鍒掕礋璐ｄ汉纭璁㈠崟鐘舵€佸拰鏁伴噺鍙ｅ緞锛屽啀鍒ゆ柇鏄惁鐪熺殑褰卞搷浜や粯銆?"
+                f"订单 {order.get('produce_order_code')} 目前不能直接算硬性交付风险。"
+                f"计划完成率为 {order.get('plan_completion_rate', 0):.1%}，但导出证据存在复核触发项：{driver_text}。"
+                "Athena 需要先请计划负责人确认订单状态和数量口径，再判断是否真的影响交付。"
             ),
         )
         cannot_conclude = self._choose(
             language,
             "Athena cannot conclude delivery risk because completion, due-date status, unscheduled quantity, or reporting quantity evidence is internally inconsistent.",
-            "Athena 涓嶈兘鐩存帴涓嬩氦浠橀闄╃粨璁猴紝鍥犱负瀹屾垚鐜囥€佷氦鏈熺姸鎬併€佹湭鎺掗噺鎴栨姤宸ラ噺璇佹嵁涔嬮棿瀛樺湪鍙ｅ緞鐭涚浘銆?",
+            "Athena 不能直接下交付风险结论，因为完成率、交期状态、未排量或报工量证据之间存在口径冲突。",
         )
         action = self._choose(
             language,
             "Confirm whether the order is closed, split, historically overdue, intentionally left open, or using a different quantity-reporting scope.",
-            "纭璁㈠崟鏄惁宸插叧闂€佹媶鍗曘€佸巻鍙查€炬湡銆佹晠鎰忎繚鐣欐湭鎺掞紝鎴栦娇鐢ㄤ簡涓嶅悓鐨勬暟閲忔姤宸ュ彛寰勩€?",
+            "确认订单是否已关闭、拆单、历史逾期、故意保留未排，或使用了不同的数量报工口径。",
         )
         return {
             "card_id": f"EVID-REVIEW-{order.get('produce_order_code')}",
@@ -1059,7 +1059,7 @@ class TianpaiApsErpExportAdapter:
             "drilldown_question": self._choose(
                 language,
                 f"Why is order {order.get('produce_order_code')} an evidence review candidate instead of a hard delivery risk?",
-                f"涓轰粈涔堣鍗?{order.get('produce_order_code')} 涓嶆槸纭€т氦浠橀闄╋紝鑰屾槸鏁版嵁澶嶆牳鍊欓€夛紵",
+                f"为什么订单 {order.get('produce_order_code')} 不是硬性交付风险，而是数据复核候选？",
             ),
             "evidence_chain": chain,
             "evidence_refs": chain.get("evidence_refs", []),
@@ -1078,14 +1078,14 @@ class TianpaiApsErpExportAdapter:
             return self._choose(
                 language,
                 f"Order {chain['produce_order_code']} needs delivery evidence review, but no hard delivery-risk driver is available after completion and sanity checks.",
-                f"璁㈠崟 {chain['produce_order_code']} 闇€瑕佸仛浜や粯璇佹嵁澶嶆牳锛涚粡杩囧畬鎴愮巼鍜屾暟鎹彛寰勬鏌ュ悗锛岀洰鍓嶆病鏈夎冻澶熻瘉鎹妸瀹冧綔涓虹‖鎬т氦浠橀闄┿€?",
+                f"订单 {chain['produce_order_code']} 需要做交付证据复核；经过完成率和数据口径检查后，目前没有足够证据把它作为硬性交付风险。",
             )
         key = "explanation_en" if language == "en" else "explanation_zh"
         driver_text = "; ".join(driver.get(key, driver.get("driver", "")) for driver in drivers)
         return self._choose(
             language,
             f"Order {chain['produce_order_code']} is a delivery-risk candidate because: {driver_text} Plan completion is {chain.get('plan_completion_rate'):.1%}; evidence credibility is {chain.get('evidence_credibility')}.",
-            f"璁㈠崟 {chain['produce_order_code']} 杩涘叆浜や粯椋庨櫓鍊欓€夌殑鍘熷洜鏄細{driver_text} 璁″垝瀹屾垚鐜囦负 {chain.get('plan_completion_rate'):.1%}锛涜瘉鎹彲淇″害涓?{chain.get('evidence_credibility')}銆?",
+            f"订单 {chain['produce_order_code']} 进入交付风险候选的原因是：{driver_text} 计划完成率为 {chain.get('plan_completion_rate'):.1%}；证据可信度为 {chain.get('evidence_credibility')}。",
         )
 
     def _order_data_sanity_flags(
@@ -1580,7 +1580,7 @@ class TianpaiApsErpExportAdapter:
                 "Purchasing/labor/freight cost root cause without cost records.",
                 "Automatic schedule modification or ERP/APS write-back.",
             ],
-            "next_prd_step": "Use the v0.113.0 delivery risk driver guard and actual-data Q&A evidence chains as the regression baseline for management question training.",
+            "next_prd_step": "Use the v0.113.1 delivery risk driver guard and actual-data Q&A evidence chains as the regression baseline for management question training.",
         }
 
     def _missing_required_fields(self, tables: dict[str, list[dict[str, str]]]) -> list[dict]:

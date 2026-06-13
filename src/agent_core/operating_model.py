@@ -628,7 +628,7 @@ def operating_model_progress() -> dict:
     ]
 
     return {
-        "version": "v0.113.0",
+        "version": "v0.113.1",
         "capabilities": [asdict(item) for item in capabilities],
         "interfaces": {
             "goal": GoalInterface.__name__,
@@ -655,7 +655,7 @@ def operating_model_progress() -> dict:
 def project_documentation() -> dict:
     model = operating_model_progress()
     return {
-        "version": "v0.113.0",
+        "version": "v0.113.1",
         "title": "AI Knitting Agent Product / Development Notes",
         "implemented_features": [
             {
